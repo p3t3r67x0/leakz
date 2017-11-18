@@ -1,3 +1,11 @@
+a {
+  color: #fff;
+}
+
+a:hover, a:focus, a:active {
+  color: #fff;
+}
+
 li {
   word-break: break-all;
 }
@@ -14,6 +22,11 @@ body {
 .nightmare {
   background-color: #535A62;
   color: #fff;
+}
+
+.cinderella {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .waterfall {
@@ -50,7 +63,11 @@ a.wonderworld:hover {
   .navbar-toggle {
     margin-right: 0;
     margin-top: 20px;
-    background-color: #
+    background-color: #ddd;
+  }
+  .cinderella {
+    margin-left: -12px;
+    margin-right: -12px;
   }
 }
 
@@ -93,7 +110,6 @@ a.wonderworld:hover {
   margin-right: -29px;
   margin-top: 32px;
 }
-
 
 .flex-container {
   display: flex;
