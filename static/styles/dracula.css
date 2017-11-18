@@ -1,0 +1,124 @@
+li {
+  word-break: break-all;
+}
+
+body {
+  background-color: #2a9bba;
+}
+
+.navbar-default {
+  background-color: transparent;
+  border: 0;
+}
+
+.nightmare {
+  background-color: #535A62;
+  color: #fff;
+}
+
+.waterfall {
+  font-family: monospace;
+}
+
+.wonderworld {
+  color: #fff;
+  margin-top: 24px;
+  display: block;
+}
+
+a.wonderworld:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.waterfall:nth-child(odd) {
+  background-color: #fcfcfc;
+}
+
+.waterfall:nth-child(even) {
+  background-color: #efefef;
+}
+
+.container-fluid>.row>.navbar-header {
+  margin-right: 36px;
+}
+
+@media (max-width: 767px) {
+  .container-fluid>.row>.navbar-header {
+    margin-right: 0;
+  }
+  .navbar-toggle {
+    margin-right: 0;
+    margin-top: 20px;
+    background-color: #
+  }
+}
+
+.navbar-nav {
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:active {
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  color: #fff;
+}
+
+.navbar-default .navbar-nav>.active>a:hover {
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  color: #fff;
+}
+
+.navbar-default .navbar-nav>.active>a {
+  background-color: transparent;
+  text-decoration: underline;
+  color: #fff;
+}
+
+.navbar-default .navbar-nav>li>a {
+  color: #fff;
+}
+
+.navbar-nav>li>a:hover, .navbar-nav>li>a:active, .navbar-nav>li>a:focus {
+  border: 0;
+  outline: 0;
+  color: #fff;
+}
+
+.navbar-right {
+  margin-right: -29px;
+  margin-top: 32px;
+}
+
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-container-b {
+  display: flex;
+  align-items: top;
+  justify-content: left;
+}
+
+.badman {
+  width: 50px;
+  height: 50px;
+}
+
+.form-inline .form-control.cowboy {
+  font-size: 18px;
+  width: 500px;
+  height: 50px;
+}
+
+.blackbird {
+  background-color: #ff0075;
+  color: #fff;
+}

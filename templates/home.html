@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>lea.kz</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles/dracula.css')}}">
+</head>
+
+<body>
+	<div class="container">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+						<a href="/hash" class="wonderworld h1">lea.kz</a>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="#">Decrypt hash</a></li>
+							<li><a href="#">Encrypt hash</a></li>
+							<li><a href="#">Certificates</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<div class="container flex-container" style="height: 100%">
+			<form class="form-inline" role="form">
+				<h2>Reverse search for md5 or sha* hash</h2>
+				<div class="form-group">
+					<label class="sr-only" for="search">Enter search terms</label>
+					<input id="search" type="search" class="form-control col-xs-8 cowboy" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512">
+					<button type="submit" class="btn btn-default badman" style="margin-left: 9px">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+			</form>
+			<p>Hint: our database contains more than 2 billion pre-compiled hash values</p>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
