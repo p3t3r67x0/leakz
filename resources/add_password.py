@@ -46,10 +46,11 @@ def hash_password(password):
 
 def insert_one(collection, password, hash_string):
     try:
-        a = collection.insert_one({'password': password.strip('\n'), 'hash': hash_string}).inserted_id
-        print a
+        password_string = password.strip('\n').strip('\r')
+        inserted_id = collection.insert_one({'password': password_string, 'hash': hash_string}).inserted_id
+        print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
-        print u'{}'.format(e)
+        print u'[E] {}'.format(e)
 
 
 def main():
