@@ -10,28 +10,7 @@
 
 <body>
 	<div class="container">
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-						<a href="/hash" class="wonderworld h1">lea.kz</a>
-					</div>
-					<div id="navbar" class="navbar-collapse collapse">
-						<ul class="nav navbar-nav">
-							<li class="active"><a href="#">Decrypt hash</a></li>
-							<li><a href="#">Encrypt hash</a></li>
-							<li><a href="#">Certificates</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</nav>
+		{% include "header.html" %}
 		<div class="container flex-container" style="height: 100%">
 			<form class="form-inline" role="form">
 				<h2>Reverse search for md5 or sha* hash</h2>
