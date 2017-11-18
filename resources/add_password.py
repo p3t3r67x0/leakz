@@ -54,7 +54,12 @@ def insert_one(collection, password, hash_string):
 
 def main():
     if len(sys.argv) > 1:
-        password_list = load_passwords(sys.argv[1])
+        try:
+            password_list = load_passwords(sys.argv[1])
+        except IOError as e:
+            print e
+            sys.exit(1)
+
         db = connect_database()
         db.password.create_index("password", unique=True)
         collection = db.password
