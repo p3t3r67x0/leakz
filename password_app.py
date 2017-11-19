@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 
 import re
 import pymongo
@@ -49,7 +50,6 @@ def show_homepage():
     return render_template('home.html', hashes = 10)
 
 
-
 @app.route('/legal')
 def show_legal():
     return render_template('legal.html')
@@ -58,6 +58,44 @@ def show_legal():
 @app.route('/privacy')
 def show_privacy():
     return render_template('privacy.html')
+
+
+@app.route('/mail', methods=['GET'])
+def show_mail_address_list():
+    try:
+        param_skip = int(request.args.get('skip'))
+    except (ValueError, TypeError) as e:
+        param_skip = 0
+
+    try:
+        param_limit = int(request.args.get('limit'))
+    except (ValueError, TypeError) as e:
+        param_limit = 10
+
+    db = connect_database()
+    collection = db.mail_address
+
+    result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
+    return render_template('mail.html', mail_address_list = result_strin)
+
+
+@app.route('/mail/q/<query_string>', methods=['GET'])
+def show_mail_address(query_string):
+    try:
+        param_skip = int(request.args.get('skip'))
+    except (ValueError, TypeError) as e:
+        param_skip = 0
+
+    try:
+        param_limit = int(request.args.get('limit'))
+    except (ValueError, TypeError) as e:
+        param_limit = 10
+
+    db = connect_database()
+    collection = db.mail_address
+
+    result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
+    return render_template('mail.html', mail_address_list = result_string)
 
 
 @app.route('/hash', methods=['GET'])
@@ -79,29 +117,8 @@ def show_hash_list():
     return render_template('hash.html', hashes = hashes_list)
 
 
-
-@app.route('/mail/q/<query_string>', methods=['GET'])
-def show_mail_address_list(query_string):
-    try:
-        param_skip = int(request.args.get('skip'))
-    except (ValueError, TypeError) as e:
-        param_skip = 0
-
-    try:
-        param_limit = int(request.args.get('limit'))
-    except (ValueError, TypeError) as e:
-        param_limit = 10
-
-    db = connect_database()
-    collection = db.mail_address
-
-    result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
-    return render_template('mail.html', mail_address_list = result_string)
-
-
-
 @app.route('/hash/q/<query_string>', methods=['GET'])
-def profile(query_string):
+def show_hash(query_string):
     db = connect_database()
     collection = db.password
 
