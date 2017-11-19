@@ -98,6 +98,11 @@ def show_mail_address(param_query):
     return render_template('mail.html', mail_address_list = result_string, isvisible = True)
 
 
+@app.route('/hash/encrypt', methods=['GET'])
+def show_encrypt_form():
+    return render_template('encrypt.html', isvisible = True)
+
+
 @app.route('/hash/decrypt', methods=['GET'])
 def show_hash_list():
     try:
@@ -114,7 +119,7 @@ def show_hash_list():
     collection = db.password
 
     hashes_list = list(collection.find().skip(param_skip).limit(param_limit))
-    return render_template('hash.html', hashes = hashes_list, isvisible = True)
+    return render_template('decrypt.html', hashes = hashes_list, isvisible = True)
 
 
 @app.route('/hash/decrypt/search', methods=['GET'])
@@ -149,7 +154,7 @@ def show_hash():
     else:
         result_string = list(collection.find({ 'password': param_query }))
 
-    return render_template('hash.html', hashes = result_string, isvisible = True)
+    return render_template('decrypt.html', hashes = result_string, isvisible = True)
 
 
 if __name__ == '__main__':
