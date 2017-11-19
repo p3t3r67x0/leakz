@@ -76,11 +76,11 @@ def show_mail_address_list():
     collection = db.mail_address
 
     result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
-    return render_template('mail.html', mail_address_list = result_strin)
+    return render_template('mail.html', mail_address_list = result_string, isvisible = True)
 
 
-@app.route('/mail/q/<query_string>', methods=['GET'])
-def show_mail_address(query_string):
+@app.route('/mail/q/<param_query>', methods=['GET'])
+def show_mail_address(param_query):
     try:
         param_skip = int(request.args.get('skip'))
     except (ValueError, TypeError) as e:
@@ -95,10 +95,10 @@ def show_mail_address(query_string):
     collection = db.mail_address
 
     result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
-    return render_template('mail.html', mail_address_list = result_string)
+    return render_template('mail.html', mail_address_list = result_string, isvisible = True)
 
 
-@app.route('/hash', methods=['GET'])
+@app.route('/hash/decrypt', methods=['GET'])
 def show_hash_list():
     try:
         param_skip = int(request.args.get('skip'))
@@ -114,20 +114,25 @@ def show_hash_list():
     collection = db.password
 
     hashes_list = list(collection.find().skip(param_skip).limit(param_limit))
-    return render_template('hash.html', hashes = hashes_list)
+    return render_template('hash.html', hashes = hashes_list, isvisible = True)
 
 
-@app.route('/hash/q/<query_string>', methods=['GET'])
-def show_hash(query_string):
+@app.route('/hash/decrypt/search', methods=['GET'])
+def show_hash():
     db = connect_database()
     collection = db.password
 
-    md5 = isvalid_md5(query_string)
-    sha1 = isvalid_sha1(query_string)
-    sha224 = isvalid_sha224(query_string)
-    sha256 = isvalid_sha256(query_string)
-    sha384 = isvalid_sha384(query_string)
-    sha512 = isvalid_sha512(query_string)
+    try:
+        param_query = request.args.get('q')
+    except (ValueError, TypeError) as e:
+        param_query = ''
+
+    md5 = isvalid_md5(param_query)
+    sha1 = isvalid_sha1(param_query)
+    sha224 = isvalid_sha224(param_query)
+    sha256 = isvalid_sha256(param_query)
+    sha384 = isvalid_sha384(param_query)
+    sha512 = isvalid_sha512(param_query)
 
     if md5:
         result_string = list(collection.find({ 'hash.md5': md5.group(0) }))
@@ -142,9 +147,9 @@ def show_hash(query_string):
     elif sha512:
         result_string = list(collection.find({ 'hash.sha512': sha512.group(0) }))
     else:
-        result_string = list(collection.find({ 'password': query_string }))
+        result_string = list(collection.find({ 'password': param_query }))
 
-    return render_template('hash.html', hashes = result_string)
+    return render_template('hash.html', hashes = result_string, isvisible = True)
 
 
 if __name__ == '__main__':

@@ -8,20 +8,22 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a href="/hash" class="wonderworld h1">lea.kz</a>
+        <a href="/" class="wonderworld h1">lea.kz</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Decrypt hash</a></li>
-          <li><a href="#">Encrypt hash</a></li>
-          <li><a href="#">Certificates</a></li>
+          <li class="active"><a href="/hash/decrypt">Decrypt hash</a></li>
+          <li><a href="/hash/encrypt">Encrypt hash</a></li>
+          <li><a href="/cert">Certificates</a></li>
         </ul>
-        <form class="navbar-form navbar-right" role="search">
+        {% if isvisible %}
+        <form class="navbar-form navbar-right hidden-xs" action="/hash/decrypt/search" role="search">
           <div class="form-group">
-            <input class="form-control" placeholder="Search" type="text">
+            <input class="form-control" name="q" placeholder="Search" type="text">
           </div>
           <button type="submit" class="btn btn-default">GO</button>
         </form>
+        {% endif %}
       </div>
     </div>
   </div>

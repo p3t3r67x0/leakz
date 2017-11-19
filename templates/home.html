@@ -13,9 +13,9 @@
 <body>
 	<div class="container">
 		{% include "header.html" %}
-		<div class="container flex-container" style="height: 100%">
-			<form class="form-inline" role="form">
-				<h2>Reverse search for md5 or sha* hash</h2>
+		<div class="flex-container" style="height: 600px;">
+			<form class="form-inline" action="/hash/decrypt/search" role="form">
+				<h2 class="ghost">Reverse search for md5 or sha* hash</h2>
 				<div class="form-group">
 					<label class="sr-only" for="search">Enter search terms</label>
 					<input id="search" type="search" class="form-control col-xs-8 cowboy" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512">
