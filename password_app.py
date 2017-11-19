@@ -45,8 +45,19 @@ def connect_database():
 
 
 @app.route('/')
-def homepage():
+def show_homepage():
     return render_template('home.html', hashes = 10)
+
+
+
+@app.route('/legal')
+def show_legal():
+    return render_template('legal.html')
+
+
+@app.route('/privacy')
+def show_privacy():
+    return render_template('privacy.html')
 
 
 @app.route('/hash', methods=['GET'])
