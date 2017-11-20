@@ -61,7 +61,7 @@ def show_privacy():
 
 
 def handle_pagination(param_skip, param_limit):
-    entries = range(param_skip, (param_skip + param_limit * 10), param_limit)
+    entries = range(param_skip, (param_skip + param_limit * 8), param_limit)
     last_entry = (entries[-1] + param_limit)
 
     if not entries[0] < 1:
