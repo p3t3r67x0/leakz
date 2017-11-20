@@ -17,7 +17,7 @@ def handle_unicode(mail_address):
         mail_address = mail_address.encode('utf-8')
     except UnicodeDecodeError as e:
         print u'{}'.format(e)
-    
+
     return mail_address
 
 
@@ -30,7 +30,7 @@ def insert_one(collection, mail_address):
     try:
         mail_address_string = mail_address.strip('\n').strip('\r')
         inserted_id = collection.insert_one({ 'mail': mail_address_string }).inserted_id
-        print u'[I] Added {} with id {}'.format(mail_address_string, inserted_id)
+        print u'[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
         print u'{}'.format(e)
 
@@ -48,7 +48,7 @@ def main():
             if re.match(r'\b[\w.+-]+?@\w*[-\.\w+?]*\b', mail_address):
                 insert_one(collection, mail_address)
             else:
-                print u'[E] Did not match regex with {}'.format(mail_address)
+                print u'[E] Did not match regex with {}'.format(mail_address.decode('utf-8'))
 
 
 if __name__ == '__main__':
