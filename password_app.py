@@ -204,7 +204,7 @@ def show_hash():
     else:
         result_list = list(collection.find({'password': param_query}))
 
-    return render_template('decrypt.html',
+    return render_template('home.html',
                            hash_list=result_list,
                            pagination_visible=False,
                            search_visible=True)
