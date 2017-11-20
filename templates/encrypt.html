@@ -10,16 +10,37 @@
 <body>
   <div class="container wrapper">
     {% include "header.html" %}
-    <form class="form-inline" action="/hash/decrypt/search" role="form">
-      <h2 class="ghost">Encrypt your any word or password</h2>
-      <div class="form-group">
-        <label class="sr-only" for="search">Enter search terms</label>
-        <input id="search" type="search" class="form-control col-xs-8 cowboy" name="q" placeholder="password123">
-        <button type="submit" class="btn btn-default badman" style="margin-left: 9px"><span class="glyphicon glyphicon-search"></span></button>
+    <div class="row">
+      <div class="col-xs-12 upanddown">
+        <h2 class="ghost">Encrypt any word or password</h2>
+        <form class="input-group input-group-lg" action="/hash/encrypt/search" role="form">
+          <label class="sr-only" for="search">Enter search terms</label>
+          <input type="text" class="form-control input-lg" name="q" placeholder="word, password or text">
+          <span class="input-group-btn">
+        		<button class="btn btn-default btn-lg" type="submit">Encrypt</button>
+      		</span>
+        </form>
+        <div>
+          <small class="claudy">Enter a word to get the md5, sha1, sha224, sha256, sha384, sha512 hash</small>
+        </div>
       </div>
-    </form>
-    <div>
-      <small class="claudy">Enter a word to get the md5, sha1, sha224, sha256, sha384, sha512 hash...</small>
+      <div class="col-xs-12">
+        <ul class="list-unstyled">
+          {% for i in hash_list %}
+          <li>
+            <ul class="list-group">
+              <li class="list-group-item nightmare">
+                <h3>{{ i['password'] }}</h3></li>
+              <li class="list-group-item waterfall"><b>md5:</b> {{ i['hash']['md5'] | upper }}</li>
+              <li class="list-group-item waterfall"><b>sha224:</b> {{ i['hash']['sha224'] | upper }}</li>
+              <li class="list-group-item waterfall"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
+              <li class="list-group-item waterfall"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
+              <li class="list-group-item waterfall"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
+            </ul>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
   {% include "footer.html" %}

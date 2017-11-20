@@ -47,7 +47,7 @@ def connect_database():
 
 @app.route('/')
 def show_homepage():
-    return render_template('home.html', hashes = 10)
+    return render_template('home.html')
 
 
 @app.route('/legal')
@@ -60,8 +60,23 @@ def show_privacy():
     return render_template('privacy.html')
 
 
+def handle_pagination(param_skip, param_limit):
+    entries = range(param_skip, (param_skip + param_limit * 10), param_limit)
+    last_entry = (entries[-1] + param_limit)
+
+    if not entries[0] < 1:
+        first_entry = (entries[0] - param_limit)
+    else:
+        first_entry = 0
+
+    return first_entry, last_entry, entries
+
+
 @app.route('/mail', methods=['GET'])
 def show_mail_address_list():
+    db = connect_database()
+    collection = db.mail_address
+
     try:
         param_skip = int(request.args.get('skip'))
     except (ValueError, TypeError) as e:
@@ -72,15 +87,23 @@ def show_mail_address_list():
     except (ValueError, TypeError) as e:
         param_limit = 10
 
-    db = connect_database()
-    collection = db.mail_address
-
-    result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
-    return render_template('mail.html', mail_address_list = result_string, isvisible = True)
+    pagination_list = handle_pagination(param_skip, param_limit)
+    result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
+    return render_template('mail.html',
+                           url='/mail',
+                           mail_address_list=result_list,
+                           entries=pagination_list[2],
+                           last_entry=pagination_list[1],
+                           first_entry=pagination_list[0],
+                           pagination_visible=True,
+                           search_visible=True)
 
 
 @app.route('/mail/q/<param_query>', methods=['GET'])
 def show_mail_address(param_query):
+    db = connect_database()
+    collection = db.mail_address
+
     try:
         param_skip = int(request.args.get('skip'))
     except (ValueError, TypeError) as e:
@@ -91,20 +114,39 @@ def show_mail_address(param_query):
     except (ValueError, TypeError) as e:
         param_limit = 10
 
-    db = connect_database()
-    collection = db.mail_address
-
-    result_string = list(collection.find({}).skip(param_skip).limit(param_limit))
-    return render_template('mail.html', mail_address_list = result_string, isvisible = True)
+    result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
+    return render_template('mail.html',
+                           mail_address_list=result_list,
+                           search_visible=True)
 
 
 @app.route('/hash/encrypt', methods=['GET'])
 def show_encrypt_form():
-    return render_template('encrypt.html', isvisible = True)
+    return render_template('encrypt.html',
+                           search_visible=True)
+
+
+@app.route('/hash/encrypt/search', methods=['GET'])
+def show_encrypt_result():
+    db = connect_database()
+    collection = db.password
+
+    try:
+        param_query = request.args.get('q')
+    except (ValueError, TypeError) as e:
+        param_query = ''
+
+    result_list = list(collection.find({'password': param_query}))
+    return render_template('encrypt.html',
+                           hash_list=result_list,
+                           search_visible=True)
 
 
 @app.route('/hash/decrypt', methods=['GET'])
 def show_hash_list():
+    db = connect_database()
+    collection = db.password
+
     try:
         param_skip = int(request.args.get('skip'))
     except (ValueError, TypeError) as e:
@@ -112,14 +154,22 @@ def show_hash_list():
 
     try:
         param_limit = int(request.args.get('limit'))
+
+        if param_limit > 200:
+            param_limit = 200
     except (ValueError, TypeError) as e:
         param_limit = 10
 
-    db = connect_database()
-    collection = db.password
-
-    hashes_list = list(collection.find().skip(param_skip).limit(param_limit))
-    return render_template('decrypt.html', hashes = hashes_list, isvisible = True)
+    pagination_list = handle_pagination(param_skip, param_limit)
+    result_list = list(collection.find().skip(param_skip).limit(param_limit))
+    return render_template('decrypt.html',
+                           url='/hash/decrypt',
+                           hash_list=result_list,
+                           entries=pagination_list[2],
+                           last_entry=pagination_list[1],
+                           first_entry=pagination_list[0],
+                           pagination_visible=True,
+                           search_visible=True)
 
 
 @app.route('/hash/decrypt/search', methods=['GET'])
@@ -140,21 +190,24 @@ def show_hash():
     sha512 = isvalid_sha512(param_query)
 
     if md5:
-        result_string = list(collection.find({ 'hash.md5': md5.group(0) }))
+        result_list = list(collection.find({'hash.md5': md5.group(0)}))
     elif sha1:
-        result_string = list(collection.find({ 'hash.sha1': sha1.group(0) }))
+        result_list = list(collection.find({'hash.sha1': sha1.group(0)}))
     elif sha224:
-        result_string = list(collection.find({ 'hash.sha224': sha224.group(0) }))
+        result_list = list(collection.find({'hash.sha224': sha224.group(0)}))
     elif sha256:
-        result_string = list(collection.find({ 'hash.sha256': sha256.group(0) }))
+        result_list = list(collection.find({'hash.sha256': sha256.group(0)}))
     elif sha384:
-        result_string = list(collection.find({ 'hash.sha384': sha384.group(0) }))
+        result_list = list(collection.find({'hash.sha384': sha384.group(0)}))
     elif sha512:
-        result_string = list(collection.find({ 'hash.sha512': sha512.group(0) }))
+        result_list = list(collection.find({'hash.sha512': sha512.group(0)}))
     else:
-        result_string = list(collection.find({ 'password': param_query }))
+        result_list = list(collection.find({'password': param_query}))
 
-    return render_template('decrypt.html', hashes = result_string, isvisible = True)
+    return render_template('decrypt.html',
+                           hash_list=result_list,
+                           pagination_visible=False,
+                           search_visible=True)
 
 
 if __name__ == '__main__':

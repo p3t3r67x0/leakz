@@ -13,7 +13,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<ul class="list-unstyled">
-					{% for i in hashes %}
+					{% for i in hash_list %}
 					<li>
 						<ul class="list-group">
 							<li class="list-group-item nightmare">
@@ -28,6 +28,7 @@
 					{% endfor %}
 				</ul>
 			</div>
+			{% include "pagination.html" %}
 		</div>
 	</div>
 	{% include "footer.html" %}
