@@ -8,21 +8,20 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container wrapper">
 		{% include "header.html" %}
-		<div class="flex-container" style="height: 600px;">
-			<form class="form-inline" action="/hash/decrypt/search" role="form">
-				<h2 class="ghost">Reverse search for md5 or sha* hash</h2>
-				<div class="form-group">
-					<label class="sr-only" for="search">Enter search terms</label>
-					<input id="search" type="search" class="form-control col-xs-8 cowboy" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512">
-					<button type="submit" class="btn btn-default badman" style="margin-left: 9px">
-							<span class="glyphicon glyphicon-search"></span>
-						</button>
-			</form>
-			<div>
-				<small class="claudy">Hint: our database contains more than 2 billion pre-compiled hash values</small>
-			</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2">
+				<h2 class="ghost">Reverse search for any hash</h2>
+				<form class="input-group input-group-lg" action="/hash/decrypt/search" role="form">
+					<input type="text" class="form-control input-lg" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512">
+					<span class="input-group-btn">
+        		<button class="btn btn-default btn-lg" type="submit">Search</button>
+      		</span>
+				</form>
+				<div>
+					<small class="claudy">Hint: our database contains more than 2 billion pre-compiled hash values</small>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -4,12 +4,23 @@
 <head>
   <meta charset="utf-8">
   <title>encrypt md5, sha1, sha224, sha256, sha384, sha512 - lea.kz</title>
-	{% include "meta.html" %}
+  {% include "meta.html" %}
 </head>
 
 <body>
-  <div class="container">
+  <div class="container wrapper">
     {% include "header.html" %}
+    <form class="form-inline" action="/hash/decrypt/search" role="form">
+      <h2 class="ghost">Encrypt your any word or password</h2>
+      <div class="form-group">
+        <label class="sr-only" for="search">Enter search terms</label>
+        <input id="search" type="search" class="form-control col-xs-8 cowboy" name="q" placeholder="password123">
+        <button type="submit" class="btn btn-default badman" style="margin-left: 9px"><span class="glyphicon glyphicon-search"></span></button>
+      </div>
+    </form>
+    <div>
+      <small class="claudy">Enter a word to get the md5, sha1, sha224, sha256, sha384, sha512 hash...</small>
+    </div>
   </div>
   {% include "footer.html" %}
 </body>

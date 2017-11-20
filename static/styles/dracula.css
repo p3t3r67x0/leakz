@@ -1,3 +1,11 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #2a9bba;
+}
+
 a {
   color: #fff;
 }
@@ -10,17 +18,19 @@ li {
   word-break: break-all;
 }
 
-body {
-  background-color: #2a9bba;
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -36px;
+}
+
+.footer, .push {
+  height: 36px;
 }
 
 .claudy {
   color: #efefef;
-}
-
-.navbar-default {
-  background-color: transparent;
-  border: 0;
 }
 
 .nightmare {
@@ -30,7 +40,7 @@ body {
 
 .ghost {
   color: #fff;
-  margin-bottom: 21px;
+  margin-bottom: 15px;
 }
 
 .cinderella {
@@ -66,24 +76,14 @@ a.wonderworld:hover {
   margin-right: 36px;
 }
 
-@media (max-width: 767px) {
-  .container-fluid>.row>.navbar-header {
-    margin-right: 0;
-  }
-  .navbar-toggle {
-    margin-right: 0;
-    margin-top: 20px;
-    background-color: #ddd;
-  }
-  .cinderella {
-    margin-left: -12px;
-    margin-right: -12px;
-  }
-}
-
 .navbar-nav {
   margin-top: 24px;
   margin-bottom: 10px;
+}
+
+.navbar-default {
+  background-color: transparent;
+  border: 0;
 }
 
 .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:active {
@@ -147,4 +147,22 @@ a.wonderworld:hover {
 .blackbird {
   background-color: #ff0075;
   color: #fff;
+}
+
+@media (max-width: 767px) {
+  .container-fluid>.row>.navbar-header {
+    margin-right: 0;
+  }
+  .form-inline .form-control.cowboy {
+    width: auto;
+  }
+  .navbar-toggle {
+    margin-right: 0;
+    margin-top: 20px;
+    background-color: #ddd;
+  }
+  .cinderella {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
 }
