@@ -18,10 +18,10 @@ def handle_unicode(password):
     except UnicodeDecodeError as e:
         print u'{}'.format(e)
         try:
-            password_string = password.decode('iso-8859-1')
+            password_string = password.decode('utf-8')
         except UnicodeDecodeError as e:
             print u'{}'.format(e)
-    
+
     return password_string
 
 
