@@ -7,7 +7,7 @@ import pymongo
 import hashlib
 
 
-def load_mail_address_list(filename):
+def load_document(filename):
     with open(filename, 'rb') as f:
         return f.readlines()
 
@@ -35,20 +35,22 @@ def insert_one(collection, mail_address):
         print u'{}'.format(e)
 
 
+def extract_mail_address(document):
+    return re.findall(r'\b[\w.+-]+?@\w*[-\.\w+?]*\b', document)
+
+
 def main():
     if len(sys.argv) > 1:
-        mail_address_list = load_mail_address_list(sys.argv[1])
         db = connect_database()
         db.mail_address.create_index('mail', unique=True)
         collection = db.mail_address
 
-        for mail_address in mail_address_list:
-            mail_address = handle_unicode(mail_address.strip('\n'))
+        document = ' '.join(load_document(sys.argv[1]))
+        mail_address_list = extract_mail_address(document)
 
-            if re.match(r'\b[\w.+-]+?@\w*[-\.\w+?]*\b', mail_address):
-                insert_one(collection, mail_address)
-            else:
-                print u'[E] Did not match regex with {}'.format(mail_address.decode('utf-8'))
+        for mail_address in mail_address_list:
+            mail_address = handle_unicode(mail_address.strip('\n').strip('\r'))
+            insert_one(collection, mail_address)
 
 
 if __name__ == '__main__':
