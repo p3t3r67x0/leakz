@@ -28,7 +28,7 @@ def connect_database():
 
 def insert_one(collection, mail_address):
     try:
-        mail_address_string = mail_address.strip('\n').strip('\r')
+        mail_address_string = mail_address.strip('\n').strip('\r').lower()
         inserted_id = collection.insert_one({ 'mail': mail_address_string }).inserted_id
         print u'[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
