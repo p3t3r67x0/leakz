@@ -83,10 +83,12 @@ a.wonderworld:hover {
 .navbar-nav {
   margin-top: 24px;
   margin-bottom: 10px;
+  margin-left: 36px;
 }
 
 .navbar-default {
   background-color: transparent;
+  border-radius: 0;
   border: 0;
 }
 
@@ -120,9 +122,13 @@ a.wonderworld:hover {
   color: #fff;
 }
 
+.navbar-default .navbar-nav>li>a:hover {
+  color: #efefef;
+}
+
 .navbar-right {
   margin-right: -29px;
-  margin-top: 32px;
+  margin-top: 25px;
 }
 
 .flex-container {
@@ -160,13 +166,19 @@ a.wonderworld:hover {
   .form-inline .form-control.cowboy {
     width: auto;
   }
+  .navbar-nav {
+    margin-left: 0;
+  }
   .navbar-toggle {
     margin-right: 0;
-    margin-top: 20px;
+    margin-top: 15px;
     background-color: #ddd;
   }
+  margin-left: -12px;
   .cinderella {
-    margin-left: -12px;
     margin-right: -12px;
+  }
+  .wonderworld {
+    margin-top: 15px;
   }
 }

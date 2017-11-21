@@ -8,37 +8,39 @@
 </head>
 
 <body>
-	<div class="container wrapper">
+	<div class="wrapper">
 		{% include "header.html" %}
-		<div class="row">
-			<div class="col-xs-12 upanddown">
-				<h2 class="ghost">Reverse search for any hash</h2>
-				<form class="input-group input-group-lg" action="/hash/decrypt/search" role="form">
-					<input type="text" class="form-control input-lg" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512" autofocus>
-					<span class="input-group-btn">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 upanddown">
+					<h2 class="ghost">Reverse search for any hash</h2>
+					<form class="input-group input-group-lg" action="/hash/decrypt/search" role="form">
+						<input type="text" class="form-control input-lg" name="q" placeholder="md5, sha1, sha224, sha256, sha384, sha512" autofocus>
+						<span class="input-group-btn">
         		<button class="btn btn-default btn-lg" type="submit">Search</button>
       		</span>
-				</form>
-				<div>
-					<small class="claudy">Hint: our database contains more than 2 billion pre-compiled hash values</small>
+					</form>
+					<div>
+						<small class="claudy">Hint: our database contains more than 2 billion pre-compiled hash values</small>
+					</div>
 				</div>
-			</div>
-			<div class="col-xs-12">
-				<ul class="list-unstyled">
-					{% for i in hash_list %}
-					<li>
-						<ul class="list-group">
-							<li class="list-group-item nightmare">
-								<h3>{{ i['password'] }}</h3></li>
-							<li class="list-group-item waterfall"><b>md5:</b> {{ i['hash']['md5'] | upper }}</li>
-							<li class="list-group-item waterfall"><b>sha224:</b> {{ i['hash']['sha224'] | upper }}</li>
-							<li class="list-group-item waterfall"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
-							<li class="list-group-item waterfall"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
-							<li class="list-group-item waterfall"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
-						</ul>
-					</li>
-					{% endfor %}
-				</ul>
+				<div class="col-xs-12">
+					<ul class="list-unstyled">
+						{% for i in hash_list %}
+						<li>
+							<ul class="list-group">
+								<li class="list-group-item nightmare">
+									<h3>{{ i['password'] }}</h3></li>
+								<li class="list-group-item waterfall"><b>md5:</b> {{ i['hash']['md5'] | upper }}</li>
+								<li class="list-group-item waterfall"><b>sha224:</b> {{ i['hash']['sha224'] | upper }}</li>
+								<li class="list-group-item waterfall"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
+								<li class="list-group-item waterfall"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
+								<li class="list-group-item waterfall"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
+							</ul>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
