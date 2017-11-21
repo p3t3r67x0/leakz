@@ -6,6 +6,9 @@ import sys
 import pymongo
 import hashlib
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 
 def load_passwords(filename):
     with open(filename, 'rb') as f:
@@ -14,12 +17,12 @@ def load_passwords(filename):
 
 def handle_unicode(password):
     try:
-        password_string = password.encode('utf-8')
+        password_string = password.decode('utf-8')
     except UnicodeDecodeError as e:
-        print u'{}'.format(e)
         try:
-            password_string = password.decode('utf-8')
+            password_string = password.encode('utf-8')
         except UnicodeDecodeError as e:
+            password_string = password.decode('ascii')
             print u'{}'.format(e)
 
     return password_string
@@ -38,6 +41,7 @@ def hash_password(password):
     hash_sha384 = hashlib.sha384(password).hexdigest()
     hash_sha512 = hashlib.sha512(password).hexdigest()
     return {'md5': hash_md5,
+            'sha1': hash_sha1,
             'sha224': hash_sha224,
             'sha256': hash_sha256,
             'sha384': hash_sha384,
