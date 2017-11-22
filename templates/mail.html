@@ -23,6 +23,7 @@
 						<small class="claudy">Hint: our database contains more than 3 billion mail addresses.</small>
 					</div>
 				</div>
+				{% if entries_visible %}
 				<div class="col-xs-12">
 					<ul class="list-unstyled">
 						{% for i in mail_address_list %}
@@ -42,6 +43,7 @@
 					</ul>
 				</div>
 				{% include "pagination.html" %}
+				{% endif %}
 			</div>
 		</div>
 	</div>

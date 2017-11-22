@@ -92,10 +92,7 @@ def show_mail_address_list():
     return render_template('mail.html',
                            url='/mail',
                            mail_address_list=result_list,
-                           entries=pagination_list[2],
-                           last_entry=pagination_list[1],
-                           first_entry=pagination_list[0],
-                           pagination_visible=True,
+                           entries_visible=False,
                            search_visible=True)
 
 
@@ -113,6 +110,7 @@ def lookup_mail_address():
     result_list = list(collection.find({'mail': param_query}))
     return render_template('mail.html',
                            mail_address_list=result_list,
+                           entries_visible=True,
                            search_visible=True)
 
 
