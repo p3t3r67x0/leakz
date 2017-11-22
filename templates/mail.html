@@ -11,14 +11,31 @@
 		{% include "header.html" %}
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-12">
+				<div class="col-xs-12 upanddown">
 					<h2 class="ghost">Is my mail address leaked?</h2>
+					<form class="input-group input-group-lg" action="/mail/search" role="form">
+						<input type="text" class="form-control input-lg" name="q" placeholder="example@domain.com" autofocus>
+						<span class="input-group-btn">
+						<button class="btn btn-default btn-lg" type="submit">Search</button>
+					</span>
+					</form>
+					<div>
+						<small class="claudy">Hint: our database contains more than 3 billion mail addresses.</small>
+					</div>
+				</div>
+				<div class="col-xs-12">
 					<ul class="list-unstyled">
 						{% for i in mail_address_list %}
 						<li>
 							<ul class="list-group">
 								<li class="list-group-item nightmare">
-									<h3>{{ i['mail'] }}</h3></li>
+									<h3>{{ i['mail'] }}</h3>
+								</li>
+								{% if i['leak'] %}
+								{% for j in i['leak'] %}
+								<li class="list-group-item waterfall"><b>Leaked:</b> {{ j }}</li>
+								{% endfor %}
+								{% endif %}
 							</ul>
 						</li>
 						{% endfor %}

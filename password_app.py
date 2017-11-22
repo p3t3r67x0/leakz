@@ -99,22 +99,18 @@ def show_mail_address_list():
                            search_visible=True)
 
 
-@app.route('/mail/q/<param_query>', methods=['GET'])
-def show_mail_address(param_query):
+@app.route('/mail/search', methods=['GET'])
+def lookup_mail_address():
     db = connect_database()
     collection = db.mail_address
 
     try:
-        param_skip = int(request.args.get('skip'))
+        param_query = request.args.get('q')
     except (ValueError, TypeError) as e:
-        param_skip = 0
+        param_query = ''
+        print e
 
-    try:
-        param_limit = int(request.args.get('limit'))
-    except (ValueError, TypeError) as e:
-        param_limit = 10
-
-    result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
+    result_list = list(collection.find({'mail': param_query}))
     return render_template('mail.html',
                            mail_address_list=result_list,
                            search_visible=True)
