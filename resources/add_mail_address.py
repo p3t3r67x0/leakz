@@ -8,8 +8,12 @@ import hashlib
 
 
 def load_document(filename):
-    with open(filename, 'rb') as f:
-        return f.readlines()
+    try:
+        with open(filename, 'rb') as f:
+            return f.readlines()
+    except IOError as e:
+        print e
+        sys.exit(1)
 
 
 def handle_unicode(mail_address):
