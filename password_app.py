@@ -136,7 +136,7 @@ def show_encrypt_result():
                            search_visible=True)
 
 
-@app.route('/hash/decrypt', methods=['GET'])
+@app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
     db = connect_database()
     collection = db.password
@@ -155,7 +155,7 @@ def show_hash_list():
         param_limit = 10
 
     pagination_list = handle_pagination(param_skip, param_limit)
-    result_list = list(collection.find().skip(param_skip).limit(param_limit))
+    result_list = list(collection.find().skip(param_skip).limit(param_limit).sort([('$natural',-1)]))
     return render_template('decrypt.html',
                            url='/hash/decrypt',
                            hash_list=result_list,
