@@ -14,7 +14,7 @@ def load_document(filename):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='parse leaked file to extract passwords and mail addresses')
+        description='parse leaked file to extract passwords')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
     parser.add_argument('-i, --index', metavar='N', required=True, dest='index',
