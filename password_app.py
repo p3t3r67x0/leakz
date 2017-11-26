@@ -126,7 +126,6 @@ def show_mail_address_list():
     pagination_list = handle_pagination(param_skip, param_limit)
     result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
     return render_template('mail.html',
-                           url='/mail',
                            mail_address_list=result_list,
                            entries_visible=False,
                            search_visible=True)
@@ -201,8 +200,8 @@ def show_hash_list():
     pagination_list = handle_pagination(param_skip, param_limit)
     result_list = list(collection.find().skip(
         param_skip).limit(param_limit).sort([('$natural', -1)]))
-    return render_template('decrypt.html',
-                           url='/hash/decrypt',
+    return render_template('latest.html',
+                           url='/hash/latest',
                            hash_list=result_list,
                            entries=pagination_list[2],
                            last_entry=pagination_list[1],
@@ -230,4 +229,4 @@ def show_hash():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
