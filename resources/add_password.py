@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 
+import re
 import sys
 import pymongo
 import hashlib
@@ -57,6 +58,10 @@ def insert_one(collection, password, hash_string):
         print u'[E] {}'.format(e)
 
 
+def extract_mail_address(document):
+    return re.findall(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+
+
 def main():
     if len(sys.argv) > 1:
         try:
@@ -70,9 +75,10 @@ def main():
         collection = db.password
 
         for password in password_list:
-            hash_string = hash_password(password)
-            password_string = handle_unicode(password)
-            insert_one(collection, password_string, hash_string)
+            if not extract_mail_address(password):
+                hash_string = hash_password(password)
+                password_string = handle_unicode(password)
+                insert_one(collection, password_string, hash_string)
 
 
 if __name__ == '__main__':
