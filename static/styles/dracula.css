@@ -59,7 +59,7 @@ li {
 
 .wonderworld {
   color: #fff;
-  margin-top: 24px;
+  margin-top: 15px;
   display: block;
 }
 
@@ -91,6 +91,10 @@ a.wonderworld:hover {
   background-color: transparent;
   border-radius: 0;
   border: 0;
+}
+
+.navbar-nav > li > a {
+  line-height: 0;
 }
 
 .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:active {
@@ -128,7 +132,7 @@ a.wonderworld:hover {
 
 .navbar-right {
   margin-right: -29px;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 .flex-container {

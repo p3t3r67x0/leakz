@@ -5,6 +5,7 @@ import re
 import pymongo
 from flask import Flask
 from flask import request
+from flask import jsonify
 from flask import render_template
 
 app = Flask(__name__)
@@ -40,24 +41,39 @@ def isvalid_sha512(hash_string):
     return p.match(hash_string.lower())
 
 
-def connect_database():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
-    return client.hashes
+def search_hash_or_password(collection, param_query):
+    param_query = param_query.lower()
 
+    md5 = isvalid_md5(param_query)
+    sha1 = isvalid_sha1(param_query)
+    sha224 = isvalid_sha224(param_query)
+    sha256 = isvalid_sha256(param_query)
+    sha384 = isvalid_sha384(param_query)
+    sha512 = isvalid_sha512(param_query)
 
-@app.route('/')
-def show_homepage():
-    return render_template('home.html')
+    if md5:
+        result_list = list(collection.find(
+            {'hash.md5': md5.group(0)}, {'_id': 0}))
+    elif sha1:
+        result_list = list(collection.find(
+            {'hash.sha1': sha1.group(0)}, {'_id': 0}))
+    elif sha224:
+        result_list = list(collection.find(
+            {'hash.sha224': sha224.group(0)}, {'_id': 0}))
+    elif sha256:
+        result_list = list(collection.find(
+            {'hash.sha256': sha256.group(0)}, {'_id': 0}))
+    elif sha384:
+        result_list = list(collection.find(
+            {'hash.sha384': sha384.group(0)}, {'_id': 0}))
+    elif sha512:
+        result_list = list(collection.find(
+            {'hash.sha512': sha512.group(0)}, {'_id': 0}))
+    else:
+        result_list = list(collection.find(
+            {'password': param_query}, {'_id': 0}))
 
-
-@app.route('/legal')
-def show_legal():
-    return render_template('legal.html')
-
-
-@app.route('/privacy')
-def show_privacy():
-    return render_template('privacy.html')
+    return result_list
 
 
 def handle_pagination(param_skip, param_limit):
@@ -70,6 +86,26 @@ def handle_pagination(param_skip, param_limit):
         first_entry = 0
 
     return first_entry, last_entry, entries
+
+
+def connect_database():
+    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    return client.hashes
+
+
+@app.route('/', methods=['GET'])
+def show_homepage():
+    return render_template('home.html')
+
+
+@app.route('/legal', methods=['GET'])
+def show_legal():
+    return render_template('legal.html')
+
+
+@app.route('/privacy', methods=['GET'])
+def show_privacy():
+    return render_template('privacy.html')
 
 
 @app.route('/mail', methods=['GET'])
@@ -136,6 +172,14 @@ def show_encrypt_result():
                            search_visible=True)
 
 
+@app.route('/api/hash/<param_query>', methods=['GET'])
+def api_query_hash(param_query):
+    db = connect_database()
+    collection = db.password
+
+    return jsonify(search_hash_or_password(collection, param_query))
+
+
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
     db = connect_database()
@@ -155,7 +199,8 @@ def show_hash_list():
         param_limit = 10
 
     pagination_list = handle_pagination(param_skip, param_limit)
-    result_list = list(collection.find().skip(param_skip).limit(param_limit).sort([('$natural',-1)]))
+    result_list = list(collection.find().skip(
+        param_skip).limit(param_limit).sort([('$natural', -1)]))
     return render_template('decrypt.html',
                            url='/hash/decrypt',
                            hash_list=result_list,
@@ -176,27 +221,7 @@ def show_hash():
     except (ValueError, TypeError) as e:
         param_query = ''
 
-    md5 = isvalid_md5(param_query)
-    sha1 = isvalid_sha1(param_query)
-    sha224 = isvalid_sha224(param_query)
-    sha256 = isvalid_sha256(param_query)
-    sha384 = isvalid_sha384(param_query)
-    sha512 = isvalid_sha512(param_query)
-
-    if md5:
-        result_list = list(collection.find({'hash.md5': md5.group(0)}))
-    elif sha1:
-        result_list = list(collection.find({'hash.sha1': sha1.group(0)}))
-    elif sha224:
-        result_list = list(collection.find({'hash.sha224': sha224.group(0)}))
-    elif sha256:
-        result_list = list(collection.find({'hash.sha256': sha256.group(0)}))
-    elif sha384:
-        result_list = list(collection.find({'hash.sha384': sha384.group(0)}))
-    elif sha512:
-        result_list = list(collection.find({'hash.sha512': sha512.group(0)}))
-    else:
-        result_list = list(collection.find({'password': param_query}))
+    result_list = search_hash_or_password(collection, param_query)
 
     return render_template('home.html',
                            hash_list=result_list,
