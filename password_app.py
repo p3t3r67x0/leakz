@@ -98,9 +98,10 @@ def show_homepage():
     collection_mail = db.mail_address
     amount_hashes = collection_hash.count()
     amount_mails = collection_mail.count()
-    print '{:,}'.format(amount_hashes)
-    print '{:,}'.format(amount_mails)
-    return render_template('home.html')
+    return render_template('home.html',
+                           amount_hashes='{:,}'.format(amount_hashes),
+                           amount_mails='{:,}'.format(amount_mails),
+                           alert_visible=True)
 
 
 @app.route('/legal', methods=['GET'])
