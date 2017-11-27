@@ -42,8 +42,6 @@ def isvalid_sha512(hash_string):
 
 
 def search_hash_or_password(collection, param_query):
-    param_query = param_query.lower()
-
     md5 = isvalid_md5(param_query)
     sha1 = isvalid_sha1(param_query)
     sha224 = isvalid_sha224(param_query)
@@ -95,6 +93,13 @@ def connect_database():
 
 @app.route('/', methods=['GET'])
 def show_homepage():
+    db = connect_database()
+    collection_hash = db.password
+    collection_mail = db.mail_address
+    amount_hashes = collection_hash.count()
+    amount_mails = collection_mail.count()
+    print '{:,}'.format(amount_hashes)
+    print '{:,}'.format(amount_mails)
     return render_template('home.html')
 
 
