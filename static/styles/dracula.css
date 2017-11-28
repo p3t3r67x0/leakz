@@ -93,7 +93,7 @@ a.wonderworld:hover {
   border: 0;
 }
 
-.navbar-nav > li > a {
+.navbar-nav>li>a {
   line-height: 0;
 }
 
@@ -184,5 +184,11 @@ a.wonderworld:hover {
   }
   .wonderworld {
     margin-top: 15px;
+  }
+  .ghost {
+    margin-top: 0;
+  }
+  .upanddown {
+    margin-bottom: 15px;
   }
 }
