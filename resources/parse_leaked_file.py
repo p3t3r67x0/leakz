@@ -8,8 +8,25 @@ import argparse
 
 
 def load_document(filename):
-    with open(filename, 'r') as f:
-        return f.readlines()
+    try:
+        with open(filename, 'r') as f:
+            return f.readlines()
+    except IOError as e:
+        print e
+        sys.exit(1)
+
+
+def extract_youporn_password(documents, args):
+    password_list = set([])
+
+    for document in documents:
+        if document.startswith('password'):
+            try:
+                password_list.add(document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)])
+            except IndexError as e:
+                pass
+
+    return password_list
 
 
 def main():
@@ -23,14 +40,23 @@ def main():
                         help='a delimiter which will be used for splitting password from mail address. This will be used in every line.')
 
     args = parser.parse_args()
-    docuements = load_document(args.file)
+    documents = load_document(args.file)
+    password_list = extract_youporn_password(documents, args)
+    
+    with open('passwords.txt', 'wb') as f:
+        for password in password_list:
+            f.write('{}\n'.format(password))
 
-    for docuement in docuements:
-        if not docuement.startswith('http'):
+        f.close()
+
+    '''
+    for document in documents:
+        if not document.startswith('http'):
             try:
-                print docuement.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
+                print document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
             except IndexError as e:
                 pass
+    '''
 
 
 if __name__ == '__main__':
