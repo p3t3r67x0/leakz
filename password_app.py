@@ -13,67 +13,42 @@ from datetime import datetime
 app = Flask(__name__)
 
 
-def isvalid_md5(hash_string):
-    p = re.compile(r'^[a-f0-9]{32}$')
-    return p.match(hash_string.lower())
+def get(iterable, keys):
+    try:
+        result = iterable
+
+        for key in keys:
+            result = result[key]
+
+        return result
+
+    except (KeyError, IndexError) as e:
+        return None
 
 
-def isvalid_sha1(hash_string):
-    p = re.compile(r'^[a-f0-9]{40}$')
-    return p.match(hash_string.lower())
+def guess_hash(hash_string):
+    m = re.match(r'^[0-9a-fA-F]+$', hash_string)
 
+    if m:
+        hash = {
+            32: 'hash.md5',
+            40: 'hash.sha1',
+            56: 'hash.sha224',
+            64: 'hash.sha256',
+            96: 'hash.sha384',
+            128: 'hash.sha512'
+        }
 
-def isvalid_sha224(hash_string):
-    p = re.compile(r'^[a-f0-9]{56}$')
-    return p.match(hash_string.lower())
+        if len(hash_string) in hash:
+            return hash[len(hash_string)], hash_string.lower()
 
-
-def isvalid_sha256(hash_string):
-    p = re.compile(r'^[a-f0-9]{64}$')
-    return p.match(hash_string.lower())
-
-
-def isvalid_sha384(hash_string):
-    p = re.compile(r'^[a-f0-9]{96}$')
-    return p.match(hash_string.lower())
-
-
-def isvalid_sha512(hash_string):
-    p = re.compile(r'^[a-f0-9]{128}$')
-    return p.match(hash_string.lower())
+    return 'password', hash_string
 
 
 def search_hash_or_password(collection, param_query):
-    md5 = isvalid_md5(param_query)
-    sha1 = isvalid_sha1(param_query)
-    sha224 = isvalid_sha224(param_query)
-    sha256 = isvalid_sha256(param_query)
-    sha384 = isvalid_sha384(param_query)
-    sha512 = isvalid_sha512(param_query)
-
-    if md5:
-        result_list = list(collection.find(
-            {'hash.md5': md5.group(0)}, {'_id': 0}))
-    elif sha1:
-        result_list = list(collection.find(
-            {'hash.sha1': sha1.group(0)}, {'_id': 0}))
-    elif sha224:
-        result_list = list(collection.find(
-            {'hash.sha224': sha224.group(0)}, {'_id': 0}))
-    elif sha256:
-        result_list = list(collection.find(
-            {'hash.sha256': sha256.group(0)}, {'_id': 0}))
-    elif sha384:
-        result_list = list(collection.find(
-            {'hash.sha384': sha384.group(0)}, {'_id': 0}))
-    elif sha512:
-        result_list = list(collection.find(
-            {'hash.sha512': sha512.group(0)}, {'_id': 0}))
-    else:
-        result_list = list(collection.find(
-            {'password': param_query}, {'_id': 0}))
-
-    return result_list
+    key, hash = guess_hash(param_query)
+    
+    return list(collection.find({key: hash}, {'_id': 0}))
 
 
 def handle_pagination(param_skip, param_limit):
@@ -100,6 +75,7 @@ def show_homepage():
     collection_mail = db.mail_address
     amount_hashes = collection_hash.count()
     amount_mails = collection_mail.count()
+
     return render_template('home.html',
                            amount_hashes='{:,}'.format(amount_hashes),
                            amount_mails='{:,}'.format(amount_mails),
@@ -133,6 +109,7 @@ def show_mail_address_list():
 
     pagination_list = handle_pagination(param_skip, param_limit)
     result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
+
     return render_template('mail.html',
                            mail_address_list=result_list,
                            entries_visible=False,
@@ -148,9 +125,9 @@ def lookup_mail_address():
         param_query = request.args.get('q')
     except (ValueError, TypeError) as e:
         param_query = ''
-        print e
 
     result_list = list(collection.find({'mail': param_query}))
+
     return render_template('mail.html',
                            mail_address_list=result_list,
                            entries_visible=True,
@@ -174,6 +151,7 @@ def show_encrypt_result():
         param_query = ''
 
     result_list = list(collection.find({'password': param_query}))
+
     return render_template('encrypt.html',
                            hash_list=result_list,
                            search_visible=True)
@@ -202,12 +180,14 @@ def show_hash_list():
 
         if param_limit > 200:
             param_limit = 200
+
     except (ValueError, TypeError) as e:
         param_limit = 10
 
     pagination_list = handle_pagination(param_skip, param_limit)
     result_list = list(collection.find().skip(
         param_skip).limit(param_limit).sort([('$natural', -1)]))
+
     return render_template('latest.html',
                            url='/hash/latest',
                            hash_list=result_list,
@@ -247,10 +227,14 @@ def api_query_cert(param_query):
     cert = result_list[0]['cert'].replace('\n', '<br>')
 
     valid_not_before = datetime.strptime(
-        result_list[0]['valid_not_before'].replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
+        result_list[0]['valid_not_before'].replace('Z', ''),
+        '%Y%m%d%H%M%S'
+    ).strftime('%d.%m.%Y %H:%M')
 
     valid_not_after = datetime.strptime(
-        result_list[0]['valid_not_after'].replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
+        result_list[0]['valid_not_after'].replace('Z', ''),
+        '%Y%m%d%H%M%S'
+    ).strftime('%d.%m.%Y %H:%M')
 
     subject_alt_names = ', '.join(result_list[0]['subject']['alt_names'])
     subject_common_name = result_list[0]['subject']['common_name']
@@ -261,30 +245,11 @@ def api_query_cert(param_query):
     subject_country_name = result_list[0]['subject']['country_name']
     subject_state = result_list[0]['subject']['state_or_province_name']
 
-    try:
-        issuer_organization = result_list[0]['issuer']['organization']
-    except KeyError as e:
-        issuer_organization = None
-
-    try:
-        issuer_common_name = result_list[0]['issuer']['common_name']
-    except KeyError as e:
-        issuer_common_name = None
-
-    try:
-        issuer_locality = result_list[0]['issuer']['locality']
-    except KeyError as e:
-        issuer_locality = None
-
-    try:
-        issuer_country_name = result_list[0]['issuer']['country_name']
-    except KeyError as e:
-        issuer_country_name = None
-
-    try:
-        issuer_state = result_list[0]['issuer']['state_or_province_name']
-    except KeyError as e:
-        issuer_state = None
+    issuer_organization = get(result_list, [0, 'issuer', 'organization'])
+    issuer_common_name = get(result_list, [0, 'issuer', 'common_name'])
+    issuer_locality = get(result_list, [0, 'issuer', 'locality'])
+    issuer_country_name = get(result_list, [0, 'issuer', 'country_name'])
+    issuer_state = get(result_list, [0, 'issuer', 'state_or_province_name'])
 
     return render_template('certificate.html',
                            subject_common_name=subject_common_name,
