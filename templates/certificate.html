@@ -67,19 +67,16 @@
         </div>
         <div class="col-xs-12">
           <ul class="list-unstyled">
-            {% for i in cert_list %}
             <li>
               <ul class="list-group">
-                <li class="list-group-item waterfall breakme"><b>cert:</b>{% autoescape false %} {{ cert }} {% endautoescape %}</li>
-                <li class="list-group-item waterfall breakme"><b>md5:</b> {{ i['hash_values']['md5'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha1:</b> {{ i['hash_values']['sha1'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha224:</b> {{ i['hash_values']['sha224'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ i['hash_values']['sha256'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ i['hash_values']['sha384'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ i['hash_values']['sha512'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>md5:</b> {{ md5 | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha1:</b> {{ sha1 | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha224:</b> {{ sha224 | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ sha256 | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ sha384 | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ sha512 | upper }}</li>
               </ul>
             </li>
-            {% endfor %}
           </ul>
         </div>
       </div>

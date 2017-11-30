@@ -47,7 +47,7 @@ def guess_hash(hash_string):
 
 def search_hash_or_password(collection, param_query):
     key, hash = guess_hash(param_query)
-    
+
     return list(collection.find({key: hash}, {'_id': 0}))
 
 
@@ -224,6 +224,9 @@ def api_query_cert(param_query):
     result_list = list(collection.find(
         {'subject.common_name': param_query}, {'_id': 0}))
 
+    if len(result_list) == 0:
+        return 'ERROR no result was found'
+
     cert = result_list[0]['cert'].replace('\n', '<br>')
 
     valid_not_before = datetime.strptime(
@@ -236,14 +239,13 @@ def api_query_cert(param_query):
         '%Y%m%d%H%M%S'
     ).strftime('%d.%m.%Y %H:%M')
 
-    subject_alt_names = ', '.join(result_list[0]['subject']['alt_names'])
-    subject_common_name = result_list[0]['subject']['common_name']
-
-    subject_organization = result_list[0]['subject']['organization']
-    subject_common_name = result_list[0]['subject']['common_name']
-    subject_locality = result_list[0]['subject']['locality']
-    subject_country_name = result_list[0]['subject']['country_name']
-    subject_state = result_list[0]['subject']['state_or_province_name']
+    subject_alt_names = ', '.join(get(result_list, [0, 'subject', 'alt_names']))
+    subject_common_name = get(result_list, [0, 'subject', 'common_name'])
+    subject_organization = get(result_list, [0, 'subject', 'organization'])
+    subject_common_name = get(result_list, [0, 'subject', 'common_name'])
+    subject_locality = get(result_list, [0, 'subject', 'locality'])
+    subject_country_name = get(result_list, [0, 'subject', 'country_name'])
+    subject_state = get(result_list, [0, 'subject', 'state_or_province_name'])
 
     issuer_organization = get(result_list, [0, 'issuer', 'organization'])
     issuer_common_name = get(result_list, [0, 'issuer', 'common_name'])
@@ -251,13 +253,20 @@ def api_query_cert(param_query):
     issuer_country_name = get(result_list, [0, 'issuer', 'country_name'])
     issuer_state = get(result_list, [0, 'issuer', 'state_or_province_name'])
 
+    md5 = get(result_list, [0, 'hash_values', 'md5'])
+    sha1 = get(result_list, [0, 'hash_values', 'sha1'])
+    sha224 = get(result_list, [0, 'hash_values', 'sha224'])
+    sha256 = get(result_list, [0, 'hash_values', 'sha256'])
+    sha384 = get(result_list, [0, 'hash_values', 'sha384'])
+    sha512 = get(result_list, [0, 'hash_values', 'sha512'])
+
     return render_template('certificate.html',
                            subject_common_name=subject_common_name,
                            subject_organization=subject_organization,
                            subject_country_name=subject_country_name,
+                           subject_alt_names=subject_alt_names,
                            subject_locality=subject_locality,
                            subject_state=subject_state,
-                           subject_alt_names=subject_alt_names,
                            issuer_state=issuer_state,
                            issuer_locality=issuer_locality,
                            issuer_common_name=issuer_common_name,
@@ -265,8 +274,12 @@ def api_query_cert(param_query):
                            issuer_organization=issuer_organization,
                            valid_not_before=valid_not_before,
                            valid_not_after=valid_not_after,
-                           cert_list=result_list,
-                           cert=cert)
+                           sha512=sha512,
+                           sha256=sha256,
+                           sha384=sha384,
+                           sha224=sha224,
+                           sha1=sha1,
+                           md5=md5)
 
 
 if __name__ == '__main__':
