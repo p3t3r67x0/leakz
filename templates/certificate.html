@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>ssl, tls, tls1.3 certificates - lea.kz</title>
+  {% include "meta.html" %}
+</head>
+
+<body>
+  <div class="wrapper">
+    {% include "header.html" %}
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2 class="ghost">{{ subject_common_name }}</h2>
+        </div>
+        <div class="col-xs-12 col-md-6 pushmedown">
+          <ul class="list-unstyled">
+            <li>
+              <ul class="list-group">
+                <li class="list-group-item nightmare">
+                  <h3>Certificate</h3>
+                </li>
+                <li class="list-group-item waterfall"><b>CN:</b> {{ subject_common_name }}</li>
+
+                {% if subject_organization %}
+                <li class="list-group-item waterfall"><b>Organization:</b> {{ subject_organization }}</li>
+                {% endif %}
+
+                {% if subject_state and subject_country_name %}
+                <li class="list-group-item waterfall"><b>State:</b> {{ subject_state }}, {{ subject_country_name }}</li>
+                {% endif %}
+
+                {% if subject_locality %}
+                <li class="list-group-item waterfall"><b>Locality:</b> {{ subject_locality }}</li>
+                {% endif %}
+                <li class="list-group-item waterfall"><b>valid from:</b> {{ valid_not_before }}</li>
+                <li class="list-group-item waterfall"><b>valid  until:</b> {{ valid_not_after }}</li>
+                <li class="list-group-item waterfall"><b>Alt names:</b> {{ subject_alt_names }}</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <ul class="list-unstyled">
+            <li>
+              <ul class="list-group">
+                <li class="list-group-item nightmare">
+                  <h3>Issuer</h3>
+                </li>
+                {% if issuer_common_name %}
+                <li class="list-group-item waterfall"><b>CN:</b> {{ issuer_common_name }}</li>
+                {% endif %}
+                {% if issuer_organization %}
+                <li class="list-group-item waterfall"><b>Organization:</b> {{ issuer_organization }}</li>
+                {% endif %}
+                {% if issuer_state and issuer_country_name %}
+                <li class="list-group-item waterfall"><b>State:</b> {{ issuer_state }}, {{ issuer_country_name }}</li>
+                {% endif %}
+                {% if issuer_locality %}
+                <li class="list-group-item waterfall"><b>Locality:</b> {{ issuer_locality }}</li>
+                {% endif %}
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-12">
+          <ul class="list-unstyled">
+            {% for i in cert_list %}
+            <li>
+              <ul class="list-group">
+                <li class="list-group-item waterfall breakme"><b>cert:</b>{% autoescape false %} {{ cert }} {% endautoescape %}</li>
+                <li class="list-group-item waterfall breakme"><b>md5:</b> {{ i['hash_values']['md5'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha1:</b> {{ i['hash_values']['sha1'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha224:</b> {{ i['hash_values']['sha224'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ i['hash_values']['sha256'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ i['hash_values']['sha384'] | upper }}</li>
+                <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ i['hash_values']['sha512'] | upper }}</li>
+              </ul>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include "footer.html" %}
+</body>
+
+</html>

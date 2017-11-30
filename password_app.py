@@ -3,10 +3,12 @@
 
 import re
 import pymongo
+import datetime
 from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import render_template
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -232,6 +234,74 @@ def show_hash():
                            hash_list=result_list,
                            pagination_visible=False,
                            search_visible=True)
+
+
+@app.route('/api/cert/<param_query>', methods=['GET'])
+def api_query_cert(param_query):
+    db = connect_database()
+    collection = db.cert
+
+    result_list = list(collection.find(
+        {'subject.common_name': param_query}, {'_id': 0}))
+
+    cert = result_list[0]['cert'].replace('\n', '<br>')
+
+    valid_not_before = datetime.strptime(
+        result_list[0]['valid_not_before'].replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
+
+    valid_not_after = datetime.strptime(
+        result_list[0]['valid_not_after'].replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
+
+    subject_alt_names = ', '.join(result_list[0]['subject']['alt_names'])
+    subject_common_name = result_list[0]['subject']['common_name']
+
+    subject_organization = result_list[0]['subject']['organization']
+    subject_common_name = result_list[0]['subject']['common_name']
+    subject_locality = result_list[0]['subject']['locality']
+    subject_country_name = result_list[0]['subject']['country_name']
+    subject_state = result_list[0]['subject']['state_or_province_name']
+
+    try:
+        issuer_organization = result_list[0]['issuer']['organization']
+    except KeyError as e:
+        issuer_organization = None
+
+    try:
+        issuer_common_name = result_list[0]['issuer']['common_name']
+    except KeyError as e:
+        issuer_common_name = None
+
+    try:
+        issuer_locality = result_list[0]['issuer']['locality']
+    except KeyError as e:
+        issuer_locality = None
+
+    try:
+        issuer_country_name = result_list[0]['issuer']['country_name']
+    except KeyError as e:
+        issuer_country_name = None
+
+    try:
+        issuer_state = result_list[0]['issuer']['state_or_province_name']
+    except KeyError as e:
+        issuer_state = None
+
+    return render_template('certificate.html',
+                           subject_common_name=subject_common_name,
+                           subject_organization=subject_organization,
+                           subject_country_name=subject_country_name,
+                           subject_locality=subject_locality,
+                           subject_state=subject_state,
+                           subject_alt_names=subject_alt_names,
+                           issuer_state=issuer_state,
+                           issuer_locality=issuer_locality,
+                           issuer_common_name=issuer_common_name,
+                           issuer_country_name=issuer_country_name,
+                           issuer_organization=issuer_organization,
+                           valid_not_before=valid_not_before,
+                           valid_not_after=valid_not_after,
+                           cert_list=result_list,
+                           cert=cert)
 
 
 if __name__ == '__main__':

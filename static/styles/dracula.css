@@ -14,7 +14,7 @@ a:hover, a:focus, a:active {
   color: #fff;
 }
 
-li {
+li.breakme {
   word-break: break-all;
 }
 
@@ -40,6 +40,10 @@ li {
 
 .upanddown {
   margin-bottom: 36px;
+}
+
+.pushmedown {
+  margin-bottom: 15px;
 }
 
 .ghost {
