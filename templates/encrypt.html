@@ -25,23 +25,7 @@
             <small class="claudy">Enter a word to get the md5, sha1, sha224, sha256, sha384, sha512 hash</small>
           </div>
         </div>
-        <div class="col-xs-12">
-          <ul class="list-unstyled">
-            {% for i in hash_list %}
-            <li>
-              <ul class="list-group">
-                <li class="list-group-item nightmare">
-                  <h3>{{ i['password'] }}</h3></li>
-                <li class="list-group-item waterfall"><b>md5:</b> {{ i['hash']['md5'] | upper }}</li>
-                <li class="list-group-item waterfall"><b>sha224:</b> {{ i['hash']['sha224'] | upper }}</li>
-                <li class="list-group-item waterfall"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
-                <li class="list-group-item waterfall"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
-                <li class="list-group-item waterfall"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
-              </ul>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+        {% include "hash.html" %}
       </div>
     </div>
   </div>
