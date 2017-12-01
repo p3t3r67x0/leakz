@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 
 import re
 import sys
@@ -6,7 +7,7 @@ import sys
 
 def save_document(filename, document):
     with open(filename, 'wb') as f:
-        f.write(document)
+        f.write(document.encode('utf-8'))
 
 
 def load_document(filename):
@@ -16,6 +17,20 @@ def load_document(filename):
     except IOError as e:
         print e
         sys.exit(1)
+
+
+def remove_escaped(text):
+    r = re.compile(r'\&\#(\d+);')
+    n = 0
+
+    for m in r.findall(text):
+        n += 1
+        c = int(m)
+        text = text.replace('&#{};'.format(c), unichr(c))
+        print u'[I] Replaced {} with {}'.format('&#{};'.format(c), unichr(c)).encode('utf-8')
+
+    print u'[I] Replaced {} in text {}'.format(n, text).encode('utf-8')
+    return text
 
 
 def match_ip_address(document):
@@ -34,7 +49,8 @@ def main():
     password_list = []
 
     for document in document_lines:
-        document = document.strip('\n').strip('\r')
+        document = document.decode('utf-8').strip('\n').strip('\r')
+        document = remove_escaped(document)
 
         if not match_ip_address(document) and not match_mail_address(document):
             password_list.append(document)
