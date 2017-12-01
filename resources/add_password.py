@@ -7,7 +7,7 @@ import sys
 import pymongo
 import hashlib
 
-reload(sys)  
+reload(sys)
 sys.setdefaultencoding('utf8')
 
 
@@ -52,7 +52,8 @@ def hash_password(password):
 def insert_one(collection, password, hash_string):
     try:
         password_string = password.strip('\n').strip('\r')
-        inserted_id = collection.insert_one({'password': password_string, 'hash': hash_string}).inserted_id
+        inserted_id = collection.insert_one(
+            {'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
         print u'[E] {}'.format(e)
@@ -63,22 +64,22 @@ def extract_mail_address(document):
 
 
 def main():
-    if len(sys.argv) > 1:
-        try:
-            password_list = load_passwords(sys.argv[1])
-        except IOError as e:
-            print e
-            sys.exit(1)
+    if len(sys.argv) < 2:
+        sys.exit(1)
 
-        db = connect_database()
-        db.password.create_index("password", unique=True)
-        collection = db.password
+    db = connect_database()
+    db.password.create_index("password", unique=True)
+    collection = db.password
 
-        for password in password_list:
-            if not extract_mail_address(password):
-                hash_string = hash_password(password)
-                password_string = handle_unicode(password)
-                insert_one(collection, password_string, hash_string)
+    with open(sys.argv[1]) as f:
+        while f:
+            for line in f.readlines(1024):
+                password = line.strip()
+
+                if password and not extract_mail_address(password):
+                    hash_string = hash_password(password)
+                    password_string = handle_unicode(password)
+                    insert_one(collection, password_string, hash_string)
 
 
 if __name__ == '__main__':
