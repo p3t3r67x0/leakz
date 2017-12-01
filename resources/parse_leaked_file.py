@@ -16,7 +16,7 @@ def load_document(filename):
         sys.exit(1)
 
 
-def extract_youporn_password(documents, args):
+def extract_password(documents, args):
     password_list = set([])
 
     for document in documents:
@@ -25,8 +25,21 @@ def extract_youporn_password(documents, args):
                 password_list.add(document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)])
             except IndexError as e:
                 pass
+        elif not match_ip_address(document) and not match_mail_address(document):
+            try:
+                password_list.add(document.strip('\n').strip('\r'))
+            except IndexError as e:
+                pass
 
     return password_list
+
+
+def match_ip_address(document):
+    return re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', document)
+
+
+def match_mail_address(document):
+    return re.search(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
 
 
 def main():
@@ -41,22 +54,13 @@ def main():
 
     args = parser.parse_args()
     documents = load_document(args.file)
-    password_list = extract_youporn_password(documents, args)
+    password_list = extract_password(documents, args)
     
     with open('passwords.txt', 'wb') as f:
         for password in password_list:
             f.write('{}\n'.format(password))
 
         f.close()
-
-    '''
-    for document in documents:
-        if not document.startswith('http'):
-            try:
-                print document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
-            except IndexError as e:
-                pass
-    '''
 
 
 if __name__ == '__main__':
