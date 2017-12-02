@@ -17,7 +17,10 @@ def load_document(filename):
 
 
 def split_line(document, args):
-    return document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
+    try:
+        return document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
+    except IndexError as e:
+        return
 
 
 def extract_password(documents, args):
