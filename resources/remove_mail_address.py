@@ -2,6 +2,7 @@
 
 import pymongo
 
+
 def connect_database():
     client = pymongo.MongoClient('mongodb://localhost:27017/')
     return client.hashes

@@ -3,6 +3,7 @@
 
 import pymongo
 
+
 def connect_database():
     client = pymongo.MongoClient('mongodb://localhost:27017/')
     return client.hashes
@@ -11,7 +12,6 @@ def connect_database():
 def update_one(collection, document_id, post):
     try:
         collection.update_one({'_id': document_id}, {"$set": post}, upsert=False)
-        print post
     except pymongo.errors.DuplicateKeyError as e:
         print u'{}'.format(e)
 
@@ -28,11 +28,10 @@ def main():
 
     for document in documents:
         document_id = document['_id']
-        mail_address = document['mail'].strip('\r')
+        mail_address = document['mail'].strip('\n').strip('\r')
         
         post = { 'mail': mail_address }
         update_one(collection, document_id, post)
-        
 
 
 if __name__ == '__main__':
