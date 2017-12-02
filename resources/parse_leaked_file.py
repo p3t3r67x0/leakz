@@ -16,20 +16,15 @@ def load_document(filename):
         sys.exit(1)
 
 
+def split_line(document, args):
+    return document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
+
+
 def extract_password(documents, args):
     password_list = set([])
 
     for document in documents:
-        if document.startswith('password'):
-            try:
-                password_list.add(document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)])
-            except IndexError as e:
-                pass
-        elif not match_ip_address(document) and not match_mail_address(document):
-            try:
-                password_list.add(document.strip('\n').strip('\r'))
-            except IndexError as e:
-                pass
+        password_list.add(split_line(document, args))
 
     return password_list
 
