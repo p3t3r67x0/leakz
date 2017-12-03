@@ -4,6 +4,7 @@ html, body {
 
 body {
   background-color: #2a9bba;
+  background-image: url('../triangles.svg')
 }
 
 a {
