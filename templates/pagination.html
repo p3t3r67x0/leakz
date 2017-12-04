@@ -1,4 +1,4 @@
-{% if pagination_visible %}
+{% if result_list | length > 1 %}
 <div class="col-xs-12 container-flex">
   <ul class="pagination block">
     <li><a href="{{ url }}?skip={{ first_entry }}&limit=10">&laquo;</a></li>

@@ -1,6 +1,7 @@
+{% if result_list | length > 0 %} {% if result_type == 'hash' %}
 <div class="col-xs-12">
   <ul class="list-unstyled">
-    {% for i in hash_list %}
+    {% for i in result_list %}
     <li>
       <ul class="list-group">
         <li class="list-group-item nightmare">
@@ -16,3 +17,22 @@
     {% endfor %}
   </ul>
 </div>
+{% endif %}
+{% if result_type == 'mail' %}
+<div class="col-xs-12">
+  <ul class="list-unstyled">
+    {% for i in result_list %}
+    <li>
+      <ul class="list-group">
+        <li class="list-group-item nightmare">
+          <h3>{{ i['mail'] }}</h3>
+        </li>
+        {% if i['leak'] %} {% for j in i['leak'] %}
+        <li class="list-group-item waterfall"><b>Leaked:</b> {{ j }}</li>
+        {% endfor %} {% endif %}
+      </ul>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %} {% endif %}

@@ -68,6 +68,10 @@ def connect_database():
     return client.hashes
 
 
+def match_mail_address(document):
+    return re.match(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+
+
 @app.route('/', methods=['GET'])
 def show_homepage():
     db = connect_database()
@@ -110,27 +114,9 @@ def show_mail_address_list():
     pagination_list = handle_pagination(param_skip, param_limit)
     result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
 
-    return render_template('mail.html',
+    return render_template('home.html',
                            mail_address_list=result_list,
                            entries_visible=False,
-                           search_visible=True)
-
-
-@app.route('/mail/search', methods=['GET'])
-def lookup_mail_address():
-    db = connect_database()
-    collection = db.mail_address
-
-    try:
-        param_query = request.args.get('q')
-    except (ValueError, TypeError) as e:
-        param_query = ''
-
-    result_list = list(collection.find({'mail': param_query}))
-
-    return render_template('mail.html',
-                           mail_address_list=result_list,
-                           entries_visible=True,
                            search_visible=True)
 
 
@@ -189,29 +175,36 @@ def show_hash_list():
         param_skip).limit(param_limit).sort([('$natural', -1)]))
 
     return render_template('latest.html',
+                           result_type='hash',
                            url='/hash/latest',
-                           hash_list=result_list,
+                           result_list=result_list,
                            entries=pagination_list[2],
                            last_entry=pagination_list[1],
                            first_entry=pagination_list[0],
-                           pagination_visible=True,
                            search_visible=True)
 
 
-@app.route('/hash/decrypt/search', methods=['GET'])
+@app.route('/search', methods=['GET'])
 def show_hash():
     db = connect_database()
-    collection = db.password
+    col_password = db.password
+    col_mail_address = db.mail_address
 
     try:
         param_query = request.args.get('q')
     except (ValueError, TypeError) as e:
         param_query = ''
 
-    result_list = search_hash_or_password(collection, param_query)
+    if match_mail_address(param_query):
+        result_list = list(col_mail_address.find({'mail': param_query}))
+        result_type = 'mail'
+    else:
+        result_list = search_hash_or_password(col_password, param_query)
+        result_type = 'hash'
 
     return render_template('home.html',
-                           hash_list=result_list,
+                           result_type=result_type,
+                           result_list=result_list,
                            pagination_visible=False,
                            search_visible=True)
 
