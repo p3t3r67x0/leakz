@@ -21,15 +21,16 @@ def load_document(filename):
 
 def remove_escaped(text):
     r = re.compile(r'\&\#(\d+);')
-    n = 0
 
     for m in r.findall(text):
-        n += 1
         c = int(m)
-        text = text.replace('&#{};'.format(c), unichr(c))
-        print u'[I] Replaced {} with {}'.format('&#{};'.format(c), unichr(c)).encode('utf-8')
 
-    print u'[I] Replaced {} in text {}'.format(n, text).encode('utf-8')
+        try:
+            text = text.replace('&#{};'.format(c), unichr(c))
+            print u'[I] Replaced {} with {}'.format('&#{};'.format(c), unichr(c)).encode('utf-8')
+        except ValueError as e:
+            pass
+
     return text
 
 
