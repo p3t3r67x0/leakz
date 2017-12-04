@@ -35,7 +35,7 @@ def remove_escaped(text):
 
 
 def match_ip_address(document):
-    return re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', document)
+    return re.match(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', document)
 
 
 def match_mail_address(document):
