@@ -3,7 +3,7 @@ html, body {
 }
 
 body {
-  background-color: #2a9bba;
+  background-color: #3492fc;
   background-image: url('../triangles.svg')
 }
 
@@ -17,10 +17,6 @@ a:hover, a:focus, a:active {
 
 li.breakme {
   word-break: break-all;
-}
-
-.typed-cursor {
-  color: #fff;
 }
 
 .wrapper {
