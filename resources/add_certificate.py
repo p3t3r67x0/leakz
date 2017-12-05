@@ -9,6 +9,15 @@ import socket
 import errno
 
 
+def load_document(filename):
+    try:
+        with open(filename, 'rb') as f:
+            return f.readlines()
+    except IOError as e:
+        print e
+        sys.exit(1)
+
+
 def connect_database():
     client = pymongo.MongoClient('mongodb://localhost:27017/')
     return client.hashes
@@ -17,6 +26,7 @@ def connect_database():
 def insert_one(collection, post):
     try:
         inserted_id = collection.insert_one(post).inserted_id
+        print u'[I] Added {} with id {}'.format(post['subject'], inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
         print e
 
@@ -136,95 +146,99 @@ def main():
     db.cert.create_index('subject.common_name', unique=True)
     collection = db.cert
 
-    result = load_certificate(sys.argv[1], 443)
-    cert = result[1]
-    x509 = result[0]
+    documents = load_document(sys.argv[1])
 
-    hash_values = {}
-    subject = {}
-    issuer = {}
+    for document in documents:
+        url = document.strip('\n').strip('\r')
+        result = load_certificate(url, 443)
+        cert = result[1]
+        x509 = result[0]
 
-    try:
-        subject['common_name'] = extract_subject_components(x509)['CN']
-    except KeyError as e:
-        pass
+        hash_values = {}
+        subject = {}
+        issuer = {}
 
-    try:
-        subject['country_name'] = extract_subject_components(x509)['C']
-    except KeyError as e:
-        pass
+        try:
+            subject['common_name'] = extract_subject_components(x509)['CN']
+        except KeyError as e:
+            pass
 
-    try:
-        subject['state_or_province_name'] = extract_subject_components(x509)['ST']
-    except KeyError as e:
-        pass
+        try:
+            subject['country_name'] = extract_subject_components(x509)['C']
+        except KeyError as e:
+            pass
 
-    try:
-        subject['locality'] = extract_subject_components(x509)['L']
-    except KeyError as e:
-        pass
+        try:
+            subject['state_or_province_name'] = extract_subject_components(x509)['ST']
+        except KeyError as e:
+            pass
 
-    try:
-        subject['organization'] = extract_subject_components(x509)['O']
-    except KeyError as e:
-        pass
+        try:
+            subject['locality'] = extract_subject_components(x509)['L']
+        except KeyError as e:
+            pass
 
-    try:
-        subject['organizational_unit'] = extract_subject_components(x509)['OU']
-    except KeyError as e:
-        pass
+        try:
+            subject['organization'] = extract_subject_components(x509)['O']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['common_name'] = extract_issuer_components(x509)['CN']
-    except KeyError as e:
-        pass
+        try:
+            subject['organizational_unit'] = extract_subject_components(x509)['OU']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['country_name'] = extract_issuer_components(x509)['C']
-    except KeyError as e:
-        pass
+        try:
+            issuer['common_name'] = extract_issuer_components(x509)['CN']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['state_or_province_name'] = extract_issuer_components(x509)['ST']
-    except KeyError as e:
-        pass
+        try:
+            issuer['country_name'] = extract_issuer_components(x509)['C']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['locality'] = extract_issuer_components(x509)['L']
-    except KeyError as e:
-        pass
+        try:
+            issuer['state_or_province_name'] = extract_issuer_components(x509)['ST']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['organization'] = extract_issuer_components(x509)['O']
-    except KeyError as e:
-        pass
+        try:
+            issuer['locality'] = extract_issuer_components(x509)['L']
+        except KeyError as e:
+            pass
 
-    try:
-        issuer['organizational_unit'] = extract_issuer_components(x509)['OU']
-    except KeyError as e:
-        pass
+        try:
+            issuer['organization'] = extract_issuer_components(x509)['O']
+        except KeyError as e:
+            pass
+
+        try:
+            issuer['organizational_unit'] = extract_issuer_components(x509)['OU']
+        except KeyError as e:
+            pass
 
 
-    subject['alt_names'] = extract_extensions(x509)
-    subject['hash'] = get_subject_hash(x509)
-    issuer['hash'] = get_issuer_hash(x509)
+        subject['alt_names'] = extract_extensions(x509)
+        subject['hash'] = get_subject_hash(x509)
+        issuer['hash'] = get_issuer_hash(x509)
 
-    post = {
-        'cert': cert,
-        'issuer': issuer,
-        'subject': subject,
-        'hash_values': get_hash_values(x509),
-        'public_key_bits': get_public_key_bits(x509),
-        'public_key_type': get_public_key_type(x509),
-        'public_key_only': is_public_key_only(x509),
-        'public_key_initialized': is_public_key_initialized(x509),
-        'serial_number': str(get_serial_number(x509)),
-        'serial_number_length': get_serial_number_length(x509),
-        'valid_not_before': valid_not_before(x509),
-        'valid_not_after': valid_not_after(x509)
-    }
+        post = {
+            'cert': cert,
+            'issuer': issuer,
+            'subject': subject,
+            'hash_values': get_hash_values(x509),
+            'public_key_bits': get_public_key_bits(x509),
+            'public_key_type': get_public_key_type(x509),
+            'public_key_only': is_public_key_only(x509),
+            'public_key_initialized': is_public_key_initialized(x509),
+            'serial_number': str(get_serial_number(x509)),
+            'serial_number_length': get_serial_number_length(x509),
+            'valid_not_before': valid_not_before(x509),
+            'valid_not_after': valid_not_after(x509)
+        }
 
-    insert_one(collection, post)
+        insert_one(collection, post)
 
 
 if __name__ == '__main__':
