@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>search for md5, sha1, sha224, sha256, sha384, sha512 - lea.kz</title>
+	<title>search leaked mail address - lea.kz</title>
 	{% include "meta.html" %}
 </head>
 
@@ -15,7 +15,7 @@
 				<div class="col-xs-12 upanddown">
 					<h2 class="ghost">Is my mail address leaked?</h2>
 					<form class="input-group input-group-lg" action="/search" role="form">
-						<input type="text" class="form-control input-lg" name="q" placeholder="e.g. you@example.com" autofocus>
+						<input type="text" class="form-control input-lg" name="q" value="{% if param_query | length > 0 %}{{ param_query }}{% endif %}" placeholder="e.g. you@example.com">
 						<span class="input-group-btn">
         		<button class="btn btn-default btn-lg" type="submit">Search</button>
       		</span>

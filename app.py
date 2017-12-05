@@ -208,8 +208,9 @@ def show_hash():
         result_type = 'hash'
 
     return render_template('home.html',
-                           result_type=result_type,
                            result_list=result_list,
+                           result_type=result_type,
+                           param_query=param_query,
                            pagination_visible=False,
                            search_visible=True)
 
