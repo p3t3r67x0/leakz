@@ -1,4 +1,5 @@
-{% if result_list | length > 0 %} {% if result_type == 'hash' %}
+{% if result_list | length > 0 %}
+{% if result_type == 'hash' %}
 <div class="col-xs-12">
   <ul class="list-unstyled">
     {% for i in result_list %}
@@ -12,13 +13,17 @@
         <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
         <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
         <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
-      </ul>
+    </ul>
     </li>
     {% endfor %}
   </ul>
 </div>
 {% endif %}
 {% if result_type == 'mail' %}
+<div class="col-xs-12">
+  <h3 class="ghost" style="margin-left: 40px">Yes! Please change your credentials!</h3>
+  <img style="position: absolute; top: 12px; left: 12px" src="./static/unsafe.svg" width="40" height="auto">
+</div>
 <div class="col-xs-12">
   <ul class="list-unstyled">
     {% for i in result_list %}
@@ -35,4 +40,9 @@
     {% endfor %}
   </ul>
 </div>
-{% endif %} {% endif %}
+{% endif %}
+{% else %}
+<div class="text-center col-xs-12 h2">
+  <img src="./static/safe.svg" width="250" height="auto">
+</div>
+{% endif %}

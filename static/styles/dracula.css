@@ -15,7 +15,7 @@ a:hover, a:focus, a:active {
   color: #fff;
 }
 
-li.breakme {
+.breakme {
   word-break: break-all;
 }
 
