@@ -13,6 +13,11 @@ from datetime import datetime
 app = Flask(__name__)
 
 
+@app.template_filter()
+def format_time(timestamp):
+    return datetime.strptime(timestamp.replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
+
+
 def get(iterable, keys):
     try:
         result = iterable
@@ -222,17 +227,11 @@ def api_query_cert(param_query):
 
     cert = result_list[0]['cert'].replace('\n', '<br>')
 
-    valid_not_before = datetime.strptime(
-        result_list[0]['valid_not_before'].replace('Z', ''),
-        '%Y%m%d%H%M%S'
-    ).strftime('%d.%m.%Y %H:%M')
+    valid_not_before = format_time(result_list[0]['valid_not_before'])
+    valid_not_after = format_time(result_list[0]['valid_not_after'])
 
-    valid_not_after = datetime.strptime(
-        result_list[0]['valid_not_after'].replace('Z', ''),
-        '%Y%m%d%H%M%S'
-    ).strftime('%d.%m.%Y %H:%M')
-
-    subject_alt_names = ', '.join(get(result_list, [0, 'subject', 'alt_names']))
+    subject_alt_names = ', '.join(
+        get(result_list, [0, 'subject', 'alt_names']))
     subject_common_name = get(result_list, [0, 'subject', 'common_name'])
     subject_organization = get(result_list, [0, 'subject', 'organization'])
     subject_common_name = get(result_list, [0, 'subject', 'common_name'])
@@ -254,6 +253,7 @@ def api_query_cert(param_query):
     sha512 = get(result_list, [0, 'hash_values', 'sha512'])
 
     return render_template('certificate.html',
+                           search_visible=True,
                            subject_common_name=subject_common_name,
                            subject_organization=subject_organization,
                            subject_country_name=subject_country_name,
@@ -273,6 +273,17 @@ def api_query_cert(param_query):
                            sha224=sha224,
                            sha1=sha1,
                            md5=md5)
+
+
+@app.route('/cert', methods=['GET'])
+def find_all_cert():
+    db = connect_database()
+    collection = db.cert
+
+    result_list = list(collection.find(
+        {}, {'_id': 0, 'subject.common_name': 1, 'hash_values.md5': 1, 'valid_not_before': 1, 'valid_not_after': 1}))
+    return render_template('cert_overview.html',
+                           result_list=result_list)
 
 
 if __name__ == '__main__':
