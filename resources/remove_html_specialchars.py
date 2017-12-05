@@ -3,7 +3,7 @@
 
 import re
 import sys
-
+import string
 
 def save_document(filename, document):
     with open(filename, 'wb') as f:
@@ -42,6 +42,10 @@ def match_mail_address(document):
     return re.search(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
 
 
+def filter_printable(document):
+    return filter(string.printable.__contains__, document)
+
+
 def main():
     if len(sys.argv) < 3:
         sys.exit(1)
@@ -52,6 +56,7 @@ def main():
     for document in document_lines:
         document = document.decode('utf-8').strip('\n').strip('\r')
         document = remove_escaped(document)
+        document = filter_printable(document)
 
         if not match_ip_address(document) and not match_mail_address(document):
             password_list.append(document)
