@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
+  margin: 0;
 }
 
 body {
@@ -15,19 +16,17 @@ a:hover, a:focus, a:active {
   color: #fff;
 }
 
-.breakme {
-  word-break: break-all;
-}
-
 .wrapper {
   min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin: 0 auto -36px;
+  margin-bottom: -50px;
 }
 
 .footer, .push {
   height: 36px;
+}
+
+.breakme {
+  word-break: break-all;
 }
 
 .claudy {
@@ -183,7 +182,6 @@ a.wonderworld:hover {
     margin-top: 15px;
     background-color: #ddd;
   }
-  margin-left: -12px;
   .cinderella {
     margin-right: -12px;
   }
