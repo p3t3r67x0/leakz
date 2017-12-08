@@ -226,54 +226,9 @@ def api_query_cert(param_query):
     if len(result_list) == 0:
         return 'ERROR no result was found'
 
-    cert = result_list[0]['cert'].replace('\n', '<br>')
-
-    valid_not_before = format_time(result_list[0]['valid_not_before'])
-    valid_not_after = format_time(result_list[0]['valid_not_after'])
-
-    subject_alt_names = ', '.join(
-        get(result_list, [0, 'subject', 'alt_names']))
-    subject_common_name = get(result_list, [0, 'subject', 'common_name'])
-    subject_organization = get(result_list, [0, 'subject', 'organization'])
-    subject_common_name = get(result_list, [0, 'subject', 'common_name'])
-    subject_locality = get(result_list, [0, 'subject', 'locality'])
-    subject_country_name = get(result_list, [0, 'subject', 'country_name'])
-    subject_state = get(result_list, [0, 'subject', 'state_or_province_name'])
-
-    issuer_organization = get(result_list, [0, 'issuer', 'organization'])
-    issuer_common_name = get(result_list, [0, 'issuer', 'common_name'])
-    issuer_locality = get(result_list, [0, 'issuer', 'locality'])
-    issuer_country_name = get(result_list, [0, 'issuer', 'country_name'])
-    issuer_state = get(result_list, [0, 'issuer', 'state_or_province_name'])
-
-    md5 = get(result_list, [0, 'hash_values', 'md5'])
-    sha1 = get(result_list, [0, 'hash_values', 'sha1'])
-    sha224 = get(result_list, [0, 'hash_values', 'sha224'])
-    sha256 = get(result_list, [0, 'hash_values', 'sha256'])
-    sha384 = get(result_list, [0, 'hash_values', 'sha384'])
-    sha512 = get(result_list, [0, 'hash_values', 'sha512'])
-
     return render_template('certificate.html',
                            search_visible=True,
-                           subject_common_name=subject_common_name,
-                           subject_organization=subject_organization,
-                           subject_country_name=subject_country_name,
-                           subject_alt_names=subject_alt_names,
-                           subject_locality=subject_locality,
-                           subject_state=subject_state,
-                           issuer_state=issuer_state,
-                           issuer_locality=issuer_locality,
-                           issuer_common_name=issuer_common_name,
-                           issuer_country_name=issuer_country_name,
-                           issuer_organization=issuer_organization,
-                           valid_not_before=valid_not_before,
-                           valid_not_after=valid_not_after,
-                           sha512=sha512,
-                           sha256=sha256,
-                           sha384=sha384,
-                           sha224=sha224,
-                           sha1=sha1,
-                           md5=md5)
+                           result_list=result_list)
 
 
 @app.route('/cert', methods=['GET'])
