@@ -55,7 +55,7 @@ def insert_one(collection, password, hash_string):
         inserted_id = collection.insert_one(
             {'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
-    except pymongo.errors.DuplicateKeyError as e:
+    except (pymongo.errors.DuplicateKeyError, pymongo.errors.WriteError) as e:
         print u'[E] {}'.format(e)
 
 
