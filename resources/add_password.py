@@ -11,9 +11,13 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-def load_passwords(filename):
-    with open(filename, 'rb') as f:
-        return f.readlines()
+def load_document(filename):
+    try:
+        with open(filename, 'rb') as f:
+            return f.readlines()
+    except IOError as e:
+        print e
+        sys.exit(1)
 
 
 def handle_unicode(password):
@@ -49,9 +53,8 @@ def hash_password(password):
             'sha512': hash_sha512}
 
 
-def insert_one(collection, password, hash_string):
+def insert_one(collection, password_string, hash_string):
     try:
-        password_string = password.strip('\n').strip('\r')
         inserted_id = collection.insert_one(
             {'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
@@ -68,18 +71,24 @@ def main():
         sys.exit(1)
 
     db = connect_database()
-    db.password.create_index("password", unique=True)
     collection = db.password
+    collection.create_index("password", unique=True)
+    collection.create_index("hash.md5", unique=True)
+    collection.create_index("hash.sha1", unique=True)
+    collection.create_index("hash.sha224", unique=True)
+    collection.create_index("hash.sha256", unique=True)
+    collection.create_index("hash.sha384", unique=True)
+    collection.create_index("hash.sha512", unique=True)
 
-    with open(sys.argv[1]) as f:
-        while f:
-            for line in f.readlines(1024):
-                password = line.strip()
+    documents = load_document(sys.argv[1])
 
-                if password and not extract_mail_address(password):
-                    hash_string = hash_password(password)
-                    password_string = handle_unicode(password)
-                    insert_one(collection, password_string, hash_string)
+    for document in documents:
+        password = document.strip('\n').strip('\r')
+
+        if password and not extract_mail_address(password):
+            hash_string = hash_password(password)
+            password_string = handle_unicode(password)
+            insert_one(collection, password_string, hash_string)
 
 
 if __name__ == '__main__':
