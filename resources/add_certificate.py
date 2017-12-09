@@ -26,20 +26,23 @@ def connect_database():
 def insert_one(collection, post):
     try:
         inserted_id = collection.insert_one(post).inserted_id
-        print u'[I] Added {} with id {}'.format(post['subject'], inserted_id)
+        print u'[I] Added {} with id {}'.format(post['subject']['common_name'], inserted_id)
     except pymongo.errors.DuplicateKeyError as e:
         print e
 
 
 def load_certificate(domain, port=443):
+    socket.timeout(3)
+
     try:
         cert = ssl.get_server_certificate((domain, port))
         return (OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert), cert)
     except (socket.error, socket.gaierror) as e:
-        print e.errno
+        print e
         if e.errno == errno.ECONNREFUSED:
             print 'Connection refused'
-        sys.exit(1)
+
+        return None
 
 
 def replace_dns_string(data):
@@ -88,7 +91,6 @@ def valid_not_before(x509):
 
 
 def valid_not_after(x509):
-    dir(x509.get_notAfter())
     return x509.get_notAfter()
 
 
@@ -150,9 +152,13 @@ def main():
 
     for document in documents:
         url = document.strip('\n').strip('\r')
-        result = load_certificate(url, 443)
-        cert = result[1]
-        x509 = result[0]
+
+        try:
+            result = load_certificate(url, 443)
+            cert = result[1]
+            x509 = result[0]
+        except TypeError as e:
+            continue
 
         hash_values = {}
         subject = {}
