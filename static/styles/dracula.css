@@ -12,8 +12,16 @@ a {
   color: #fff;
 }
 
+.list-group-item a {
+  color: #333;
+}
+
 a:hover, a:focus, a:active {
   color: #fff;
+}
+
+.list-group-item a:hover, .list-group-item a:focus, .list-group-item a:active {
+  color: #222;
 }
 
 .wrapper {
@@ -165,6 +173,14 @@ a.wonderworld:hover {
 .blackbird {
   background-color: #ff0075;
   color: #fff;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+  border: 0;
 }
 
 @media (max-width: 767px) {

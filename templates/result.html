@@ -7,11 +7,12 @@
         <li class="list-group-item nightmare">
           <h3 class="breakme">{{ i['password'] }}</h3>
         </li>
-        <li class="list-group-item waterfall breakme"><b>md5:</b> {{ i['hash']['md5'] | upper }}</li>
-        <li class="list-group-item waterfall breakme"><b>sha224:</b> {{ i['hash']['sha224'] | upper }}</li>
-        <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ i['hash']['sha256'] | upper }}</li>
-        <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ i['hash']['sha384'] | upper }}</li>
-        <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ i['hash']['sha512'] | upper }}</li>
+        <li class="list-group-item waterfall breakme"><b>md5:</b> <a href="{{ i['hash']['md5'] | lower }}">{{ i['hash']['md5'] | upper }}</a></li>
+        <li class="list-group-item waterfall breakme"><b>sha1:</b> <a href="{{ i['hash']['sha1'] | lower }}">{{ i['hash']['sha1'] | upper }}</a></li>
+        <li class="list-group-item waterfall breakme"><b>sha224:</b> <a href="{{ i['hash']['sha224'] | lower }}">{{ i['hash']['sha224'] | upper }}</a></li>
+        <li class="list-group-item waterfall breakme"><b>sha256:</b> <a href="{{ i['hash']['sha256'] | lower }}">{{ i['hash']['sha256'] | upper }}</a></li>
+        <li class="list-group-item waterfall breakme"><b>sha384:</b> <a href="{{ i['hash']['sha384'] | lower }}">{{ i['hash']['sha384'] | upper }}</a></li>
+        <li class="list-group-item waterfall breakme"><b>sha512:</b> <a href="{{ i['hash']['sha512'] | lower }}">{{ i['hash']['sha512'] | upper }}</a></li>
       </ul>
     </li>
     {% endfor %}
