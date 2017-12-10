@@ -152,7 +152,7 @@ a.wonderworld:hover {
 
 .navbar-nav>li>a {
   padding-top: 21px;
-  padding-bottom: 0;
+  padding-bottom: 9px;
 }
 
 @media (max-width: 767px) {
