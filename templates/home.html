@@ -12,17 +12,20 @@
 		{% include "header.html" %}
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-12 upanddown">
-					<h2 class="ghost">Is my mail address leaked?</h2>
-					<form class="input-group input-group-lg" action="/search" role="form">
-						<input type="text" class="form-control input-lg" name="q" value="{% if param_query | length > 0 %}{{ param_query }}{% endif %}" placeholder="e.g. you@example.com">
-						<span class="input-group-btn">
+				<div class="col-xs-12">
+					<h2 class="ghost">{{ title }}</h2> {% if searchform_visible %}
+					<div class="upanddown">
+						<form class="input-group input-group-lg" action="/search" role="form">
+							<input type="text" class="form-control input-lg" name="q" value="{% if param_query | length > 0 %}{{ param_query }}{% endif %}" placeholder="e.g. you@example.com">
+							<span class="input-group-btn">
         		<button class="btn btn-default btn-lg" type="submit">Search</button>
       		</span>
-					</form>
-					<div>
-						<small class="claudy">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512 hash</small>
+						</form>
+						<div>
+							<small class="claudy">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512 hash</small>
+						</div>
 					</div>
+					{% endif %}
 				</div>
 				{% include "result.html" %} {% if alert_visible %}
 				<div class="col-xs-12 col-md-offset-2 col-sm-6  col-md-4 upanddown">

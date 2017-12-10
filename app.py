@@ -101,61 +101,6 @@ def show_privacy():
     return render_template('privacy.html')
 
 
-@app.route('/mail', methods=['GET'])
-def show_mail_address_list():
-    db = connect_database()
-    collection = db.mail_address
-
-    try:
-        param_skip = int(request.args.get('skip'))
-    except (ValueError, TypeError) as e:
-        param_skip = 0
-
-    try:
-        param_limit = int(request.args.get('limit'))
-    except (ValueError, TypeError) as e:
-        param_limit = 10
-
-    pagination_list = handle_pagination(param_skip, param_limit)
-    result_list = list(collection.find({}).skip(param_skip).limit(param_limit))
-
-    return render_template('home.html',
-                           mail_address_list=result_list,
-                           entries_visible=False,
-                           search_visible=True)
-
-
-@app.route('/hash/encrypt', methods=['GET'])
-def show_encrypt_form():
-    return render_template('encrypt.html',
-                           search_visible=True)
-
-
-@app.route('/hash/encrypt/search', methods=['GET'])
-def show_encrypt_result():
-    db = connect_database()
-    collection = db.password
-
-    try:
-        param_query = request.args.get('q')
-    except (ValueError, TypeError) as e:
-        param_query = ''
-
-    result_list = list(collection.find({'password': param_query}))
-
-    return render_template('encrypt.html',
-                           hash_list=result_list,
-                           search_visible=True)
-
-
-@app.route('/api/hash/<param_query>', methods=['GET'])
-def api_query_hash(param_query):
-    db = connect_database()
-    collection = db.password
-
-    return jsonify(search_hash_or_password(collection, param_query))
-
-
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
     db = connect_database()
@@ -189,6 +134,32 @@ def show_hash_list():
                            search_visible=True)
 
 
+@app.route('/api/hash/<param_query>', methods=['GET'])
+def api_query_hash(param_query):
+    db = connect_database()
+    collection = db.password
+
+    return jsonify(search_hash_or_password(collection, param_query))
+
+
+@app.route('/hash/<param_query>', methods=['GET'])
+def show_hash_value(param_query):
+    db = connect_database()
+    col_password = db.password
+
+    result_list = search_hash_or_password(col_password, param_query)
+    result_type = 'hash'
+
+    return render_template('home.html',
+                           title='Detailed information',
+                           result_list=result_list,
+                           result_type=result_type,
+                           param_query=param_query,
+                           searchform_visible=False,
+                           pagination_visible=False,
+                           search_visible=True)
+
+
 @app.route('/search', methods=['GET'])
 def show_hash():
     db = connect_database()
@@ -211,6 +182,7 @@ def show_hash():
                            result_list=result_list,
                            result_type=result_type,
                            param_query=param_query,
+                           title='Is my mail address leaked?',
                            pagination_visible=False,
                            search_visible=True)
 
