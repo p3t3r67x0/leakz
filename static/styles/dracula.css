@@ -150,12 +150,21 @@ a.wonderworld:hover {
   background-color: #ddd;
 }
 
+.navbar-nav>li>a {
+  padding-top: 21px;
+  padding-bottom: 0;
+}
+
 @media (max-width: 767px) {
   .form-inline .form-control.cowboy {
     width: auto;
   }
   .navbar-brand.h1 {
     font-size: 24px;
+  }
+  .navbar-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
   .cinderella {
     margin-right: -12px;

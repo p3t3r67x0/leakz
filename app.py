@@ -129,11 +129,11 @@ def show_hash_list():
     return render_template('latest.html',
                            result_type='hash',
                            url='/hash/latest',
+                           menu_is_active='latest',
                            result_list=result_list,
                            entries=pagination_list[2],
                            last_entry=pagination_list[1],
-                           first_entry=pagination_list[0],
-                           search_visible=True)
+                           first_entry=pagination_list[0])
 
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
@@ -158,8 +158,7 @@ def show_hash_value(param_query):
                            result_type=result_type,
                            param_query=param_query,
                            searchform_visible=False,
-                           pagination_visible=False,
-                           search_visible=True)
+                           pagination_visible=False)
 
 
 @app.route('/search', methods=['GET'])
@@ -202,7 +201,6 @@ def api_query_cert(param_query):
         return 'ERROR no result was found'
 
     return render_template('certificate.html',
-                           search_visible=True,
                            result_list=result_list)
 
 
