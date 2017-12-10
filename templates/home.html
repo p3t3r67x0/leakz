@@ -13,7 +13,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12">
-					<h2 class="ghost">{{ title }}</h2> {% if searchform_visible %}
+					<h2 class="ghost">{{ title }}</h2>
+					{% if searchform_visible %}
 					<div class="upanddown">
 						<form class="input-group input-group-lg" action="/search" role="form">
 							<input type="text" class="form-control input-lg" name="q" value="{% if param_query | length > 0 %}{{ param_query }}{% endif %}" placeholder="e.g. you@example.com">

@@ -88,6 +88,8 @@ def show_homepage():
     return render_template('home.html',
                            amount_hashes='{:,}'.format(amount_hashes),
                            amount_mails='{:,}'.format(amount_mails),
+                           title='Is my mail address leaked?',
+                           searchform_visible=True,
                            alert_visible=True)
 
 
@@ -184,6 +186,7 @@ def show_hash():
                            param_query=param_query,
                            title='Is my mail address leaked?',
                            pagination_visible=False,
+                           searchform_visible=True,
                            search_visible=True)
 
 
