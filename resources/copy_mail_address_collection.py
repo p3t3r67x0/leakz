@@ -30,7 +30,7 @@ def main():
     collection_source = db.mail_address2
     collection_target = db.mail_address
     documents = collection_source.find()
-    add_mail_addresses = []
+    mail_addresses = []
 
     try:
         for document in documents:
@@ -40,10 +40,11 @@ def main():
             else:
                 insert_one(collection_target, document['mail'], document['leak'][0])
 
-            add_mail_addresses.append(document['mail'])
+            mail_addresses.append(document['mail'])
     except pymongo.errors.CursorNotFound as e:
+        print mail_addresses
         with open('out.txt', 'wb') as f:
-            f.writelines(add_mail_addresses)
+            f.writelines(mail_addresses)
 
 
 if __name__ == '__main__':
