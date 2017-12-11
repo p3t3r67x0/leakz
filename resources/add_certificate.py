@@ -5,6 +5,7 @@ import sys
 import ssl
 import OpenSSL
 import pymongo
+import argparse
 import socket
 import errno
 
@@ -144,11 +145,17 @@ def get_serial_number_length(x509):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Load url from file to query certificates and add them to your mongodb instance')
+    parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
+                        help='file with absolute or relative path')
+
     db = connect_database()
     db.cert.create_index('subject.common_name', unique=True)
     collection = db.cert
 
-    documents = load_document(sys.argv[1])
+    args = parser.parse_args()
+    documents = load_document(args.file)
 
     for document in documents:
         url = document.strip('\n').strip('\r')
