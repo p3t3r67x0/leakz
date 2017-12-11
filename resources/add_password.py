@@ -6,6 +6,7 @@ import re
 import sys
 import pymongo
 import hashlib
+import argparse
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -67,8 +68,10 @@ def extract_mail_address(document):
 
 
 def main():
-    if len(sys.argv) < 2:
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description='Add passwords from file to your mongodb instance')
+    parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
+                        help='file with absolute or relative path')
 
     db = connect_database()
     collection = db.password
@@ -80,7 +83,8 @@ def main():
     collection.create_index("hash.sha384", unique=True)
     collection.create_index("hash.sha512", unique=True)
 
-    documents = load_document(sys.argv[1])
+    args = parser.parse_args()
+    documents = load_document(args.file)
 
     for document in documents:
         password = document.strip('\n').strip('\r')
