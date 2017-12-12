@@ -6,8 +6,18 @@ import pymongo
 
 
 def connect_database():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    secret = get_secret()
+    client = pymongo.MongoClient('mongodb://localhost:27017/',
+             username='pymongo',
+             password=secret,
+             authSource='hashes',
+             authMechanism='SCRAM-SHA-1')
+
     return client.hashes
+
+
+def get_secret():
+    return load_document('../.secret')[0].strip()
 
 
 def insert_one(collection, mail_address_string, leak_name):

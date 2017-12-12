@@ -9,8 +9,18 @@ import pymongo
 
 
 def connect_database():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    secret = get_secret()
+    client = pymongo.MongoClient('mongodb://localhost:27017/',
+             username='pymongo',
+             password=secret,
+             authSource='hashes',
+             authMechanism='SCRAM-SHA-1')
+
     return client.hashes
+
+
+def get_secret():
+    return load_document('../.secret')[0].strip()
 
 
 def main():
@@ -36,11 +46,11 @@ def main():
 
     sorted_list = []
     vol_amount_all = 0
-    
+
     for item in sorted(stat_dict.items(), key=lambda x: x[1], reverse=True):
         vol_amount_all = item[1] + vol_amount_all
         sorted_list.append(item)
-    
+
     for i in sorted_list:
         calc = round(i[1] / vol_amount_all * 100, 2)
 

@@ -10,6 +10,21 @@ import socket
 import errno
 
 
+def connect_database():
+    secret = get_secret()
+    client = pymongo.MongoClient('mongodb://localhost:27017/',
+             username='pymongo',
+             password=secret,
+             authSource='hashes',
+             authMechanism='SCRAM-SHA-1')
+
+    return client.hashes
+
+
+def get_secret():
+    return load_document('../.secret')[0].strip()
+
+
 def load_document(filename):
     try:
         with open(filename, 'rb') as f:
@@ -17,11 +32,6 @@ def load_document(filename):
     except IOError as e:
         print e
         sys.exit(1)
-
-
-def connect_database():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
-    return client.hashes
 
 
 def insert_one(collection, post):
@@ -151,8 +161,13 @@ def main():
                         help='file with absolute or relative path')
 
     db = connect_database()
-    db.cert.create_index('subject.common_name', unique=True)
     collection = db.cert
+
+    try:
+        collection.create_index('subject.common_name', unique=True)
+    except pymongo.errors.OperationFailure as e:
+        print e
+        sys.exit(1)
 
     args = parser.parse_args()
     documents = load_document(args.file)

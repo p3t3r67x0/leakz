@@ -18,6 +18,30 @@ def format_time(timestamp):
     return datetime.strptime(timestamp.replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
 
 
+def connect_database():
+    secret = get_secret()
+    client = pymongo.MongoClient('mongodb://localhost:27017/',
+             username='pymongo',
+             password=secret,
+             authSource='hashes',
+             authMechanism='SCRAM-SHA-1')
+
+    return client.hashes
+
+
+def get_secret():
+    return load_document('.secret')[0].strip()
+
+
+def load_document(filename):
+    try:
+        with open(filename, 'rb') as f:
+            return f.readlines()
+    except IOError as e:
+        print e
+        sys.exit(1)
+
+
 def get(iterable, keys):
     try:
         result = iterable
@@ -66,11 +90,6 @@ def handle_pagination(param_skip, param_limit):
         first_entry = 0
 
     return first_entry, last_entry, entries
-
-
-def connect_database():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
-    return client.hashes
 
 
 def match_mail_address(document):
