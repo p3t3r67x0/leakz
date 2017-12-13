@@ -2,6 +2,7 @@
 
 import sys
 import pymongo
+import hashlib
 
 
 def connect_database():
@@ -28,11 +29,28 @@ def load_document(filename):
         sys.exit(1)
 
 
-def update_one(collection, document_id, post):
+def insert_one(collection, password_string, hash_string):
     try:
-        collection.update_one({'_id': document_id}, {"$set": post}, upsert=False)
-    except pymongo.errors.DuplicateKeyError as e:
-        pass
+        inserted_id = collection.insert_one(
+            {'password': password_string, 'hash': hash_string}).inserted_id
+        print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
+    except (pymongo.errors.DuplicateKeyError, pymongo.errors.WriteError) as e:
+        print u'[E] {}'.format(e)
+
+
+def hash_password(password):
+    hash_md5 = hashlib.md5(password).hexdigest()
+    hash_sha1 = hashlib.sha1(password).hexdigest()
+    hash_sha224 = hashlib.sha224(password).hexdigest()
+    hash_sha256 = hashlib.sha256(password).hexdigest()
+    hash_sha384 = hashlib.sha384(password).hexdigest()
+    hash_sha512 = hashlib.sha512(password).hexdigest()
+    return {'md5': hash_md5,
+            'sha1': hash_sha1,
+            'sha224': hash_sha224,
+            'sha256': hash_sha256,
+            'sha384': hash_sha384,
+            'sha512': hash_sha512}
 
 
 def simple_leetspeak(text):
@@ -46,12 +64,26 @@ def find_all_documents(collection):
 def main():
     db = connect_database()
     collection = db.password
+
+    try:
+        collection.create_index("password", unique=True)
+        collection.create_index("hash.md5", unique=True)
+        collection.create_index("hash.sha1", unique=True)
+        collection.create_index("hash.sha224", unique=True)
+        collection.create_index("hash.sha256", unique=True)
+        collection.create_index("hash.sha384", unique=True)
+        collection.create_index("hash.sha512", unique=True)
+    except pymongo.errors.OperationFailure as e:
+        print e
+        sys.exit(1)
+
     documents = find_all_documents(collection)
 
     for document in documents:
-        document_id = document['_id']
-        post = { 'password': simple_leetspeak(document['password']) }
-        update_one(collection, document_id, post)
+        hash_string = hash_password(document['password'].encode('utf-8'))
+        password_string = simple_leetspeak(
+            document['password'].encode('utf-8'))
+        insert_one(collection, password_string, hash_string)
 
 
 if __name__ == '__main__':
