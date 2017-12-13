@@ -54,7 +54,14 @@ def hash_password(password):
 
 
 def simple_leetspeak(text):
-    return text.replace('a', '4').replace('A', '4').replace('b', '8').replace('B', '8').replace('e', '3').replace('E', '3').replace('g', '6').replace('G', '6').replace('i', '1').replace('I', '1').replace('o', '0').replace('O', '0').replace('s', '5').replace('S', '5').replace('t', '7').replace('T', '7')
+    pattern = {'a': '4', 'A': '4', 'b': '8', 'B': '8', 'e': '3', 'E': '3', 'g': '6',
+               'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0', 's': '5', 'S': '5',
+               't': '7', 'T': '7'}
+
+    for key, value in pattern.iteritems():
+        text = text.replace(key, value)
+
+    return text
 
 
 def find_all_documents(collection):
@@ -80,9 +87,9 @@ def main():
     documents = find_all_documents(collection)
 
     for document in documents:
-        hash_string = hash_password(document['password'].encode('utf-8'))
-        password_string = simple_leetspeak(
-            document['password'].encode('utf-8'))
+        password = document['password'].encode('utf-8')
+        hash_string = hash_password(password)
+        password_string = simple_leetspeak(password)
         insert_one(collection, password_string, hash_string)
 
 
