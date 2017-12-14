@@ -3,6 +3,9 @@
 import sys
 import pymongo
 import hashlib
+from pymongo.errors import WriteError
+from pymongo.errors import DuplicateKeyError
+
 
 
 def connect_database():
@@ -34,7 +37,7 @@ def insert_one(collection, password_string, hash_string):
         inserted_id = collection.insert_one(
             {'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string.encode('utf-8'), inserted_id)
-    except (pymongo.errors.DuplicateKeyError, pymongo.errors.WriteError) as e:
+    except (UnicodeDecodeError, DuplicateKeyError, WriteError) as e:
         print u'[E] {}'.format(e)
 
 
