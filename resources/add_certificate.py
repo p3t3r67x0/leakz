@@ -22,7 +22,8 @@ def connect_database():
 
 
 def get_secret():
-    return load_document('../.secret')[0].strip()
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../.secret'))
+    return load_document(path)[0].strip()
 
 
 def load_document(filename):
