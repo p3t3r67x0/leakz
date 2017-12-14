@@ -65,7 +65,7 @@ def simple_leetspeak(text):
 
 
 def find_all_documents(collection):
-    return collection.find({})
+    return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
 def main():
@@ -88,9 +88,11 @@ def main():
 
     for document in documents:
         password = document['password'].encode('utf-8')
-        hash_string = hash_password(password)
-        password_string = simple_leetspeak(password)
-        insert_one(collection, password_string, hash_string)
+        leetspeak = simple_leetspeak(password)
+
+        if leetspeak != password:
+            hash_string = hash_password(leetspeak)
+            insert_one(collection, leetspeak, hash_string)
 
 
 if __name__ == '__main__':
