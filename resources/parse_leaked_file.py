@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 *-*
 
-
+import os
 import re
 import sys
 import argparse
@@ -53,7 +53,7 @@ def main():
     args = parser.parse_args()
     documents = load_document(args.file)
     password_list = extract_password(documents, args)
-    
+
     with open('passwords.txt', 'wb') as f:
         for password in password_list:
             f.write('{}\n'.format(password))

@@ -4,6 +4,7 @@
 from __future__ import division
 from operator import itemgetter
 
+import os
 import re
 import pymongo
 
