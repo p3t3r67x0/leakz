@@ -106,9 +106,11 @@ def main():
         password = document.strip('\n').strip('\r')
 
         if password and not extract_mail_address(password):
-            hash_string = hash_password(password)
             password_string = handle_unicode(password)
-            insert_one(collection, password_string, hash_string)
+
+            if len(password_string) > 3 and len(password_string) < 24:
+                hash_string = hash_password(password)
+                insert_one(collection, password_string, hash_string)
 
 
 if __name__ == '__main__':
