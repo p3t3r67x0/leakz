@@ -14,16 +14,17 @@ import errno
 def connect_database():
     secret = get_secret()
     client = pymongo.MongoClient('mongodb://localhost:27017/',
-             username='pymongo',
-             password=secret,
-             authSource='hashes',
-             authMechanism='SCRAM-SHA-1')
+                                 username='pymongo',
+                                 password=secret,
+                                 authSource='hashes',
+                                 authMechanism='SCRAM-SHA-1')
 
     return client.hashes
 
 
 def get_secret():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../.secret'))
+    path = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../.secret'))
     return load_document(path)[0].strip()
 
 
@@ -87,7 +88,7 @@ def extract_extensions(x509):
     for i in xrange(x509.get_extension_count()):
         try:
             extensions.append((x509.get_extension(i).get_short_name(),
-                           x509.get_extension(i).__str__()))
+                               x509.get_extension(i).__str__()))
         except OpenSSL.crypto.Error as e:
             print e
 
@@ -250,7 +251,6 @@ def main():
             issuer['organizational_unit'] = extract_issuer_components(x509)['OU']
         except KeyError as e:
             pass
-
 
         subject['alt_names'] = extract_extensions(x509)
         subject['hash'] = get_subject_hash(x509)
