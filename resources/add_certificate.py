@@ -85,8 +85,11 @@ def extract_extensions(x509):
     extensions = []
 
     for i in xrange(x509.get_extension_count()):
-        extensions.append((x509.get_extension(i).get_short_name(),
+        try:
+            extensions.append((x509.get_extension(i).get_short_name(),
                            x509.get_extension(i).__str__()))
+        except OpenSSL.crypto.Error as e:
+            print e
 
     for extension in extensions:
         if extension[0] == 'subjectAltName':
