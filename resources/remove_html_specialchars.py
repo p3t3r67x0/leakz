@@ -26,6 +26,9 @@ def remove_escaped(text):
         c = int(m)
 
         try:
+            text = text.replace('&amp;', '&')
+                       .replace('&lt;', '<')
+                       .replace('&gt;', '>')
             text = text.replace('&#{};'.format(c), unichr(c))
             print u'[I] Replaced {} with {}'.format('&#{};'.format(c), unichr(c)).encode('utf-8')
         except ValueError as e:
