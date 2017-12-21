@@ -5,7 +5,9 @@ html, body {
 
 body {
   background-color: #3492fc;
-  background-image: url('../triangles.svg')
+  background-image: url('../triangles.svg');
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 a {
