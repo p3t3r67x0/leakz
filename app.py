@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import os
 import re
 import pymongo
 import datetime
@@ -21,16 +22,17 @@ def format_time(timestamp):
 def connect_database():
     secret = get_secret()
     client = pymongo.MongoClient('mongodb://localhost:27017/',
-             username='pymongo',
-             password=secret,
-             authSource='hashes',
-             authMechanism='SCRAM-SHA-1')
+                                 username='pymongo',
+                                 password=secret,
+                                 authSource='hashes',
+                                 authMechanism='SCRAM-SHA-1')
 
     return client.hashes
 
 
 def get_secret():
-    return load_document('.secret')[0].strip()
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '.secret'))
+    return load_document(path)[0].strip()
 
 
 def load_document(filename):
