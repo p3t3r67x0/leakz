@@ -45,6 +45,7 @@ def remove_escaped(text):
 
     for k, v in pattern.iteritems():
         text = text.replace(k, v)
+        print u'[I] Replaced {} with {}'.format(k, v)
 
     return text
 
