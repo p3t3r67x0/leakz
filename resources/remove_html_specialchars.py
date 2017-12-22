@@ -5,6 +5,7 @@ import re
 import sys
 import string
 
+
 def save_document(filename, document):
     with open(filename, 'wb') as f:
         f.write(document.encode('utf-8'))
@@ -26,13 +27,24 @@ def remove_escaped(text):
         c = int(m)
 
         try:
-            text = text.replace('&amp;', '&')
-                       .replace('&lt;', '<')
-                       .replace('&gt;', '>')
             text = text.replace('&#{};'.format(c), unichr(c))
             print u'[I] Replaced {} with {}'.format('&#{};'.format(c), unichr(c)).encode('utf-8')
         except ValueError as e:
             pass
+
+    pattern = {'&Yuml;': u'\u0178', '&permil;': u'\u2030', '&rlm;': u'\u200f',
+               '&tilde;': u'\u02dc', '&emsp;': u'\u2003', '&Dagger;': u'\u2021',
+               '&quot;': '"', '&OElig;': u'\u0152', '&lt;': '<', '&lsquo;': u'\u2018',
+               '&scaron;': u'\u0161', '&lrm;': u'\u200e', '&ldquo;': u'\u201c',
+               '&zwj;': u'\u200d', '&rsaquo;': u'\u203a', '&sbquo;': u'\u201a',
+               '&ensp;': u'\u2002', '&thinsp;': u'\u2009', '&lsaquo;': u'\u2039',
+               '&rsquo;': u'\u2019', '&amp;': '&', '&Scaron;': u'\u0160', '&gt;': '>',
+               '&ndash;': u'\u2013', '&euro;': u'\u20ac', '&rdquo;': u'\u201d',
+               '&oelig;': u'\u0153', '&dagger;': u'\u2020', '&mdash;': u'\u2014',
+               '&zwnj;': u'\u200c', '&bdquo;': u'\u201e', '&circ;': u'\u02c6'}
+
+    for k, v in pattern.iteritems():
+        text = text.replace(k, v)
 
     return text
 
