@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import random
 import argparse
 
 def load_document(filename):
@@ -32,6 +33,15 @@ def generate_year(password):
     return result
 
 
+def generate_random(password):
+    random_password = list(password)
+    
+    for i, e in enumerate(password):
+        random_password[i] = random.choice(e.lower() + e.upper())
+
+    return ''.join(random_password)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Generate password combinations from a given string')
@@ -47,6 +57,10 @@ def main():
 
     for password in documents:
         leetspeak.append(password.strip())
+
+        for i in range(len(password)):
+            leetspeak.append(generate_random(password.strip()))
+
         leetspeak.append(generate_leetspeak(password.strip()))
 
     print '[I] Finished leetspeak generation'
@@ -58,8 +72,10 @@ def main():
 
     print '[I] Finished password appending year generation'
 
+    output = set(merged_passwords)
+
     with open('out.txt', 'w') as f:
-        f.writelines('{}\n'.format(line) for line in merged_passwords)
+        f.writelines('{}\n'.format(line) for line in output)
         print u'[I] Saved generated passwords in out.txt'
 
 
