@@ -34,7 +34,7 @@ def main():
 
     for mail_address in mail_address_list:
         mail_address = mail_address['mail']
-        m = re.match(r'\b[\w.+-]+?@(\w*[-\.\w+?]*\b)', mail_address)
+        m = re.match(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', mail_address)
 
         try:
             mail_address = m.group(1).lower()

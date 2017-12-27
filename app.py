@@ -95,7 +95,7 @@ def handle_pagination(param_skip, param_limit):
 
 
 def match_mail_address(document):
-    return re.match(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+    return re.match(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 
 
 @app.route('/', methods=['GET'])

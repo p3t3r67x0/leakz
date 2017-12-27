@@ -58,7 +58,7 @@ def find_one_and_update(collection, mail_address_string, leak_name):
 
 
 def extract_mail_address(document):
-    return re.findall(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+    return re.findall(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 
 
 def main():

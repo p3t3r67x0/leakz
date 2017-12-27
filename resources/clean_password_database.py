@@ -33,7 +33,7 @@ def match_ip_address(document):
 
 
 def match_mail_address(document):
-    return re.search(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+    return re.search(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 
 
 def find_all_documents(collection):

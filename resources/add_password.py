@@ -75,7 +75,7 @@ def insert_one(collection, password_string, hash_string):
 
 
 def extract_mail_address(document):
-    return re.findall(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+    return re.findall(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 
 
 def main():
