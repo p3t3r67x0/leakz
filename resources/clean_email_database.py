@@ -4,14 +4,14 @@
 import os
 import re
 
-import database_helper as dbh
-import mail_handling as mh
+import utils.database_helper as dbh
+import utils.mail_handling as mh
 
 
 def main():
     db = dbh.connect_database('hashes')
     collection = db.mail_address
-    documents = mh.find_all_documents(collection)
+    documents = dbh.find_all_documents(collection)
 
     for document in documents:
         if not mh.is_valid_mail(document['mail']):

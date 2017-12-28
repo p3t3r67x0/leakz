@@ -5,10 +5,6 @@
 import re
 
 
-def find_all_documents(collection):
-    return collection.find({})
-
-
 def extract_mail_address(document):
     return re.findall(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 

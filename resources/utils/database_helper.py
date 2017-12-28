@@ -11,6 +11,10 @@ def remove_one(collection, object_id):
     collection.delete_one({'_id': ObjectId(object_id)})
 
 
+def find_all_documents(collection):
+    return collection.find({})
+
+
 def connect_database(database):
     secret = fh.get_secret()
     client = pymongo.MongoClient('mongodb://localhost:27017/',

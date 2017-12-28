@@ -6,10 +6,10 @@ import re
 import sys
 import pymongo
 
-import database_helper as dbh
-import unicode_helper as uh
-import file_hadndling as fh
-import mail_handling as mh
+import utils.database_helper as dbh
+import utils.unicode_helper as uh
+import utils.file_hadndling as fh
+import utils.mail_handling as mh
 
 
 def insert_one(collection, mail_address_string, leak_name):

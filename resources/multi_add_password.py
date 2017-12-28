@@ -5,11 +5,11 @@ import math
 import multiprocessing
 import add_password
 
-import database_helper as dbh
-import password_handling as ph
-import file_hadndling as fh
-import unicode_helper as uh
-import mail_handling as mh
+import utils.database_helper as dbh
+import utils.password_handling as ph
+import utils.file_hadndling as fh
+import utils.unicode_helper as uh
+import utils.mail_handling as mh
 
 
 def worker(passwords):

@@ -17,5 +17,5 @@ def load_document(filename):
 
 def get_secret():
     path = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../.secret'))
+        os.path.dirname(__file__), '../../.secret'))
     return load_document(path)[0].strip()
