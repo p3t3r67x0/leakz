@@ -7,18 +7,12 @@ import sys
 import argparse
 
 
-def load_document(filename):
-    try:
-        with open(filename, 'r') as f:
-            return f.readlines()
-    except IOError as e:
-        print e
-        sys.exit(1)
+import file_hadndling as fh
 
 
 def split_line(document, args):
     try:
-        return document.strip('\n').strip('\r').split(args.delimiter)[int(args.index)]
+        return document.strip().split(args.delimiter)[int(args.index)]
     except IndexError as e:
         return
 
@@ -32,14 +26,6 @@ def extract_password(documents, args):
     return password_list
 
 
-def match_ip_address(document):
-    return re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', document)
-
-
-def match_mail_address(document):
-    return re.search(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
-
-
 def main():
     parser = argparse.ArgumentParser(
         description='parse leaked file to extract passwords')
@@ -51,7 +37,7 @@ def main():
                         help='a delimiter which will be used for splitting password from mail address. This will be used in every line.')
 
     args = parser.parse_args()
-    documents = load_document(args.file)
+    documents = fh.load_document(args.file)
     password_list = extract_password(documents, args)
 
     with open('passwords.txt', 'wb') as f:

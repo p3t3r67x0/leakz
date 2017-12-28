@@ -4,7 +4,6 @@
 import os
 import re
 
-
 import database_helper as dbh
 import mail_handling as mh
 

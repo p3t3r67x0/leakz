@@ -4,13 +4,7 @@
 import random
 import argparse
 
-def load_document(filename):
-    try:
-        with open(filename, 'rb') as f:
-            return f.readlines()
-    except IOError as e:
-        print e
-        sys.exit(1)
+import file_hadndling as fh
 
 
 def generate_leetspeak(password):
@@ -35,7 +29,7 @@ def generate_year(password):
 
 def generate_random(password):
     random_password = list(password)
-    
+
     for i, e in enumerate(password):
         random_password[i] = random.choice(e.lower() + e.upper())
 
@@ -49,7 +43,7 @@ def main():
                         help='file with absolute or relative path')
 
     args = parser.parse_args()
-    documents = load_document(args.file)
+    documents = fh.load_document(args.file)
     merged_passwords = []
     leetspeak = []
 
