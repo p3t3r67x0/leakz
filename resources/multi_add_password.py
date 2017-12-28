@@ -5,18 +5,15 @@ import math
 import multiprocessing
 import add_password
 
-
-def load_document(filename):
-    try:
-        with open(filename, 'rb') as f:
-            return f.readlines()
-    except IOError as e:
-        print e
-        sys.exit(1)
+import database_helper as dbh
+import password_handling as ph
+import file_hadndling as fh
+import unicode_helper as uh
+import mail_handling as mh
 
 
 def worker(passwords):
-    db = add_password.connect_database()
+    db = dbh.connect_database('hashes')
     collection = db.password
 
     try:
@@ -34,18 +31,19 @@ def worker(passwords):
     for password in passwords:
         password = password.strip()
 
-        if password and not add_password.extract_mail_address(password):
-            password_string = add_password.handle_unicode(password)
+        if password and not mh.extract_mail_address(password):
+            password_string = uh.handle_unicode(password)
 
             if len(password_string) > 3 and len(password_string) < 24:
-                hash_string = add_password.hash_password(password)
-                add_password.insert_one(collection, password_string, hash_string)
+                hash_string = ph.hash_password(password)
+                add_password.insert_one(
+                    collection, password_string, hash_string)
 
     return
 
 
 def main():
-    passwords = load_document(sys.argv[1])
+    passwords = fh.load_document(sys.argv[1])
     core_count = multiprocessing.cpu_count()
     chunk_size = int(math.ceil(len(passwords) / core_count))
     jobs = []
