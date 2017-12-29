@@ -15,12 +15,12 @@ def find_all_documents(collection):
     return collection.find({})
 
 
-def connect_database(database):
+def connect_database(database, port):
     secret = fh.get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:27017/',
+    client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
                                  username='pymongo',
                                  password=secret,
-                                 authSource='hashes',
+                                 authSource=database,
                                  authMechanism='SCRAM-SHA-1')
 
     return client[database]

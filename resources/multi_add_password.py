@@ -4,6 +4,7 @@ import sys
 import math
 import multiprocessing
 import add_password
+import argparse
 
 import utils.database_helper as dbh
 import utils.password_handling as ph
@@ -12,8 +13,8 @@ import utils.unicode_helper as uh
 import utils.mail_handling as mh
 
 
-def worker(passwords):
-    db = dbh.connect_database('hashes')
+def worker(passwords, args):
+    db = dbh.connect_database('hashes', args.port)
     collection = db.password
 
     try:
@@ -43,15 +44,21 @@ def worker(passwords):
 
 
 def main():
-    passwords = fh.load_document(sys.argv[1])
+    parser = argparse.ArgumentParser(
+        description='Add passwords from file to your mongodb instance')
+    parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
+                        help='file with absolute or relative path')
+    parser.add_argument('-p, --port', metavar='P', required=True, dest='port',
+                        help='define mongodb port to connect the database')
+
+    args = parser.parse_args()
+    passwords = fh.load_document(args.file)
     core_count = multiprocessing.cpu_count()
     chunk_size = int(math.ceil(len(passwords) / core_count))
-    jobs = []
 
     for i in xrange(core_count):
         job = passwords[i * chunk_size:(i + 1) * chunk_size]
-        p = multiprocessing.Process(target=worker, args=(job,))
-        jobs.append(p)
+        p = multiprocessing.Process(target=worker, args=(job, args,))
         p.start()
 
 
