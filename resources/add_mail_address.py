@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import pymongo
+import argparse
 
 import utils.database_helper as dbh
 import utils.unicode_helper as uh
@@ -29,24 +30,31 @@ def find_one_and_update(collection, mail_address_string, leak_name):
 
 
 def main():
-    if len(sys.argv) > 2:
-        db = dbh.connect_database('hashes')
-        collection = db.mail_address
+    parser = argparse.ArgumentParser(
+        description='Add mail addresses from file to your mongodb instance')
+    parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
+                        help='non structured document with leaked mail addresses')
+    parser.add_argument('-p, --port', metavar='P', required=True, dest='port',
+                        help='define mongodb port to connect the database')
+    parser.add_argument('-l, --leak', metavar='L', required=True, dest='leak',
+                        help='set leaked website or organistion name here')
 
-        try:
-            collection.create_index('mail', unique=True)
-        except pymongo.errors.OperationFailure as e:
-            print u'{}'.format(e)
-            sys.exit(1)
+    args = parser.parse_args()
+    db = dbh.connect_database('hashes', args.port)
+    collection = db.mail_address
 
-        document = ' '.join(fh.load_document(sys.argv[1]))
-        mail_address_list = mh.extract_mail_address(document)
-        leak_name = sys.argv[2]
+    try:
+        collection.create_index('mail', unique=True)
+    except pymongo.errors.OperationFailure as e:
+        print u'{}'.format(e)
+        sys.exit(1)
 
-        for mail_address in mail_address_list:
-            mail_address = uh.handle_unicode(
-                mail_address.strip('\n').strip('\r').lower())
-            insert_one(collection, mail_address, leak_name)
+    document = ' '.join(fh.load_document(args.file))
+    mail_address_list = mh.extract_mail_address(document)
+
+    for mail_address in mail_address_list:
+        mail_address = uh.handle_unicode(mail_address.strip().lower())
+        insert_one(collection, mail_address, args.leak)
 
 
 if __name__ == '__main__':
