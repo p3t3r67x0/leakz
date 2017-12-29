@@ -30,8 +30,12 @@ def main():
         description='Add passwords from file to your mongodb instance')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
+    parser.add_argument('-p, --port', metavar='P', required=True, dest='port',
+                        help='define mongodb port to connect the database')
 
-    db = dbh.connect_database('hashes')
+    args = parser.parse_args()
+    documents = fh.load_document(args.file)
+    db = dbh.connect_database('hashes', args.port)
     collection = db.password
 
     try:
@@ -45,9 +49,6 @@ def main():
     except pymongo.errors.OperationFailure as e:
         print e
         sys.exit(1)
-
-    args = parser.parse_args()
-    documents = fh.load_document(args.file)
 
     for document in documents:
         password = document.strip()
