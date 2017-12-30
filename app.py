@@ -19,15 +19,15 @@ def format_time(timestamp):
     return datetime.strptime(timestamp.replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
 
 
-def connect_database():
+def connect_database(database, port):
     secret = get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:27017/',
+    client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
                                  username='pymongo',
                                  password=secret,
-                                 authSource='hashes',
+                                 authSource=database,
                                  authMechanism='SCRAM-SHA-1')
 
-    return client.hashes
+    return client[database]
 
 
 def get_secret():
@@ -100,9 +100,10 @@ def match_mail_address(document):
 
 @app.route('/', methods=['GET'])
 def show_homepage():
-    db = connect_database()
+    db = connect_database('hashes', '27017')
+    db2 = connect_database('hashes', '27018')
     collection_hash = db.password
-    collection_mail = db.mail_address
+    collection_mail = db2.mail_address
     amount_hashes = collection_hash.count()
     amount_mails = collection_mail.count()
 
@@ -126,7 +127,7 @@ def show_privacy():
 
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
-    db = connect_database()
+    db = connect_database('hashes', '27017')
     collection = db.password
 
     try:
@@ -159,7 +160,7 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
-    db = connect_database()
+    db = connect_database('hashes', '27017')
     collection = db.password
 
     return jsonify(search_hash_or_password(collection, param_query))
@@ -167,7 +168,7 @@ def api_query_hash(param_query):
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
-    db = connect_database()
+    db = connect_database('hashes', '27017')
     col_password = db.password
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -184,9 +185,10 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
-    db = connect_database()
+    db = connect_database('hashes', '27017')
+    db2 = connect_database('hashes', '27018')
     col_password = db.password
-    col_mail_address = db.mail_address
+    col_mail_address = db2.mail_address
 
     try:
         param_query = request.args.get('q')
@@ -212,7 +214,7 @@ def show_hash():
 
 @app.route('/api/cert/<param_query>', methods=['GET'])
 def api_query_cert(param_query):
-    db = connect_database()
+    db = connect_database('hashes', '27017')
     collection = db.cert
 
     result_list = list(collection.find(
@@ -227,7 +229,7 @@ def api_query_cert(param_query):
 
 @app.route('/cert', methods=['GET'])
 def find_all_cert():
-    db = connect_database()
+    db = connect_database('hashes', '27017')
     collection = db.cert
 
     result_list = list(collection.find(
