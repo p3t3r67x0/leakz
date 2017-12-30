@@ -4,7 +4,7 @@
 import random
 import argparse
 
-import file_hadndling as fh
+import utils.file_hadndling as fh
 
 
 def generate_leetspeak(password):
@@ -16,15 +16,6 @@ def generate_leetspeak(password):
         password = password.replace(key, value)
 
     return password
-
-
-def generate_year(password):
-    result = []
-
-    for i in range(1940, 2005):
-        result.append('{}{}'.format(password, i))
-
-    return result
 
 
 def generate_random(password):
@@ -55,16 +46,7 @@ def main():
         for i in range(len(password)):
             leetspeak.append(generate_random(password.strip()))
 
-        leetspeak.append(generate_leetspeak(password.strip()))
-
     print '[I] Finished leetspeak generation'
-    print '[I] Starting password appending year generation'
-
-    for password in leetspeak:
-        if len(password.strip()) > 0:
-            merged_passwords += generate_year(password.strip())
-
-    print '[I] Finished password appending year generation'
 
     output = set(merged_passwords)
 
