@@ -35,7 +35,6 @@ def main():
 
     args = parser.parse_args()
     documents = fh.load_document(args.file)
-    merged_passwords = []
     leetspeak = []
 
     print '[I] Starting leetspeak generation'
@@ -48,7 +47,7 @@ def main():
 
     print '[I] Finished leetspeak generation'
 
-    output = set(merged_passwords)
+    output = set(leetspeak)
 
     with open('out.txt', 'w') as f:
         f.writelines('{}\n'.format(line) for line in output)
