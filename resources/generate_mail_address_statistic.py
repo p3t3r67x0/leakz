@@ -1,40 +1,23 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+
 from __future__ import division
 from operator import itemgetter
 
-import os
 import re
-import pymongo
-
-
-def connect_database():
-    secret = get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:27017/',
-             username='pymongo',
-             password=secret,
-             authSource='hashes',
-             authMechanism='SCRAM-SHA-1')
-
-    return client.hashes
-
-
-def get_secret():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../.secret'))
-    return load_document(path)[0].strip()
+import utils.database_helper as dbh
 
 
 def main():
-    db = connect_database()
+    db = dbh.connect_database('hashes', '27017')
     collection = db.mail_address
     stat_dict = {}
 
-    mail_address_list = collection.find({})
+    mail_address_list = dbh.find_all_documents(collection)
 
     for mail_address in mail_address_list:
-        mail_address = mail_address['mail']
-        m = re.match(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', mail_address)
+        m = re.match(r'\b[\w.+-]+?@([-_\w]+[.]+[-_.\w]+)\b', mail_address['mail'])
 
         try:
             mail_address = m.group(1).lower()
