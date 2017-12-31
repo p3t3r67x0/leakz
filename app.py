@@ -3,8 +3,10 @@
 
 import os
 import re
+import json
 import pymongo
 import datetime
+from flask import abort
 from flask import Flask
 from flask import request
 from flask import jsonify
@@ -12,6 +14,9 @@ from flask import render_template
 from datetime import datetime
 
 app = Flask(__name__)
+
+PORT_MAIL_DATABASE = 27017
+PORT_PASSWORD_DATABASE = 27017
 
 
 @app.template_filter()
@@ -28,6 +33,11 @@ def connect_database(database, port):
                                  authMechanism='SCRAM-SHA-1')
 
     return client[database]
+
+
+def get_config():
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '.config'))
+    return ''.join(load_document(path))
 
 
 def get_secret():
@@ -100,8 +110,9 @@ def match_mail_address(document):
 
 @app.route('/', methods=['GET'])
 def show_homepage():
-    db = connect_database('hashes', '27017')
-    db2 = connect_database('hashes', '27018')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
+    db2 = connect_database('hashes', config['db_port_mail'])
     collection_hash = db.password
     collection_mail = db2.mail_address
     amount_hashes = collection_hash.count()
@@ -113,6 +124,11 @@ def show_homepage():
                            title='Is my mail address leaked?',
                            searchform_visible=True,
                            alert_visible=True)
+
+
+@app.route('/api', methods=['GET'])
+def show_api():
+    return render_template('api.html')
 
 
 @app.route('/legal', methods=['GET'])
@@ -127,7 +143,8 @@ def show_privacy():
 
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
-    db = connect_database('hashes', '27017')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
     collection = db.password
 
     try:
@@ -160,15 +177,22 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
-    db = connect_database('hashes', '27017')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
     collection = db.password
 
-    return jsonify(search_hash_or_password(collection, param_query))
+    data = search_hash_or_password(collection, param_query)
+
+    if data:
+        return jsonify(data)
+    else:
+        return abort(404)
 
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
-    db = connect_database('hashes', '27017')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
     col_password = db.password
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -185,8 +209,9 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
-    db = connect_database('hashes', '27017')
-    db2 = connect_database('hashes', '27018')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
+    db2 = connect_database('hashes', config['db_port_mail'])
     col_password = db.password
     col_mail_address = db2.mail_address
 
@@ -208,13 +233,13 @@ def show_hash():
                            param_query=param_query,
                            title='Is my mail address leaked?',
                            pagination_visible=False,
-                           searchform_visible=True,
-                           search_visible=True)
+                           searchform_visible=True)
 
 
 @app.route('/api/cert/<param_query>', methods=['GET'])
 def api_query_cert(param_query):
-    db = connect_database('hashes', '27017')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
     collection = db.cert
 
     result_list = list(collection.find(
@@ -229,7 +254,8 @@ def api_query_cert(param_query):
 
 @app.route('/cert', methods=['GET'])
 def find_all_cert():
-    db = connect_database('hashes', '27017')
+    config = json.loads(get_config())
+    db = connect_database('hashes', config['db_port_passwords'])
     collection = db.cert
 
     result_list = list(collection.find(
@@ -239,4 +265,4 @@ def find_all_cert():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(threaded=True)

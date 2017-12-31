@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>free api for everyone - lea.kz</title>
+  {% include "meta.html" %}
+</head>
+
+<body>
+  <div class="wrapper">
+    {% include "header.html" %}
+    <div class="container">
+      <div class="col-xs-12 upanddown" style="background-color: #fefefe;">
+        <h2>Free API for everyone</h2>
+        <p>You can call the api with any plaintext string, when not found it returns a 404</p>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl https://lea.kz/api/hash/derrick09</code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash">{
+  "hash": {
+    "md5": "e6e7c0a347468dd5cc73712fa53861cb",
+    "sha1": "2b8ceabd027c1751972cae3e5940f5007a28960b",
+    "sha224": "68a465d743cd4e5d81855d67178ac4f078d43804f9ad5a9fb8d282e2",
+    "sha256": "9852a8e206e8e7031a2a17e97ae0c71135ca3a197a7caa4e3e35a2af7ce7bee1",
+    "sha384": "889ef67ffb66f51d687008c0258504e6d0b22c6ebb7746c1ffa3e2d74ab24513b13b8ccf71c0d399fae10b485577eae1",
+    "sha512": "5d06a40e653fc3db2100fc15684c51ddb38914bddd944d8e6161be76f161c0bddbe0db2b50e5919053057de1064894b1b23c0e0e56140145982605ab3e67ba96"
+  },
+  "password": "derrick09"
+}</code></pre>
+        </figure>
+        <p>You can also call the api with any md5, sha1, sha224, sha256, sha384 or sha512 hash</p>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl https://lea.kz/api/hash/e6e7c0a347468dd5cc73712fa53861cb</code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash">{
+  "hash": {
+    "md5": "e6e7c0a347468dd5cc73712fa53861cb",
+    "sha1": "2b8ceabd027c1751972cae3e5940f5007a28960b",
+    "sha224": "68a465d743cd4e5d81855d67178ac4f078d43804f9ad5a9fb8d282e2",
+    "sha256": "9852a8e206e8e7031a2a17e97ae0c71135ca3a197a7caa4e3e35a2af7ce7bee1",
+    "sha384": "889ef67ffb66f51d687008c0258504e6d0b22c6ebb7746c1ffa3e2d74ab24513b13b8ccf71c0d399fae10b485577eae1",
+    "sha512": "5d06a40e653fc3db2100fc15684c51ddb38914bddd944d8e6161be76f161c0bddbe0db2b50e5919053057de1064894b1b23c0e0e56140145982605ab3e67ba96"
+  },
+  "password": "derrick09"
+}</code></pre>
+        </figure>
+      </div>
+    </div>
+    <div class="push"></div>
+  </div>
+  {% include "footer.html" %}
+</body>
+
+</html>
