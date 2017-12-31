@@ -3,6 +3,7 @@
 
 import os
 import re
+import sys
 import json
 import pymongo
 import datetime
@@ -128,7 +129,8 @@ def show_homepage():
 
 @app.route('/api', methods=['GET'])
 def show_api():
-    return render_template('api.html')
+    return render_template('api.html',
+                           menu_is_active='api')
 
 
 @app.route('/legal', methods=['GET'])
