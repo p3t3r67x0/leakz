@@ -30,7 +30,7 @@ def worker(passwords, args):
         sys.exit(1)
 
     for password in passwords:
-        password = password.strip()
+        password = password.strip().replace(' ', '')
 
         if password and not mh.extract_mail_address(password):
             password_string = uh.handle_unicode(password)
