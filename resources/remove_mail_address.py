@@ -21,10 +21,6 @@ def get_secret():
     return load_document(path)[0].strip()
 
 
-def remove_one(collection, post):
-    db.collection.delete_one({'x': 1})
-
-
 def update_one(collection, document_id, post):
     try:
         collection.update_one({'_id': document_id}, {"$set": post}, upsert=False)
