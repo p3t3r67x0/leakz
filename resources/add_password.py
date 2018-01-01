@@ -51,13 +51,13 @@ def main():
         sys.exit(1)
 
     for document in documents:
-        password = document.strip()
+        password = document.strip().replace(' ', '')
 
         if password and not mh.extract_mail_address(password):
             password_string = uh.handle_unicode(password)
 
             if len(password_string) > 3 and len(password_string) < 24:
-                hash_string = ph.hash_password(password)
+                hash_string = ph.hash_password(password_string)
                 insert_one(collection, password_string, hash_string)
 
 
