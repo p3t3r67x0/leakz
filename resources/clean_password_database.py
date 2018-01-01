@@ -29,7 +29,7 @@ def main():
         password = document['password']
 
         if match_ip_address(password) or match_mail_address(password):
-            dbh.delete_one(collection, document['_id'])
+            dbh.delete_one(db.password, document['_id'])
 
 
 if __name__ == '__main__':
