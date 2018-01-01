@@ -15,7 +15,7 @@ def main():
 
     for document in documents:
         if not mh.is_valid_mail(document['mail']):
-            regex_match = dbh.remove_one(collection, document['_id'])
+            regex_match = dbh.delete_one(collection, document['_id'])
 
             if regex_match:
                 print u'[I] removed entry {} with id {}'.format(document['mail'], document['_id'])

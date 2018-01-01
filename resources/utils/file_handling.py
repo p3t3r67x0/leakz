@@ -19,3 +19,9 @@ def get_secret():
     path = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../../.secret'))
     return load_document(path)[0].strip()
+
+
+def get_config():
+    path = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../../.config'))
+    return ''.join(load_document(path))

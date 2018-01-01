@@ -3,12 +3,12 @@
 
 
 import pymongo
-from bson import ObjectId
-import file_hadndling as fh
+import file_handling as fh
 
 
-def remove_one(collection, object_id):
-    collection.delete_one({'_id': ObjectId(object_id)})
+def delete_one(collection, document_id):
+    result = collection.delete_one({'_id': document_id})
+    print result.raw_result
 
 
 def find_all_documents(collection):
