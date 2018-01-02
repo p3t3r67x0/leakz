@@ -18,3 +18,7 @@ def hash_password(password):
             'sha256': hash_sha256,
             'sha384': hash_sha384,
             'sha512': hash_sha512}
+
+
+def remove_whitespace(document):
+    return document.strip().replace(' ', '')
