@@ -37,7 +37,7 @@ def main():
 
     try:
         for document in documents:
-            print u'[I] Parsing id {}'.format(document['id'])
+            print u'[I] Parsing id {}'.format(document['_id'])
 
             if len(document['leak']) > 1:
                 for leak in document['leak']:
@@ -46,7 +46,7 @@ def main():
                 insert_one(collection_target,
                            document['mail'], document['leak'][0])
 
-            dbh.delete_one(collection_source, document['id'])
+            dbh.delete_one(collection_source, document['_id'])
     except pymongo.errors.CursorNotFound as e:
         pass
 
