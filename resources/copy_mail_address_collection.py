@@ -44,7 +44,6 @@ def main():
 
             mail_addresses.append(document['mail'])
     except pymongo.errors.CursorNotFound as e:
-        print mail_addresses
         with open('out.txt', 'wb') as f:
             f.writelines(mail_addresses)
 
