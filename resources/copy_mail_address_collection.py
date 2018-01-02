@@ -3,23 +3,11 @@
 
 import os
 import sys
+import json
 import pymongo
 
-
-def connect_database():
-    secret = get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:27017/',
-             username='pymongo',
-             password=secret,
-             authSource='hashes',
-             authMechanism='SCRAM-SHA-1')
-
-    return client.hashes
-
-
-def get_secret():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../.secret'))
-    return load_document(path)[0].strip()
+import utils.database_helper as dbh
+import utils.file_handling as fh
 
 
 def insert_one(collection, mail_address_string, leak_name):
@@ -38,10 +26,11 @@ def find_one_and_update(collection, mail_address_string, leak_name):
 
 
 def main():
-    db = connect_database()
+    config = json.loads(fh.get_config())
+    db = dbh.connect_database('hashes', config['db_port_mail'])
     collection_source = db.mail_address2
     collection_target = db.mail_address
-    documents = collection_source.find()
+    documents = dbh.find_all_documents(collection_source)
     mail_addresses = []
 
     try:
@@ -50,7 +39,8 @@ def main():
                 for leak in document['leak']:
                     insert_one(collection_target, document['mail'], leak)
             else:
-                insert_one(collection_target, document['mail'], document['leak'][0])
+                insert_one(collection_target,
+                           document['mail'], document['leak'][0])
 
             mail_addresses.append(document['mail'])
     except pymongo.errors.CursorNotFound as e:
