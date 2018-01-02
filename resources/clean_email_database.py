@@ -3,13 +3,16 @@
 
 import os
 import re
+import json
 
 import utils.database_helper as dbh
 import utils.mail_handling as mh
+import utils.file_handling as fh
 
 
 def main():
-    db = dbh.connect_database('hashes')
+    config = json.loads(fh.get_config())
+    db = dbh.connect_database('hashes', config['db_port_mail'])
     collection = db.mail_address
     documents = dbh.find_all_documents(collection)
 
