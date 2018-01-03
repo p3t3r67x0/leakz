@@ -35,7 +35,7 @@ def find_all_documents(collection):
 
 def main():
     db = connect_database()
-    collection = db.mail_address
+    collection = db['mails']
     documents = find_all_documents(collection)
 
     for document in documents:

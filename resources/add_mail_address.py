@@ -41,7 +41,7 @@ def main():
 
     args = parser.parse_args()
     db = dbh.connect_database('hashes', args.port)
-    collection = db.mail_address
+    collection = db['mails']
 
     try:
         collection.create_index('mail', unique=True)

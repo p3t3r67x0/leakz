@@ -23,7 +23,7 @@ def update_one(collection, document_id, post):
 def main():
     config = json.loads(fh.get_config())
     db = dbh.connect_database('hashes', config['db_port_mail'])
-    collection = db.mail_address
+    collection = db['mails']
     documents = dbh.find_all_documents(collection)
 
     for document in documents:

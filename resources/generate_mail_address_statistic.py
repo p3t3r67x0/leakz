@@ -11,7 +11,7 @@ import utils.database_helper as dbh
 
 def main():
     db = dbh.connect_database('hashes', '27017')
-    collection = db.mail_address
+    collection = db['mails']
     stat_dict = {}
 
     mail_address_list = dbh.find_all_documents(collection)

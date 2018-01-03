@@ -32,7 +32,7 @@ def main():
     config = json.loads(fh.get_config())
     db = dbh.connect_database('hashes', config['db_port_mail'])
     collection_source = db.mail_address2
-    collection_target = db.mail_address
+    collection_target = db['mails']
     documents = dbh.find_all_documents(collection_source)
 
     try:

@@ -115,7 +115,7 @@ def show_homepage():
     db = connect_database('hashes', config['db_port_passwords'])
     db2 = connect_database('hashes', config['db_port_mail'])
     collection_hash = db.password
-    collection_mail = db2.mail_address
+    collection_mail = db2['mails']
     amount_hashes = collection_hash.count()
     amount_mails = collection_mail.count()
 
@@ -215,7 +215,7 @@ def show_hash():
     db = connect_database('hashes', config['db_port_passwords'])
     db2 = connect_database('hashes', config['db_port_mail'])
     col_password = db.password
-    col_mail_address = db2.mail_address
+    col_mail_address = db2['mails']
 
     try:
         param_query = request.args.get('q')
