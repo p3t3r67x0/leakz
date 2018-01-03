@@ -16,9 +16,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-PORT_MAIL_DATABASE = 27017
-PORT_PASSWORD_DATABASE = 27017
-
 
 @app.template_filter()
 def format_time(timestamp):
@@ -112,12 +109,10 @@ def match_mail_address(document):
 @app.route('/', methods=['GET'])
 def show_homepage():
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
-    db2 = connect_database('hashes', config['db_port_mail'])
-    collection_passwords = db['passwords']
-    collection_mails = db2['mails']
-    amount_hashes = collection_passwords.count()
-    amount_mails = collection_mails.count()
+    db = connect_database(config['db_name'], config['db_port_passwords'])
+    db2 = connect_database(config['db_name'], config['db_port_mails'])
+    amount_hashes = db['passwords'].count()
+    amount_mails = db2['mails'].count()
 
     return render_template('home.html',
                            amount_hashes='{:,}'.format(amount_hashes),
@@ -146,7 +141,7 @@ def show_privacy():
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
     try:
@@ -180,7 +175,7 @@ def show_hash_list():
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
     data = search_hash_or_password(collection, param_query)
@@ -194,7 +189,7 @@ def api_query_hash(param_query):
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
     col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -212,8 +207,8 @@ def show_hash_value(param_query):
 @app.route('/search', methods=['GET'])
 def show_hash():
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
-    db2 = connect_database('hashes', config['db_port_mail'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
+    db2 = connect_database(config['db_name'], config['db_port_mails'])
     col_password = db['passwords']
     col_mail_address = db2['mails']
 
@@ -241,7 +236,7 @@ def show_hash():
 @app.route('/api/cert/<param_query>', methods=['GET'])
 def api_query_cert(param_query):
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
     collection = db.cert
 
     result_list = list(collection.find(
@@ -257,7 +252,7 @@ def api_query_cert(param_query):
 @app.route('/cert', methods=['GET'])
 def find_all_cert():
     config = json.loads(get_config())
-    db = connect_database('hashes', config['db_port_passwords'])
+    db = connect_database(config['db_name'], config['db_port_passwords'])
     collection = db.cert
 
     result_list = list(collection.find(
