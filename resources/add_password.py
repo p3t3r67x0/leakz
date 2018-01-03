@@ -36,7 +36,7 @@ def main():
     args = parser.parse_args()
     documents = fh.load_document(args.file)
     db = dbh.connect_database('hashes', args.port)
-    collection = db.password
+    collection = db['passwords']
 
     try:
         collection.create_index("password", unique=True)

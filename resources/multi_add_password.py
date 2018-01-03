@@ -15,7 +15,7 @@ import utils.mail_handling as mh
 
 def worker(passwords, args):
     db = dbh.connect_database('hashes', args.port)
-    collection = db.password
+    collection = db['passwords']
 
     try:
         collection.create_index("password", unique=True)

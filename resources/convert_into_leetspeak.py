@@ -75,7 +75,7 @@ def find_all_documents(collection):
 
 def main():
     db = connect_database()
-    collection = db.password
+    collection = db['passwords']
 
     try:
         collection.create_index("password", unique=True)
