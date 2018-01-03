@@ -38,6 +38,7 @@ def main():
                         help='set leaked website or organistion name here')
 
     args = parser.parse_args()
+    config = json.loads(fh.get_config())
     db = dbh.connect_database(config['db_name'], config['db_port_mails'])
     collection = db['mails']
 
