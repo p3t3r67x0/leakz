@@ -4,7 +4,7 @@
 import random
 import argparse
 
-import utils.file_hadndling as fh
+import utils.file_handling as fh
 
 
 def generate_leetspeak(password):
