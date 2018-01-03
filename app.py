@@ -114,10 +114,10 @@ def show_homepage():
     config = json.loads(get_config())
     db = connect_database('hashes', config['db_port_passwords'])
     db2 = connect_database('hashes', config['db_port_mail'])
-    collection_hash = db.password
-    collection_mail = db2['mails']
-    amount_hashes = collection_hash.count()
-    amount_mails = collection_mail.count()
+    collection_passwords = db['passwords']
+    collection_mails = db2['mails']
+    amount_hashes = collection_passwords.count()
+    amount_mails = collection_mails.count()
 
     return render_template('home.html',
                            amount_hashes='{:,}'.format(amount_hashes),
@@ -147,7 +147,7 @@ def show_privacy():
 def show_hash_list():
     config = json.loads(get_config())
     db = connect_database('hashes', config['db_port_passwords'])
-    collection = db.password
+    collection = db['passwords']
 
     try:
         param_skip = int(request.args.get('skip'))
@@ -181,7 +181,7 @@ def show_hash_list():
 def api_query_hash(param_query):
     config = json.loads(get_config())
     db = connect_database('hashes', config['db_port_passwords'])
-    collection = db.password
+    collection = db['passwords']
 
     data = search_hash_or_password(collection, param_query)
 
@@ -195,7 +195,7 @@ def api_query_hash(param_query):
 def show_hash_value(param_query):
     config = json.loads(get_config())
     db = connect_database('hashes', config['db_port_passwords'])
-    col_password = db.password
+    col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
     result_type = 'hash'
@@ -214,7 +214,7 @@ def show_hash():
     config = json.loads(get_config())
     db = connect_database('hashes', config['db_port_passwords'])
     db2 = connect_database('hashes', config['db_port_mail'])
-    col_password = db.password
+    col_password = db['passwords']
     col_mail_address = db2['mails']
 
     try:
