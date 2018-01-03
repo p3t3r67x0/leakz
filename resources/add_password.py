@@ -33,7 +33,9 @@ def main():
                         help='file with absolute or relative path')
 
     args = parser.parse_args()
+    config = json.loads(fh.get_config())
     documents = fh.load_document(args.file)
+
     db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
