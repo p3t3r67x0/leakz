@@ -7,7 +7,6 @@ import sys
 import json
 import pymongo
 
-
 import utils.database_helper as dbh
 import utils.file_handling as fh
 
@@ -22,7 +21,7 @@ def match_mail_address(document):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database('hashes', config['db_port_passwords'])
+    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     documents = dbh.find_all_documents(db.password)
 
     for document in documents:

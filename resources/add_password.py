@@ -30,12 +30,10 @@ def main():
         description='Add passwords from file to your mongodb instance')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
-    parser.add_argument('-p, --port', metavar='P', required=True, dest='port',
-                        help='define mongodb port to connect the database')
 
     args = parser.parse_args()
     documents = fh.load_document(args.file)
-    db = dbh.connect_database('hashes', args.port)
+    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
     try:

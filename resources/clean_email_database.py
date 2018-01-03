@@ -12,7 +12,7 @@ import utils.file_handling as fh
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database('hashes', config['db_port_mail'])
+    db = dbh.connect_database(config['db_name'], config['db_port_mail'])
     collection = db.mail_address
     documents = dbh.find_all_documents(collection)
 

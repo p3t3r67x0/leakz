@@ -34,13 +34,11 @@ def main():
         description='Add mail addresses from file to your mongodb instance')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='non structured document with leaked mail addresses')
-    parser.add_argument('-p, --port', metavar='P', required=True, dest='port',
-                        help='define mongodb port to connect the database')
     parser.add_argument('-l, --leak', metavar='L', required=True, dest='leak',
                         help='set leaked website or organistion name here')
 
     args = parser.parse_args()
-    db = dbh.connect_database('hashes', args.port)
+    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
     collection = db['mails']
 
     try:

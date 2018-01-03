@@ -30,7 +30,7 @@ def find_one_and_update(collection, mail_address_string, leak_name):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database('hashes', config['db_port_mail'])
+    db = dbh.connect_database(config['db_name'], config['db_port_mail'])
     collection_source = db.mail_address2
     collection_target = db['mails']
     documents = dbh.find_all_documents(collection_source)
