@@ -15,6 +15,11 @@ def load_document(filename):
         sys.exit(1)
 
 
+def save_document(filename, document):
+    with open(filename, 'wb') as f:
+        f.write(document.encode('utf-8'))
+
+
 def get_secret():
     path = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../../.secret'))
