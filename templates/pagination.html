@@ -1,9 +1,9 @@
-{% if result_list | length > 1 %}
+{% if result_list %}
 <div class="col-xs-12 container-flex">
   <ul class="pagination block">
     <li><a href="{{ url }}?skip={{ first_entry }}&limit=10">&laquo;</a></li>
     {% for entry in entries %}
-    <li><a href="{{ url }}?skip={{ entry }}&limit=10">{{loop.index}}</a></li>
+    <li><a href="{{ url }}?skip={{ entry }}&limit=10">{{ entry }}</a></li>
     {% endfor %}
     <li><a href="{{ url }}?skip={{ last_entry }}&limit=10">&raquo;</a></li>
   </ul>

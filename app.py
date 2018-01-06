@@ -91,13 +91,16 @@ def search_hash_or_password(collection, param_query):
 
 
 def handle_pagination(param_skip, param_limit):
+    if param_skip == 0:
+        param_skip = 10
+
     entries = range(param_skip, (param_skip + param_limit * 8), param_limit)
     last_entry = (entries[-1] + param_limit)
 
-    if not entries[0] < 1:
-        first_entry = (entries[0] - param_limit)
-    else:
+    if entries[-1] <= 80:
         first_entry = 0
+    else:
+        first_entry = (entries[-1] - 80)
 
     return first_entry, last_entry, entries
 
