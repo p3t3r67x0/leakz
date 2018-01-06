@@ -54,7 +54,7 @@ def main():
     args = parser.parse_args()
     passwords = fh.load_document(args.file)
     core_count = multiprocessing.cpu_count()
-    chunk_size = int(math.ceil(len(passwords) / core_count))
+    chunk_size = int(math.ceil(len(passwords) / core_count) - 2)
 
     for i in xrange(core_count):
         job = passwords[i * chunk_size:(i + 1) * chunk_size]
