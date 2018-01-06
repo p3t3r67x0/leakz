@@ -19,18 +19,6 @@ def worker(passwords, args):
     db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
-    try:
-        collection.create_index("password", unique=True)
-        collection.create_index("hash.md5", unique=True)
-        collection.create_index("hash.sha1", unique=True)
-        collection.create_index("hash.sha224", unique=True)
-        collection.create_index("hash.sha256", unique=True)
-        collection.create_index("hash.sha384", unique=True)
-        collection.create_index("hash.sha512", unique=True)
-    except pymongo.errors.OperationFailure as e:
-        print e
-        sys.exit(1)
-
     for password in passwords:
         password = password.strip().replace(' ', '')
 
