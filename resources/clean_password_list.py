@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import re
+import codecs
+import argparse
+
+import utils.file_handling as fh
+
+
+def match_ip_address(document):
+    return re.match(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', document)
+
+
+def match_mail_address(document):
+    return re.search(r'\b[\w.+-]+?@[\w]+[.]+[-_.\w]+\b', document)
+
+
+def match_url(document):
+    return re.match(r'[\w]?[://-_\w\d]+[.]+[-_\.\w]+', document)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Clean up any password list')
+    parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
+                        help='file with absolute or relative path')
+    parser.add_argument('-o, --out', metavar='F', required=True, dest='out',
+                        help='output file name, will be saved in same folder')
+
+    args = parser.parse_args()
+    documents = fh.load_document(args.file)
+    passwords = []
+
+    for line in documents:
+        line = line.strip()
+
+        if len(line) > 3 and len(line) < 90:
+            if not match_ip_address(line) and not match_mail_address(line) and not match_url(line):
+                passwords.append(line)
+
+    with codecs.open(args.out, 'w', 'utf-8') as f:
+        for line in passwords:
+            f.write(u'{}\n'.format(line.decode('utf-8')))
+
+
+if __name__ == '__main__':
+    main()
