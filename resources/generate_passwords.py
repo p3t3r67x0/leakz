@@ -32,6 +32,8 @@ def main():
         description='Generate password combinations from a given string')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
+    parser.add_argument('-o, --out', metavar='F', required=True, dest='out',
+                        help='output file name, will be saved in same folder')
 
     args = parser.parse_args()
     documents = fh.load_document(args.file)
@@ -49,9 +51,9 @@ def main():
 
     output = set(leetspeak)
 
-    with open('out.txt', 'w') as f:
+    with open(args.out, 'w') as f:
         f.writelines('{}\n'.format(line) for line in output)
-        print u'[I] Saved generated passwords in out.txt'
+        print u'[I] Saved generated passwords in {}'.format(args.out)
 
 
 if __name__ == '__main__':
