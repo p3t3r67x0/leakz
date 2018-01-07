@@ -20,7 +20,7 @@ def find_documents(collection, skip, limit):
 
 
 def find_all_documents(collection):
-    return collection.find({})
+    return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
 def connect_database(database, port):
