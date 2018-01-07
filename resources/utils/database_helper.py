@@ -9,7 +9,7 @@ import file_handling as fh
 
 
 def delete_one(collection, document_id, password):
-    result = db[collection._Collection__name].delete_one({'_id': ObjectId(document_id)})
+    result = collection.delete_one({'_id': ObjectId(document_id)})
     print result.deleted_count
     print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
 
