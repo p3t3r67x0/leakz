@@ -36,7 +36,7 @@ def main():
             password = document['password']
 
             if match_ip_address(password) or match_mail_address(password) or match_full_url(password):
-                dbh.delete_one(db.password, document['_id'], password)
+                dbh.delete_one(db.passwords, document['_id'], password)
 
 
 if __name__ == '__main__':
