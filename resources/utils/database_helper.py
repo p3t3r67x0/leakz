@@ -11,6 +11,10 @@ def delete_one(collection, document_id):
     print result.raw_result
 
 
+def find_documents(collection, skip, limit):
+    return collection.find({}).skip(skip).limit(limit)
+
+
 def find_all_documents(collection):
     return collection.find({})
 

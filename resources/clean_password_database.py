@@ -26,13 +26,17 @@ def match_url(document):
 def main():
     config = json.loads(fh.get_config())
     db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
-    documents = dbh.find_all_documents(db.password)
+    amount = db['passwords'].count()
+    step = 50000
 
-    for document in documents:
-        password = document['password']
+    for index in xrange(0, amount, step):
+        documents = dbh.find_documents(db['passwords'], index, (index + step))
 
-        if match_ip_address(password) or match_mail_address(password) or match_url(password):
-            dbh.delete_one(db.password, document['_id'])
+        for document in documents:
+            password = document['password']
+
+            if match_ip_address(password) or match_mail_address(password) or match_url(password):
+                dbh.delete_one(db.password, document['_id'])
 
 
 if __name__ == '__main__':
