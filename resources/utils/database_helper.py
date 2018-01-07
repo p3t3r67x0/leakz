@@ -3,11 +3,14 @@
 
 
 import pymongo
+from bson import ObjectId
+
 import file_handling as fh
 
 
 def delete_one(collection, document_id, password):
-    result = collection.delete_one({'_id': document_id})
+    result = collection.delete_one({'_id': ObjectId(document_id)})
+    print result
     print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
 
 
