@@ -6,9 +6,9 @@ import pymongo
 import file_handling as fh
 
 
-def delete_one(collection, document_id):
+def delete_one(collection, document_id, password):
     result = collection.delete_one({'_id': document_id})
-    print result.raw_result
+    print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
 
 
 def find_documents(collection, skip, limit):

@@ -12,16 +12,17 @@ import utils.file_handling as fh
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_mail'])
-    collection = db.mail_address
-    documents = dbh.find_all_documents(collection)
+    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
+    collection = db['mail_address']
+    amount = db['mails'].count()
+    step = 50000
 
-    for document in documents:
-        if not mh.is_valid_mail(document['mail']):
-            regex_match = dbh.delete_one(collection, document['_id'])
+    for index in xrange(0, amount, step):
+        documents = dbh.find_documents(db['mails'], index, (index + step))
 
-            if regex_match:
-                print u'[I] removed entry {} with id {}'.format(document['mail'], document['_id'])
+        for document in documents:
+            if not mh.is_valid_mail(document['mail']):
+                dbh.delete_one(collection, document['_id'], document['mail'])
 
 
 if __name__ == '__main__':

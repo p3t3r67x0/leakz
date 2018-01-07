@@ -16,11 +16,11 @@ def match_ip_address(document):
 
 
 def match_mail_address(document):
-    return re.match(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
+    return re.match(r'\b[\w.+-]+?[@]+[-_\w]+[.]+[-_.\w]+\b', document)
 
 
-def match_url(document):
-    return re.match(r'[\w]?[://-_\w\d]+[.]+[-_\.\w]+', document)
+def match_full_url(document):
+    return re.match(r'[\w]*?[://]+[-_\w\d]+[.]+[-_\.\w]+', document)
 
 
 def main():
@@ -35,8 +35,8 @@ def main():
         for document in documents:
             password = document['password']
 
-            if match_ip_address(password) or match_mail_address(password) or match_url(password):
-                dbh.delete_one(db.password, document['_id'])
+            if match_ip_address(password) or match_mail_address(password) or match_full_url(password):
+                dbh.delete_one(db.password, document['_id'], password)
 
 
 if __name__ == '__main__':
