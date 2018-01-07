@@ -2,44 +2,26 @@
 
 import os
 import sys
+import json
 import pymongo
 import hashlib
+
 from pymongo.errors import WriteError
 from pymongo.errors import DuplicateKeyError
 
-
-
-def connect_database():
-    secret = get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:27017/',
-                                 username='pymongo',
-                                 password=secret,
-                                 authSource='hashes',
-                                 authMechanism='SCRAM-SHA-1')
-
-    return client.hashes
-
-
-def get_secret():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../.secret'))
-    return load_document(path)[0].strip()
-
-
-def load_document(filename):
-    try:
-        with open(filename, 'rb') as f:
-            return f.readlines()
-    except IOError as e:
-        print e
-        sys.exit(1)
+import utils.database_helper as dbh
+import utils.file_handling as fh
 
 
 def insert_one(collection, password_string, hash_string):
     try:
         inserted_id = collection.insert_one(
-            {'password': password_string, 'hash': hash_string}).inserted_id
-        print u'[I] Added {} with id: {}'.format(password_string.encode('utf-8'), inserted_id)
-    except (UnicodeDecodeError, DuplicateKeyError, WriteError) as e:
+            {'password': password_string.decode('utf-8'), 'hash': hash_string}).inserted_id
+        print u'[I] Added {} with id: {}'.format(password_string.decode('utf-8'), inserted_id)
+    except (UnicodeDecodeError) as e:
+        print u'[E] {}'.format(e)
+        sys.exit(1)
+    except (DuplicateKeyError, WriteError) as e:
         print u'[E] {}'.format(e)
 
 
@@ -74,7 +56,8 @@ def find_all_documents(collection):
 
 
 def main():
-    db = connect_database()
+    config = json.loads(fh.get_config())
+    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
     try:
