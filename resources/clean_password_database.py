@@ -19,6 +19,10 @@ def match_mail_address(document):
     return re.match(r'\b[\w.+-]+?@[-_\w]+[.]+[-_.\w]+\b', document)
 
 
+def match_url(document):
+    return re.match(r'[\w]?[://-_\w\d]+[.]+[-_\.\w]+', document)
+
+
 def main():
     config = json.loads(fh.get_config())
     db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
@@ -27,7 +31,7 @@ def main():
     for document in documents:
         password = document['password']
 
-        if match_ip_address(password) or match_mail_address(password):
+        if match_ip_address(password) or match_mail_address(password) or match_url(password):
             dbh.delete_one(db.password, document['_id'])
 
 
