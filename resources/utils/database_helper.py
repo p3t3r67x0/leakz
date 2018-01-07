@@ -10,8 +10,9 @@ import file_handling as fh
 
 def delete_one(collection, document_id, password):
     result = collection.delete_one({'_id': ObjectId(document_id)})
-    print result.deleted_count
-    print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
+
+    if result.deleted_count:
+        print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
 
 
 def find_documents(collection, skip, limit):
