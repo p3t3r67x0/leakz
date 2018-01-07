@@ -10,6 +10,7 @@ from pymongo.errors import WriteError
 from pymongo.errors import DuplicateKeyError
 
 import utils.database_helper as dbh
+import utils.password_handling as ph
 import utils.file_handling as fh
 
 
@@ -25,21 +26,6 @@ def insert_one(collection, password_string, hash_string):
         print u'[E] {}'.format(e)
 
 
-def hash_password(password):
-    hash_md5 = hashlib.md5(password).hexdigest()
-    hash_sha1 = hashlib.sha1(password).hexdigest()
-    hash_sha224 = hashlib.sha224(password).hexdigest()
-    hash_sha256 = hashlib.sha256(password).hexdigest()
-    hash_sha384 = hashlib.sha384(password).hexdigest()
-    hash_sha512 = hashlib.sha512(password).hexdigest()
-    return {'md5': hash_md5,
-            'sha1': hash_sha1,
-            'sha224': hash_sha224,
-            'sha256': hash_sha256,
-            'sha384': hash_sha384,
-            'sha512': hash_sha512}
-
-
 def simple_leetspeak(text):
     pattern = {'a': '4', 'A': '4', 'b': '8', 'B': '8', 'e': '3', 'E': '3', 'g': '6',
                'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0', 's': '5', 'S': '5',
@@ -49,10 +35,6 @@ def simple_leetspeak(text):
         text = text.replace(key, value)
 
     return text
-
-
-def find_all_documents(collection):
-    return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
 def main():
@@ -72,14 +54,14 @@ def main():
         print e
         sys.exit(1)
 
-    documents = find_all_documents(collection)
+    documents = dbh.find_all_documents(collection)
 
     for document in documents:
         password = document['password'].encode('utf-8')
         leetspeak = simple_leetspeak(password)
 
         if leetspeak != password:
-            hash_string = hash_password(leetspeak)
+            hash_string = ph.hash_password(leetspeak)
             insert_one(collection, leetspeak, hash_string)
 
 
