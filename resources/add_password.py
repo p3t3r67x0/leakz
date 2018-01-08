@@ -31,6 +31,7 @@ def main():
         description='Add passwords from file to your mongodb instance')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
+    parser.add_argument('-c, --create', action='store_true', dest='create')
 
     args = parser.parse_args()
     config = json.loads(fh.get_config())
@@ -39,17 +40,18 @@ def main():
     db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
-    try:
-        collection.create_index("password", unique=True)
-        collection.create_index("hash.md5", unique=True)
-        collection.create_index("hash.sha1", unique=True)
-        collection.create_index("hash.sha224", unique=True)
-        collection.create_index("hash.sha256", unique=True)
-        collection.create_index("hash.sha384", unique=True)
-        collection.create_index("hash.sha512", unique=True)
-    except pymongo.errors.OperationFailure as e:
-        print e
-        sys.exit(1)
+    if args.create:
+        try:
+            collection.create_index("password", unique=True)
+            collection.create_index("hash.md5", unique=True)
+            collection.create_index("hash.sha1", unique=True)
+            collection.create_index("hash.sha224", unique=True)
+            collection.create_index("hash.sha256", unique=True)
+            collection.create_index("hash.sha384", unique=True)
+            collection.create_index("hash.sha512", unique=True)
+        except pymongo.errors.OperationFailure as e:
+            print e
+            sys.exit(1)
 
     for document in documents:
         password = document.strip().replace(' ', '')
@@ -57,7 +59,7 @@ def main():
         if password and not mh.extract_mail_address(password):
             password_string = uh.handle_unicode(password)
 
-            if len(password_string) > 3 and len(password_string) < 24:
+            if len(password_string) > 3 and len(password_string) < 60:
                 hash_string = ph.hash_password(password_string)
                 insert_one(collection, password_string, hash_string)
 
