@@ -4,15 +4,24 @@
 
 import pymongo
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 import file_handling as fh
 
 
-def delete_one(collection, document_id, password):
+def delete_one(collection, document_id, context):
     result = collection.delete_one({'_id': ObjectId(document_id)})
 
     if result.deleted_count:
-        print u'[I] deleted {} from collection: {}'.format(password, collection._Collection__name)
+        print u'[I] deleted {} from collection: {}'.format(context, collection._Collection__name)
+
+
+def update_one(collection, document_id, post):
+    try:
+        collection.update_one({'_id': document_id}, {
+                              "$set": post}, upsert=True)
+    except DuplicateKeyError as e:
+        print u'{}'.format(e)
 
 
 def find_documents(collection, skip, limit):

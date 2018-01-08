@@ -12,25 +12,15 @@ import utils.password_handling as ph
 import utils.file_handling as fh
 
 
-def update_one(collection, document_id, post):
-    try:
-        collection.update_one({'_id': document_id}, {
-                              "$set": post}, upsert=True)
-    except DuplicateKeyError as e:
-        print u'{}'.format(e)
-
-
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_mail'])
+    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
     collection = db['mails']
     documents = dbh.find_all_documents(collection)
 
     for document in documents:
-        document_id = document['_id']
-
         post = {'mail': ph.remove_whitespace(document['mail'])}
-        update_one(collection, document_id, post)
+        dbh.update_one(collection, document['_id'], post)
 
 
 if __name__ == '__main__':
