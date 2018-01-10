@@ -30,8 +30,8 @@ def find_one_and_update(collection, mail_address_string, leak_name):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_mail'])
-    collection_source = db.mail_address2
+    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
+    collection_source = db.mails_import
     collection_target = db['mails']
     documents = dbh.find_all_documents(collection_source)
 
@@ -44,7 +44,7 @@ def main():
                 insert_one(collection_target,
                            document['mail'], document['leak'][0])
 
-            dbh.delete_one(collection_source, document['_id'])
+            dbh.delete_one(collection_source, document['_id'], document['mail'])
     except CursorNotFound as e:
         pass
 
