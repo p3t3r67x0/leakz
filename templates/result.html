@@ -21,7 +21,7 @@
 {% elif result_type == 'mail' %}
 <div class="col-xs-12">
   <h3 class="ghost" style="margin-left: 40px">Ohhh noooo! Update your credentials.</h3>
-  <img style="position: absolute; top: 12px; left: 12px" src="./static/unsafe.svg" width="40" height="auto">
+  <img style="position: absolute; top: 12px; left: 12px" src="./unsafe.svg" width="40" height="auto">
 </div>
 <div class="col-xs-12">
   <ul class="list-unstyled">
@@ -41,6 +41,6 @@
 </div>
 {% endif %} {% elif result_list | length == 0 and result_type == 'mail' %}
 <div class="text-center col-xs-12 h2">
-  <img src="./static/safe.svg" width="250" height="auto">
+  <img src="./safe.svg" width="250" height="auto">
 </div>
 {% endif %}
