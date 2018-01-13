@@ -92,7 +92,6 @@ def main():
             sys.exit(1)
 
     total = 0
-    step = set()
     length = len(documents)
 
     for i in xrange(0, length, 4096):
@@ -101,13 +100,11 @@ def main():
         total += len(docs)
         k = int(1 + (total / length * 100))
 
-        if not k in step and k % 2 == 0:
-            step.add(k)
-            percentage = '{}%'.format(k)
-            sys.stdout.write('\r{:>57}'.format(']'))
-            sys.stdout.flush()
-            sys.stdout.write('\r{:<5}[{}'.format(percentage, update_line(k)))
-            sys.stdout.flush()
+        percentage = '{}%'.format(k)
+        sys.stdout.write('\r{:>57}'.format(']'))
+        sys.stdout.flush()
+        sys.stdout.write('\r{:<5}[{}'.format(percentage, update_line(k)))
+        sys.stdout.flush()
 
     sys.stdout.write('\n')
 
