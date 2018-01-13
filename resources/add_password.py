@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import division
+
 import sys
 import json
-import pymongo
 import argparse
+import pymongo
+from pymongo.errors import WriteError
+from pymongo.errors import BulkWriteError
+from pymongo.errors import DuplicateKeyError
 
 import utils.database_helper as dbh
 import utils.password_handling as ph
 import utils.unicode_helper as uh
 import utils.file_handling as fh
 import utils.mail_handling as mh
-
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -22,8 +26,32 @@ def insert_one(collection, password_string, hash_string):
         inserted_id = collection.insert_one(
             {'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
-    except (pymongo.errors.DuplicateKeyError, pymongo.errors.WriteError) as e:
+    except (DuplicateKeyError, WriteError) as e:
         print u'[E] {}'.format(e)
+
+
+def insert_many(collection, data):
+    try:
+        collection.insert_many(data)
+    except BulkWriteError:
+        pass
+
+
+def make_docs(docs):
+    result = []
+    for password in docs:
+        password = password.strip().replace(' ', '')
+
+        if password and not mh.extract_mail_address(password):
+            password_string = uh.handle_unicode(password)
+
+            if len(password_string) > 3 and len(password_string) < 60:
+                result.append({
+                    'password': password,
+                    'hash': ph.hash_password(password_string)
+                })
+
+    return result
 
 
 def main():
@@ -53,15 +81,13 @@ def main():
             print e
             sys.exit(1)
 
-    for document in documents:
-        password = document.strip().replace(' ', '')
-
-        if password and not mh.extract_mail_address(password):
-            password_string = uh.handle_unicode(password)
-
-            if len(password_string) > 3 and len(password_string) < 60:
-                hash_string = ph.hash_password(password_string)
-                insert_one(collection, password_string, hash_string)
+    total = 0
+    length = len(documents)
+    for i in xrange(0, length, 1024):
+        docs = make_docs(documents[i:i + 1024])
+        insert_many(collection, docs)
+        total += len(docs)
+        print total, '{:.2f}'.format(total / length * 100)
 
 
 if __name__ == '__main__':
