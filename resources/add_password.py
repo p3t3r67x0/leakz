@@ -4,6 +4,7 @@
 from __future__ import division
 
 import sys
+import math
 import json
 import argparse
 import pymongo
@@ -54,6 +55,15 @@ def make_docs(docs):
     return result
 
 
+def update_line(count):
+    line = []
+
+    for i in xrange(0, count, 2):
+        line.append('#')
+
+    return ''.join(line)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Add passwords from file to your mongodb instance')
@@ -82,12 +92,24 @@ def main():
             sys.exit(1)
 
     total = 0
+    step = set()
     length = len(documents)
-    for i in xrange(0, length, 1024):
-        docs = make_docs(documents[i:i + 1024])
+
+    for i in xrange(0, length, 4096):
+        docs = make_docs(documents[i:i + 4096])
         insert_many(collection, docs)
         total += len(docs)
-        print total, '{:.2f}'.format(total / length * 100)
+        k = int(1 + (total / length * 100))
+
+        if not k in step and k % 2 == 0:
+            step.add(k)
+            percentage = '{}%'.format(k)
+            sys.stdout.write('\r{:>57}'.format(']'))
+            sys.stdout.flush()
+            sys.stdout.write('\r{:<5}[{}'.format(percentage, update_line(k)))
+            sys.stdout.flush()
+
+    sys.stdout.write('\n')
 
 
 if __name__ == '__main__':
