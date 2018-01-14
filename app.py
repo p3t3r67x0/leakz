@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import json
+import locale
 import pymongo
 import datetime
 from flask import abort
@@ -14,6 +15,9 @@ from flask import jsonify
 from flask import render_template
 from datetime import datetime
 
+reload(sys)
+sys.setdefaultencoding('utf8')
+locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 app = Flask(__name__, static_folder='static', static_url_path='')
 
 
@@ -118,8 +122,8 @@ def show_homepage():
     amount_mails = db2['mails'].count()
 
     return render_template('home.html',
-                           amount_hashes='{:,}'.format(amount_hashes),
-                           amount_mails='{:,}'.format(amount_mails),
+                           amount_hashes='{:n}'.format(amount_hashes),
+                           amount_mails='{:n}'.format(amount_mails),
                            title='Is my mail address leaked?',
                            searchform_visible=True,
                            alert_visible=True)
