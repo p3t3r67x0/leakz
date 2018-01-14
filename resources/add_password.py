@@ -6,6 +6,7 @@ from __future__ import division
 import sys
 import math
 import json
+import locale
 import argparse
 import pymongo
 from pymongo.errors import WriteError
@@ -20,6 +21,7 @@ import utils.mail_handling as mh
 
 reload(sys)
 sys.setdefaultencoding('utf8')
+locale.setlocale(locale.LC_ALL, '')
 
 
 def insert_one(collection, password_string, hash_string):
@@ -55,13 +57,29 @@ def make_docs(docs):
     return result
 
 
-def update_line(count):
+def get_progress(count):
     line = []
 
     for i in xrange(0, count, 2):
         line.append('#')
 
     return ''.join(line)
+
+
+def print_progress(total, length, max_value=100):
+    percentage = int(1 + (total / length * max_value))
+
+    if percentage > max_value:
+        percentage = max_value
+
+    percentage_string = '{}%'.format(percentage)
+    sys.stdout.write('\r{0:>68n}/{1:n}'.format(total, length))
+    sys.stdout.flush()
+    sys.stdout.write('\r{:>57}'.format(']'))
+    sys.stdout.flush()
+    sys.stdout.write('\r{:<5}[{}'.format(
+        percentage_string, get_progress(percentage)))
+    sys.stdout.flush()
 
 
 def main():
@@ -98,13 +116,7 @@ def main():
         docs = make_docs(documents[i:i + 4096])
         insert_many(collection, docs)
         total += len(docs)
-        k = int(1 + (total / length * 100))
-
-        percentage = '{}%'.format(k)
-        sys.stdout.write('\r{:>57}'.format(']'))
-        sys.stdout.flush()
-        sys.stdout.write('\r{:<5}[{}'.format(percentage, update_line(k)))
-        sys.stdout.flush()
+        print_progress(total, length)
 
     sys.stdout.write('\n')
 
