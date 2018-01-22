@@ -21,7 +21,7 @@ import utils.mail_handling as mh
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-locale.setlocale(locale.LC_ALL, '')
+locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 
 def insert_one(collection, password_string, hash_string):
