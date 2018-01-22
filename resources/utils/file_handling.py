@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import os
 import sys
 
 
 def load_document(filename):
     try:
-        with open(filename, 'rb') as f:
+        with open(filename, 'r') as f:
             return f.readlines()
     except IOError as e:
         print e
@@ -16,8 +15,8 @@ def load_document(filename):
 
 
 def save_document(filename, document):
-    with open(filename, 'wb') as f:
-        f.write(document.encode('utf-8'))
+    with open(filename, 'w') as f:
+        f.write(document)
 
 
 def get_secret():
