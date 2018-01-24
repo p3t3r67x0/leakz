@@ -37,19 +37,21 @@ def main():
 
     args = parser.parse_args()
     documents = fh.load_document(args.file)
-    leetspeak = []
+    passwords = []
 
-    print '[I] Starting leetspeak generation'
+    print '[I] Starting password generation'
 
     for password in documents:
-        leetspeak.append(password.strip())
+        passwords.append('{}{}'.format(password.strip(), random.randint(1940, 2010)))
 
         for i in range(len(password)):
-            leetspeak.append(generate_random(password.strip()))
+            passwords.append(generate_random(password.strip()))
 
-    print '[I] Finished leetspeak generation'
+        passwords.append(generate_leetspeak(password.strip()))
 
-    output = set(leetspeak)
+    print '[I] Finished password generation'
+
+    output=set(passwords)
 
     with open(args.out, 'w') as f:
         f.writelines('{}\n'.format(line) for line in output)
