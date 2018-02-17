@@ -96,7 +96,11 @@ def search_hash_or_password(collection, param_query):
 
 def search_mail_address(collection, param_query):
     try:
-        return list(collection.find({'mail': param_query}, {'_id': 0}))[0]
+        result = list(collection.find({'mail': param_query}, {'_id': 0}))[0]
+        return {
+            'mail': result['mail'],
+            'leaked': ', '.join(result['leak'])
+        }
     except IndexError as e:
         return []
 
