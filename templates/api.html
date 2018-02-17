@@ -12,8 +12,17 @@
     {% include "header.html" %}
     <div class="container">
       <div class="col-xs-12 upanddown" style="background-color: #fefefe;">
-        <h2>Free API for everyone</h2>
-        <p>You can call the api with any plaintext string, when not found it returns a 404</p>
+        <h2>Query your mail address</h2>
+        <p>Call the api with your mail address to see if your account credentials got leaked, when not found it returns a 404</p>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl https://lea.kz/api/mail/me@example.com</code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash">{
+  "leaked": "myspace.com, adobe.com",
+  "mail": "me@example.com"
+}</code></pre>
+        </figure>
+
+        <h2>Query for any plaintext password</h2>
+        <p>Call the api with any plaintext password, when not found it returns a 404</p>
         <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl https://lea.kz/api/hash/derrick09</code></pre></figure>
         <figure class=""><pre><code class="language-bash" data-lang="bash">{
   "hash": {
@@ -27,7 +36,9 @@
   "password": "derrick09"
 }</code></pre>
         </figure>
-        <p>You can also call the api with any md5, sha1, sha224, sha256, sha384 or sha512 hash</p>
+
+        <h2>Query for any md5 or sha* hash</h2>
+        <p>Call the api with any hash like md5, sha1, sha224, sha256, sha384 or sha512, when not found it returns a 404</p>
         <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl https://lea.kz/api/hash/e6e7c0a347468dd5cc73712fa53861cb</code></pre></figure>
         <figure class=""><pre><code class="language-bash" data-lang="bash">{
   "hash": {
