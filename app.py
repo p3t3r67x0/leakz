@@ -94,6 +94,13 @@ def search_hash_or_password(collection, param_query):
     return list(collection.find({key: hash}, {'_id': 0}))
 
 
+def search_mail_address(collection, param_query):
+    try:
+        return list(collection.find({'mail': param_query}, {'_id': 0}))[0]
+    except IndexError as e:
+        return []
+
+
 def handle_pagination(param_skip, param_limit):
     if param_skip == 0:
         param_skip = 10
@@ -186,6 +193,20 @@ def api_query_hash(param_query):
     collection = db['passwords']
 
     data = search_hash_or_password(collection, param_query)
+
+    if data:
+        return jsonify(data)
+    else:
+        return abort(404)
+
+
+@app.route('/api/mail/<param_query>', methods=['GET'])
+def api_query_mail(param_query):
+    config = json.loads(get_config())
+    db = connect_database(config['db_name'], config['db_port_mails'])
+    collection = db['mails']
+
+    data = search_mail_address(collection, param_query)
 
     if data:
         return jsonify(data)
