@@ -91,7 +91,10 @@ def guess_hash(hash_string):
 def search_hash_or_password(collection, param_query):
     key, hash = guess_hash(param_query)
 
-    return list(collection.find({key: hash}, {'_id': 0}))
+    try:
+        return list(collection.find({key: hash}, {'_id': 0}))[0]
+    except IndexError as e:
+        return []
 
 
 def search_mail_address(collection, param_query):
