@@ -28,12 +28,20 @@ a {
   color: #fff;
 }
 
+code a {
+  color: #333;
+}
+
 .list-group-item a {
   color: #333;
 }
 
 a:hover, a:focus, a:active {
   color: #fff;
+}
+
+code a:hover, code a:focus, code a:active {
+  color: #333;
 }
 
 .list-group-item a:hover, .list-group-item a:focus, .list-group-item a:active {

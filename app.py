@@ -91,17 +91,31 @@ def guess_hash(hash_string):
 def search_hash_or_password(collection, param_query):
     key, hash = guess_hash(param_query)
 
+    return list(collection.find({key: hash}, {'_id': 0}))
+
+
+def api_search_hash(collection, param_query):
+    key, hash = guess_hash(param_query)
+
     try:
-        return list(collection.find({key: hash}, {'_id': 0}))[0]
+        return list(collection.find({key: hash}, {'_id': 0, 'password': 1}))[0]
     except IndexError as e:
         return []
 
 
-def search_mail_address(collection, param_query):
+def api_search_password(collection, param_query):
+    key, hash = guess_hash(param_query)
+
     try:
-        result = list(collection.find({'mail': param_query}, {'_id': 0}))[0]
+        return list(collection.find({key: hash}, {'_id': 0, 'password': 0}))[0]['hash']
+    except IndexError as e:
+        return []
+
+
+def api_search_mail(collection, param_query):
+    try:
+        result = list(collection.find({'mail': param_query}, {'_id': 0, 'mail': 0}))[0]
         return {
-            'mail': result['mail'],
             'leaked': ', '.join(result['leak'])
         }
     except IndexError as e:
@@ -199,7 +213,22 @@ def api_query_hash(param_query):
     db = connect_database(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
-    data = search_hash_or_password(collection, param_query)
+    data = api_search_hash(collection, param_query)
+
+    if data:
+        return jsonify(data)
+    else:
+        return abort(404)
+
+
+
+@app.route('/api/password/<param_query>', methods=['GET'])
+def api_query_password(param_query):
+    config = json.loads(get_config())
+    db = connect_database(config['db_name'], config['db_port_passwords'])
+    collection = db['passwords']
+
+    data = api_search_password(collection, param_query)
 
     if data:
         return jsonify(data)
@@ -213,7 +242,7 @@ def api_query_mail(param_query):
     db = connect_database(config['db_name'], config['db_port_mails'])
     collection = db['mails']
 
-    data = search_mail_address(collection, param_query)
+    data = api_search_mail(collection, param_query)
 
     if data:
         return jsonify(data)
