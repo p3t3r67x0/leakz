@@ -112,8 +112,8 @@ def main():
     total = 0
     length = len(documents)
 
-    for i in xrange(0, length, 4096):
-        docs = make_docs(documents[i:i + 4096])
+    for i in xrange(0, length, 1024):
+        docs = make_docs(documents[i:i + 1024])
         insert_many(collection, docs)
         total += len(docs)
         print_progress(total, length)

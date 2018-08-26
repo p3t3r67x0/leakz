@@ -18,6 +18,21 @@ def generate_leetspeak(password):
     return password
 
 
+def generate_year(password):
+    passwords = []
+    
+    if password[-1].isdigit():
+        return []
+
+    for year in xrange(1940, 2015):
+        passwords.append('{}{}'.format(password, year))
+
+    for year in xrange(00, 99):
+        passwords.append('{}{:02}'.format(password, year))
+
+    return passwords
+
+
 def generate_random(password):
     random_password = list(password)
 
@@ -42,11 +57,7 @@ def main():
     print '[I] Starting password generation'
 
     for password in documents:
-        passwords.append('{}{}'.format(password.strip(), random.randint(1940, 2010)))
-
-        for i in range(len(password)):
-            passwords.append(generate_random(password.strip()))
-
+        passwords = passwords + generate_year(password.strip())
         passwords.append(generate_leetspeak(password.strip()))
 
     print '[I] Finished password generation'
