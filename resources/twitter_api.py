@@ -13,10 +13,11 @@ import utils.file_handling as fh
 import utils.mail_handling as mh
 
 
-api = twitter.Api(consumer_key='jVjGC8NhqW2UBmBCdgVsq0QXr',
-                  consumer_secret='rydPMGFoQhLSUFfIBG3jGCWyxlnn4KyD6DNO9MggsDsOdNXP9G',
-                  access_token_key='126295888-egAcxblAJUZMkzja79tMuVEOE05x5z0oTvf1Cd28',
-                  access_token_secret='FXI9WyWHs09uIbbq3MIg3RMDqH6nKzpdRrBo6n5qiXMZZ')
+def connect_twitter(config):
+    return twitter.Api(consumer_key = config['consumer_key'],
+                      consumer_secret = config['consumer_secret'],
+                      access_token_key = config['access_token_key'],
+                      access_token_secret = config['access_token_secret'])
 
 
 def insert_one(collection, mail_address_string, leak_name):
@@ -64,6 +65,7 @@ def main():
         print u'{}'.format(e)
         sys.exit(1)
 
+    api = connect_twitter(config)
     items = get_user_timeline(api, 'checkmydump')
     content = iterate_items(items)
 
