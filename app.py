@@ -26,9 +26,9 @@ def format_time(timestamp):
     return datetime.strptime(timestamp.replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
 
 
-def connect_database(database, port):
+def connect_database(database, port, uri):
     secret = get_secret()
-    client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
+    client = pymongo.MongoClient('mongodb://{}:{}/'.format(uri, port),
                                  username='pymongo',
                                  password=secret,
                                  authSource=database,
@@ -144,8 +144,8 @@ def match_mail_address(document):
 @app.route('/', methods=['GET'])
 def show_homepage():
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'])
-    db2 = connect_database(config['db_name'], config['db_port_mails'])
+    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+    db2 = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
     amount_hashes = db['passwords'].count()
     amount_mails = db2['mails'].count()
 
