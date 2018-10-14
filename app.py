@@ -14,6 +14,7 @@ from flask import request
 from flask import jsonify
 from flask import render_template
 from datetime import datetime
+from influxdb import InfluxDBClient
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -209,11 +210,28 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
+    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
+    influx_client.create_database('metric')
+
     config = json.loads(get_config())
     db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
     collection = db['passwords']
 
     data = api_search_hash(collection, param_query)
+
+    influx_json_body = [{
+        'measurement': 'api_endpoint_short',
+        'tags': {
+            'endpoint': 'hash'
+        },
+        'time': datetime.utcnow(),
+        'fields': {
+            'status': 200 if data else 404,
+            'value': param_query.lower()
+        }
+    }]
+
+    influx_client.write_points(influx_json_body)
 
     if data:
         return jsonify(data)
@@ -224,11 +242,28 @@ def api_query_hash(param_query):
 
 @app.route('/api/password/<param_query>', methods=['GET'])
 def api_query_password(param_query):
+    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
+    influx_client.create_database('metric')
+
     config = json.loads(get_config())
     db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
     collection = db['passwords']
 
     data = api_search_password(collection, param_query)
+
+    influx_json_body = [{
+        'measurement': 'api_endpoint_short',
+        'tags': {
+            'endpoint': 'password'
+        },
+        'time': datetime.utcnow(),
+        'fields': {
+            'status': 200 if data else 404,
+            'value': param_query
+        }
+    }]
+
+    influx_client.write_points(influx_json_body)
 
     if data:
         return jsonify(data)
@@ -238,11 +273,28 @@ def api_query_password(param_query):
 
 @app.route('/api/mail/<param_query>', methods=['GET'])
 def api_query_mail(param_query):
+    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
+    influx_client.create_database('metric')
+
     config = json.loads(get_config())
     db = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
     collection = db['mails']
 
     data = api_search_mail(collection, param_query)
+
+    influx_json_body = [{
+        'measurement': 'api_endpoint_short',
+        'tags': {
+            'endpoint': 'mail'
+        },
+        'time': datetime.utcnow(),
+        'fields': {
+            'status': 200 if data else 404,
+            'value': param_query.lower()
+        }
+    }]
+
+    influx_client.write_points(influx_json_body)
 
     if data:
         return jsonify(data)
@@ -252,12 +304,29 @@ def api_query_mail(param_query):
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
+    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
+    influx_client.create_database('metric')
+
     config = json.loads(get_config())
     db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
     col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
     result_type = 'hash'
+
+    influx_json_body = [{
+        'measurement': 'api_endpoint_short',
+        'tags': {
+            'endpoint': 'hash'
+        },
+        'time': datetime.utcnow(),
+        'fields': {
+            'status': 200 if len(result_list) > 0 else 404,
+            'value': param_query.lower()
+        }
+    }]
+
+    influx_client.write_points(influx_json_body)
 
     return render_template('home.html',
                            title='Detailed information',
@@ -270,6 +339,9 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
+    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
+    influx_client.create_database('metric')
+
     config = json.loads(get_config())
     db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
     db2 = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
