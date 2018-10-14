@@ -103,3 +103,4 @@ ENV/
 .secret
 .config
 robots.txt
+/app
