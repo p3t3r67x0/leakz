@@ -9,9 +9,11 @@ import json
 import locale
 import argparse
 import pymongo
+
 from pymongo.errors import WriteError
 from pymongo.errors import BulkWriteError
 from pymongo.errors import DuplicateKeyError
+from pymongo.errors import OperationFailure
 
 import utils.database_helper as dbh
 import utils.password_handling as ph
@@ -105,8 +107,8 @@ def main():
             collection.create_index("hash.sha256", unique=True)
             collection.create_index("hash.sha384", unique=True)
             collection.create_index("hash.sha512", unique=True)
-        except pymongo.errors.OperationFailure as e:
-            print e
+        except OperationFailure as e:
+            print u'{}'.format(e)
             sys.exit(1)
 
     total = 0
