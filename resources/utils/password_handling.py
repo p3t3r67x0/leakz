@@ -9,6 +9,15 @@ def test_md5(password):
     return re.match(r'(\b[a-fA-F\d]{32}\b)', password)
 
 
+def extract_pastebin_password(password):
+    match = re.match(r'(\b[\w.+-]+?@[\w]+[.-]+[-_.\w]+\b)([ :]+)(.*)', password)
+
+    if match:
+        return match.group(3)
+    else:
+        return ''
+
+
 def hash_password(password):
     hash_md5 = hashlib.md5(password).hexdigest()
     hash_sha1 = hashlib.sha1(password).hexdigest()
