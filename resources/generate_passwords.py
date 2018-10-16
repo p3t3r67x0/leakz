@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import random
 import argparse
 
@@ -21,7 +20,7 @@ def generate_leetspeak(password):
 def generate_year(password):
     passwords = []
     
-    if password[-1].isdigit():
+    if len(password) > 0 and password[-1].isdigit():
         return []
 
     for year in xrange(1940, 2015):
@@ -54,19 +53,10 @@ def main():
     documents = fh.load_document(args.file)
     passwords = []
 
-    print '[I] Starting password generation'
-
-    for password in documents:
-        passwords = passwords + generate_year(password.strip())
-        passwords.append(generate_leetspeak(password.strip()))
-
-    print '[I] Finished password generation'
-
-    output=set(passwords)
-
-    with open(args.out, 'w') as f:
-        f.writelines('{}\n'.format(line) for line in output)
-        print u'[I] Saved generated passwords in {}'.format(args.out)
+    with open(args.out, 'a') as f:
+        for password in documents:
+            passwords = passwords + generate_year(password.strip())
+            f.write('{}\n'.format(generate_leetspeak(password.strip())))
 
 
 if __name__ == '__main__':
