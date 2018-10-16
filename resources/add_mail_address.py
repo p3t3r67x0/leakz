@@ -40,7 +40,7 @@ def main():
 
     args = parser.parse_args()
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
+    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
     collection = db['mails']
 
     try:

@@ -145,10 +145,9 @@ def match_mail_address(document):
 @app.route('/', methods=['GET'])
 def show_homepage():
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
-    db2 = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     amount_hashes = db['passwords'].count()
-    amount_mails = db2['mails'].count()
+    amount_mails = db['mails'].count()
 
     return render_template('home.html',
                            amount_hashes='{:n}'.format(amount_hashes),
@@ -177,7 +176,7 @@ def show_privacy():
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db['passwords']
 
     try:
@@ -210,11 +209,12 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
-    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
-    influx_client.create_database('metric')
-
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+
+    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
+    influx_client.create_database(config['influxdb_db'])
+
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db['passwords']
 
     data = api_search_hash(collection, param_query)
@@ -242,11 +242,12 @@ def api_query_hash(param_query):
 
 @app.route('/api/password/<param_query>', methods=['GET'])
 def api_query_password(param_query):
-    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
-    influx_client.create_database('metric')
-
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+
+    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
+    influx_client.create_database(config['influxdb_db'])
+
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db['passwords']
 
     data = api_search_password(collection, param_query)
@@ -273,11 +274,12 @@ def api_query_password(param_query):
 
 @app.route('/api/mail/<param_query>', methods=['GET'])
 def api_query_mail(param_query):
-    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
-    influx_client.create_database('metric')
-
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
+
+    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
+    influx_client.create_database(config['influxdb_db'])
+
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db['mails']
 
     data = api_search_mail(collection, param_query)
@@ -304,11 +306,12 @@ def api_query_mail(param_query):
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
-    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
-    influx_client.create_database('metric')
-
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+
+    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
+    influx_client.create_database(config['influxdb_db'])
+
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -339,14 +342,14 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
-    influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'metric')
-    influx_client.create_database('metric')
-
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
-    db2 = connect_database(config['db_name'], config['db_port_mails'], config['db_uri'])
+
+    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
+    influx_client.create_database(config['influxdb_db'])
+
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     col_password = db['passwords']
-    col_mail_address = db2['mails']
+    col_mail = db['mails']
 
     try:
         param_query = request.args.get('q')
@@ -354,7 +357,7 @@ def show_hash():
         param_query = ''
 
     if match_mail_address(param_query):
-        result_list = list(col_mail_address.find({'mail': param_query}))
+        result_list = list(col_mail.find({'mail': param_query}))
         result_type = 'mail'
     else:
         result_list = search_hash_or_password(col_password, param_query)
@@ -372,7 +375,7 @@ def show_hash():
 @app.route('/api/cert/<param_query>', methods=['GET'])
 def api_query_cert(param_query):
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db.cert
 
     result_list = list(collection.find(
@@ -388,7 +391,7 @@ def api_query_cert(param_query):
 @app.route('/cert', methods=['GET'])
 def find_all_cert():
     config = json.loads(get_config())
-    db = connect_database(config['db_name'], config['db_port_passwords'], config['db_uri'])
+    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
     collection = db.cert
 
     result_list = list(collection.find(

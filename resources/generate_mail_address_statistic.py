@@ -10,7 +10,7 @@ import utils.database_helper as dbh
 
 
 def main():
-    db = dbh.connect_database('hashes', '27017')
+    db = dbh.connect_database('intel', '27017')
     collection = db['mails']
     stat_dict = {}
 

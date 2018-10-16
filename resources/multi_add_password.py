@@ -16,7 +16,7 @@ import utils.mail_handling as mh
 
 def worker(passwords, args):
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
+    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
     collection = db['passwords']
 
     for password in passwords:
@@ -25,10 +25,9 @@ def worker(passwords, args):
         if password and not mh.extract_mail_address(password):
             password_string = uh.handle_unicode(password)
 
-            if len(password_string) > 3 and len(password_string) < 24:
-                hash_string = ph.hash_password(password)
-                add_password.insert_one(
-                    collection, password_string, hash_string)
+            if len(password_string) > 3 and len(password_string) < 32 and not ph.test_md5(password_string):
+                hash_string = ph.hash_password(password_string)
+                add_password.insert_one(collection, password_string, hash_string)
 
     return
 

@@ -48,9 +48,9 @@ def make_docs(docs):
         if password and not mh.extract_mail_address(password):
             password_string = uh.handle_unicode(password)
 
-            if len(password_string) > 3 and len(password_string) < 60:
+            if len(password_string) > 3 and len(password_string) < 32 and not ph.test_md5(password_string):
                 result.append({
-                    'password': password,
+                    'password': password_string,
                     'hash': ph.hash_password(password_string)
                 })
 
@@ -93,7 +93,7 @@ def main():
     config = json.loads(fh.get_config())
     documents = fh.load_document(args.file)
 
-    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
+    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
     collection = db['passwords']
 
     if args.create:

@@ -25,7 +25,7 @@ def match_full_url(document):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
+    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
     amount = db['passwords'].count()
     step = 50000
 

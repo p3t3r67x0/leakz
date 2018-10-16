@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import re
 import hashlib
+
+
+def test_md5(password):
+    return re.match(r'(\b[a-fA-F\d]{32}\b)', password)
 
 
 def hash_password(password):

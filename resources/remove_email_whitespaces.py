@@ -14,7 +14,7 @@ import utils.file_handling as fh
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_mails'])
+    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
     collection = db['mails']
     documents = dbh.find_all_documents(collection)
 
