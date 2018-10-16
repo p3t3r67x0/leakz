@@ -10,16 +10,18 @@ import argparse
 import socket
 import errno
 
+print dir(socket)
+
 
 def connect_database():
     secret = get_secret()
     client = pymongo.MongoClient('mongodb://localhost:27017/',
                                  username='pymongo',
                                  password=secret,
-                                 authSource='hashes',
+                                 authSource='intel',
                                  authMechanism='SCRAM-SHA-1')
 
-    return client.hashes
+    return client['intel']
 
 
 def get_secret():
@@ -47,12 +49,13 @@ def insert_one(collection, post):
 
 def load_certificate(domain, port=443):
     socket.timeout(3)
+    socket.setdefaulttimeout(3)
 
     try:
         cert = ssl.get_server_certificate((domain, port))
         return (OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert), cert)
     except (socket.error, socket.gaierror) as e:
-        print e
+        print 'ERROR: {}'.format(e)
         if e.errno == errno.ECONNREFUSED:
             print 'Connection refused'
 
@@ -167,7 +170,7 @@ def main():
                         help='file with absolute or relative path')
 
     db = connect_database()
-    collection = db.cert
+    collection = db['certs']
 
     try:
         collection.create_index('subject.common_name', unique=True)
