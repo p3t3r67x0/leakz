@@ -50,13 +50,12 @@ def main():
                         help='output file name, will be saved in same folder')
 
     args = parser.parse_args()
-    documents = fh.load_document(args.file)
-    passwords = []
+    passwords = fh.load_document(args.file)
 
     with open(args.out, 'a') as f:
-        for password in documents:
-            passwords = passwords + generate_year(password.strip())
-            f.write('{}\n'.format(generate_leetspeak(password.strip())))
+        for password in passwords:
+            f.writelines('\n'.join(generate_year(password.strip())))
+            f.write('\n{}'.format(generate_leetspeak(password.strip())))
 
 
 if __name__ == '__main__':
