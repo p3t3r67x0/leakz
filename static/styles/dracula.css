@@ -140,7 +140,7 @@ a.wonderworld:hover {
   color: #fff;
 }
 
-.table {
+.table, .margin-bottom-0 {
   margin-bottom: 0;
 }
 

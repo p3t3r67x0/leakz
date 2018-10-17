@@ -11,76 +11,61 @@
   <div class="wrapper">
     {% include "header.html" %}
     <div class="container">
-      <div class="row">
-        {% for i in result_list %}
-        <div class="col-xs-12">
-          <h2 class="ghost">{{ i['subject']['common_name'] }}</h2>
+      {% for i in result_list %}
+        <div class="row padding-12 upanddown">
+          <div class="col-xs-12 col-md-6">
+            <ul class="list-unstyled">
+              <li>
+                <ul class="list-group margin-bottom-0">
+                  <li class="list-group-item nightmare">
+                    <h3>{{ i['subject']['common_name'] }}</h3>
+                  </li>
+                  <li class="list-group-item waterfall"><b>CN:</b> {{ i['subject']['common_name'] }}</li>
+                  {% if i['subject']['organization'] %}
+                  <li class="list-group-item waterfall"><b>Organization:</b> {{ i['subject']['organization'] }}</li>
+                  {% endif %}
+                  {% if i['subject']['state'] and i['subject']['country_name'] %}
+                  <li class="list-group-item waterfall"><b>State:</b> {{ i['subject']['state'] }}, {{ i['subject']['country_name'] }}</li>
+                  {% endif %}
+                  {% if i['subject']['locality'] %}
+                  <li class="list-group-item waterfall"><b>Locality:</b> {{ i['subject']['locality'] }}</li>
+                  {% endif %}
+                  <li class="list-group-item waterfall"><b>Valid from:</b> {{ i['valid_not_before'] | format_time }}</li>
+                  <li class="list-group-item waterfall"><b>Valid  until:</b> {{ i['valid_not_after'] | format_time }}</li>
+                  {% if i['subject']['alt_names'] %}
+                  <li class="list-group-item waterfall"><b>Alt names:</b> {{ i['subject']['alt_names'] | join(', ') }}</li>
+                  {% endif %}
+                </ul>
+              </li>
+            </ul>
+          </div>
+          {% if i['issuer'] %}
+          <div class="col-xs-12 col-md-6">
+            <ul class="list-unstyled">
+              <li>
+                <ul class="list-group">
+                  <li class="list-group-item nightmare">
+                    <h3>Issuer</h3>
+                  </li>
+                  {% if i['issuer']['common_name'] %}
+                  <li class="list-group-item waterfall"><b>CN:</b> {{ i['issuer']['common_name'] }}</li>
+                  {% endif %}
+                  {% if i['issuer']['organization'] %}
+                  <li class="list-group-item waterfall"><b>Organization:</b> {{ i['issuer']['organization'] }}</li>
+                  {% endif %}
+                  {% if i['issuer']['state'] and i['country_name'] %}
+                  <li class="list-group-item waterfall"><b>State:</b> {{ i['issuer']['state'] }}, {{ i['issuer']['country_name'] }}</li>
+                  {% endif %}
+                  {% if i['issuer']['locality'] %}
+                  <li class="list-group-item waterfall"><b>Locality:</b> {{ i['issuer']['locality'] }}</li>
+                  {% endif %}
+                </ul>
+              </li>
+            </ul>
+          </div>
+          {% endif %}
         </div>
-        <div class="col-xs-12 col-md-6 pushmedown">
-          <ul class="list-unstyled">
-            <li>
-              <ul class="list-group">
-                <li class="list-group-item nightmare">
-                  <h3>Certificate</h3>
-                </li>
-                <li class="list-group-item waterfall"><b>CN:</b> {{ i['subject']['common_name'] }}</li>
-                {% if i['subject']['organization'] %}
-                <li class="list-group-item waterfall"><b>Organization:</b> {{ i['subject']['organization'] }}</li>
-                {% endif %}
-                {% if i['subject']['state'] and i['subject']['country_name'] %}
-                <li class="list-group-item waterfall"><b>State:</b> {{ i['subject']['state'] }}, {{ i['subject']['country_name'] }}</li>
-                {% endif %}
-                {% if i['subject']['locality'] %}
-                <li class="list-group-item waterfall"><b>Locality:</b> {{ i['subject']['locality'] }}</li>
-                {% endif %}
-                <li class="list-group-item waterfall"><b>valid from:</b> {{ i['valid_not_before'] | format_time }}</li>
-                <li class="list-group-item waterfall"><b>valid  until:</b> {{ i['valid_not_after'] | format_time }}</li>
-                {% if i['subject']['alt_names'] %}
-                <li class="list-group-item waterfall"><b>Alt names:</b> {{ i['subject']['alt_names'] | join(', ') }}</li>
-                {% endif %}
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="col-xs-12 col-md-6">
-          <ul class="list-unstyled">
-            <li>
-              <ul class="list-group">
-                <li class="list-group-item nightmare">
-                  <h3>Issuer</h3>
-                </li>
-                {% if i['issuer']['common_name'] %}
-                <li class="list-group-item waterfall"><b>CN:</b> {{ i['issuer']['common_name'] }}</li>
-                {% endif %}
-                {% if i['issuer']['organization'] %}
-                <li class="list-group-item waterfall"><b>Organization:</b> {{ i['issuer']['organization'] }}</li>
-                {% endif %}
-                {% if i['issuer']['state'] and i['country_name'] %}
-                <li class="list-group-item waterfall"><b>State:</b> {{ i['issuer']['state'] }}, {{ i['issuer']['country_name'] }}</li>
-                {% endif %}
-                {% if i['issuer']['locality'] %}
-                <li class="list-group-item waterfall"><b>Locality:</b> {{ i['issuer']['locality'] }}</li>
-                {% endif %}
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="col-xs-12">
-          <ul class="list-unstyled">
-            <li>
-              <ul class="list-group">
-                <li class="list-group-item waterfall breakme"><b>md5:</b> {{ i['hash_values']['md5'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha1:</b> {{ i['hash_values']['sha1'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha224:</b> {{ i['hash_values']['sha224'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha256:</b> {{ i['hash_values']['sha256'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha384:</b> {{ i['hash_values']['sha384'] | upper }}</li>
-                <li class="list-group-item waterfall breakme"><b>sha512:</b> {{ i['hash_values']['sha512'] | upper }}</li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        {% endfor %}
-      </div>
+      {% endfor %}
     </div>
     <div class="push"></div>
   </div>

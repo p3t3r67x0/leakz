@@ -4,13 +4,12 @@
 import os
 import sys
 import ssl
+import bson
 import OpenSSL
 import pymongo
 import argparse
 import socket
 import errno
-
-print dir(socket)
 
 
 def connect_database():
@@ -273,8 +272,11 @@ def main():
             'valid_not_before': valid_not_before(x509),
             'valid_not_after': valid_not_after(x509)
         }
-
-        insert_one(collection, post)
+        
+        try:
+            insert_one(collection, post)
+        except bson.errors.InvalidStringData as e:
+            pass
 
 
 if __name__ == '__main__':

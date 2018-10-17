@@ -376,7 +376,7 @@ def show_hash():
 def api_query_cert(param_query):
     config = json.loads(get_config())
     db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
-    collection = db.cert
+    collection = db['certs']
 
     result_list = list(collection.find(
         {'subject.common_name': param_query}, {'_id': 0}))
@@ -392,12 +392,10 @@ def api_query_cert(param_query):
 def find_all_cert():
     config = json.loads(get_config())
     db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
-    collection = db.cert
+    collection = db['certs']
 
-    result_list = list(collection.find(
-        {}, {'_id': 0, 'subject.common_name': 1, 'hash_values.md5': 1, 'valid_not_before': 1, 'valid_not_after': 1}))
-    return render_template('cert_overview.html',
-                           result_list=result_list)
+    result_list = list(collection.find({}, { '_id': 0 }).limit(10))
+    return render_template('certificate.html', result_list=result_list)
 
 
 if __name__ == '__main__':
