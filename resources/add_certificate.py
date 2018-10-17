@@ -195,7 +195,7 @@ def main():
         issuer = {}
 
         try:
-            subject['common_name'] = extract_subject_components(x509)['CN']
+            subject['common_name'] = extract_subject_components(x509)['CN'].lower()
         except KeyError as e:
             pass
 
