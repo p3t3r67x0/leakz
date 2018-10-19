@@ -96,7 +96,7 @@ def main():
 
     for line in lines:
         for string in line.split('\r\n'):
-            password = ph.extract_pastebin_password(string.split('|')[0])
+            password = ph.extract_pastebin_password(re.split(r',|>>|::| |\|', string)[0])
 
             if not mh.extract_mail_address(password):
                 password_string = uh.handle_unicode(password)
