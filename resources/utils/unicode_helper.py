@@ -6,7 +6,7 @@ def handle_unicode(password):
     try:
         password_string = password.decode('utf-8')
     except UnicodeDecodeError as e:
-            password_string = password.encode('utf-8')
+            password_string = password.encode('utf-8', 'ignore')
     except UnicodeEncodeError as e:
             password_string = password.encode('ascii', 'ignore')
 
