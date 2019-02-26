@@ -30,8 +30,7 @@ def connect_twitter(config):
 
 def insert_password(col_password, password_string, hash_string):
     try:
-        inserted_id = col_password.insert_one(
-            {'password': password_string, 'hash': hash_string}).inserted_id
+        inserted_id = col_password.insert_one({'password': password_string, 'hash': hash_string}).inserted_id
         print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
     except (DuplicateKeyError, WriteError) as e:
         print u'[E] {}'.format(e)
@@ -97,6 +96,11 @@ def main():
     for line in lines:
         for string in line.split('\r\n'):
             password = ph.extract_pastebin_password(re.split(r',|>>|::| |\|', string)[0])
+
+            try:
+                password = password.split(':')[0]
+            except KeyError as e:
+                pass
 
             if not mh.extract_mail_address(password):
                 password_string = uh.handle_unicode(password)
