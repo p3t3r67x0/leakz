@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
 import sys
@@ -27,7 +27,7 @@ def load_document(filename):
         rows = csv.reader(f, delimiter=',')
         for row in rows:
             if match_length(row[3]):
-                print row[3]
+                print(row[3])
 
 
 def main():

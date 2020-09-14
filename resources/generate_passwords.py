@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import random
 import argparse
@@ -11,7 +11,7 @@ def generate_leetspeak(password):
                'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0', 's': '5', 'S': '5',
                't': '7', 'T': '7'}
 
-    for key, value in pattern.iteritems():
+    for key, value in pattern.items():
         password = password.replace(key, value)
 
     return password
@@ -19,14 +19,14 @@ def generate_leetspeak(password):
 
 def generate_year(password):
     passwords = []
-    
+
     if len(password) > 0 and password[-1].isdigit():
         return []
 
-    for year in xrange(1940, 2015):
+    for year in range(1940, 2015):
         passwords.append('{}{}'.format(password, year))
 
-    for year in xrange(00, 99):
+    for year in range(00, 99):
         passwords.append('{}{:02}'.format(password, year))
 
     return passwords

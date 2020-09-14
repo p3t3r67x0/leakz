@@ -34,16 +34,16 @@ def load_document(filename):
         with open(filename, 'rb') as f:
             return f.readlines()
     except IOError as e:
-        print e
+        print(e)
         sys.exit(1)
 
 
 def insert_one(collection, post):
     try:
         inserted_id = collection.insert_one(post).inserted_id
-        print u'[I] Added {} with id {}'.format(post['subject']['common_name'], inserted_id)
+        print('[I] Added {} with id {}'.format(post['subject']['common_name'], inserted_id))
     except pymongo.errors.DuplicateKeyError as e:
-        print e
+        print(e)
 
 
 def load_certificate(domain, port=443):
@@ -54,9 +54,9 @@ def load_certificate(domain, port=443):
         cert = ssl.get_server_certificate((domain, port))
         return (OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert), cert)
     except (socket.error, socket.gaierror) as e:
-        print 'ERROR: {}'.format(e)
+        print('ERROR: {}'.format(e))
         if e.errno == errno.ECONNREFUSED:
-            print 'Connection refused'
+            print('Connection refused')
 
         return None
 
@@ -87,18 +87,18 @@ def extract_extensions(x509):
     subject_alt_name = []
     extensions = []
 
-    for i in xrange(x509.get_extension_count()):
+    for i in range(x509.get_extension_count()):
         try:
             extensions.append((x509.get_extension(i).get_short_name(),
                                x509.get_extension(i).__str__()))
         except OpenSSL.crypto.Error as e:
-            print e
+            print(e)
 
     for extension in extensions:
         if extension[0] == 'subjectAltName':
             subject_alt_name = extension[1].split(', ')
 
-    return map(replace_dns_string, subject_alt_name)
+    return list(map(replace_dns_string, subject_alt_name))
 
 
 def has_expired(x509):
@@ -174,7 +174,7 @@ def main():
     try:
         collection.create_index('subject.common_name', unique=True)
     except pymongo.errors.OperationFailure as e:
-        print e
+        print(e)
         sys.exit(1)
 
     args = parser.parse_args()

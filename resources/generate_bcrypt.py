@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -23,15 +23,15 @@ def connect_database(database, port):
 def insert_one(collection, password_string, hash_string):
     try:
         inserted_id = collection.insert_one({'password': password_string, 'hash': hash_string}).inserted_id
-        print u'[I] Added {} with id: {}'.format(hash_string, inserted_id)
+        print('[I] Added {} with id: {}'.format(hash_string, inserted_id))
     except (DuplicateKeyError, WriteError) as e:
-        print u'[E] {}'.format(e)
+        print('[E] {}'.format(e))
 
 
 def create_bcrypt_hash(collection):
     passwd = b"hello"
 
-    for i in xrange(7998152934):
+    for i in range(7998152934):
         salt = bcrypt.gensalt(rounds=12, prefix=b'2b')
         hashed_pwd = bcrypt.hashpw(passwd, salt)
         insert_one(collection, passwd, hashed_pwd)
@@ -44,7 +44,7 @@ def main():
     try:
         collection.create_index("hash", unique=True)
     except pymongo.errors.OperationFailure as e:
-        print e
+        print(e)
         sys.exit(1)
 
     create_bcrypt_hash(collection)

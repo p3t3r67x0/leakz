@@ -17,7 +17,7 @@ def main():
     amount = db['mails'].count()
     step = 50000
 
-    for index in xrange(0, amount, step):
+    for index in range(0, amount, step):
         documents = dbh.find_documents(db['mails'], index, (index + step))
 
         for document in documents:

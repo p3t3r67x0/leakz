@@ -1,7 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-
-from __future__ import division
 
 import sys
 import math
@@ -17,22 +15,17 @@ from pymongo.errors import OperationFailure
 
 import utils.database_helper as dbh
 import utils.password_handling as ph
-import utils.unicode_helper as uh
 import utils.file_handling as fh
 import utils.mail_handling as mh
-
-reload(sys)
-sys.setdefaultencoding('utf8')
-locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 
 def insert_one(collection, password_string, hash_string):
     try:
         inserted_id = collection.insert_one(
             {'password': password_string, 'hash': hash_string}).inserted_id
-        print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
+        print('[I] Added {} with id: {}'.format(password_string, inserted_id))
     except (DuplicateKeyError, WriteError) as e:
-        print u'[E] {}'.format(e)
+        print('[E] {}'.format(e))
 
 
 def insert_many(collection, data):
@@ -48,7 +41,7 @@ def make_docs(docs):
         password = password.strip().replace(' ', '')
 
         if password and not mh.extract_mail_address(password):
-            password_string = uh.handle_unicode(password)
+            password_string = password
 
             if len(password_string) > 3 and len(password_string) < 32 and not ph.test_md5(password_string):
                 result.append({
@@ -62,7 +55,7 @@ def make_docs(docs):
 def get_progress(count):
     line = []
 
-    for i in xrange(0, count, 2):
+    for i in range(0, count, 2):
         line.append('#')
 
     return ''.join(line)
@@ -95,7 +88,7 @@ def main():
     config = json.loads(fh.get_config())
     documents = fh.load_document(args.file)
 
-    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
+    db = dbh.connect_database(config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
     collection = db['passwords']
 
     if args.create:
@@ -108,13 +101,13 @@ def main():
             collection.create_index("hash.sha384", unique=True)
             collection.create_index("hash.sha512", unique=True)
         except OperationFailure as e:
-            print u'{}'.format(e)
+            print('{}'.format(e))
             sys.exit(1)
 
     total = 0
     length = len(documents)
 
-    for i in xrange(0, length, 1024):
+    for i in range(0, length, 1024):
         docs = make_docs(documents[i:i + 1024])
         insert_many(collection, docs)
         total += len(docs)

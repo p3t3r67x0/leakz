@@ -18,12 +18,12 @@ def insert_one(collection, password_string, hash_string):
     try:
         inserted_id = collection.insert_one(
             {'password': password_string.decode('utf-8'), 'hash': hash_string}).inserted_id
-        print u'[I] Added {} with id: {}'.format(password_string.decode('utf-8'), inserted_id)
+        print('[I] Added {} with id: {}'.format(password_string.decode('utf-8'), inserted_id))
     except (UnicodeDecodeError) as e:
-        print u'[E] {}'.format(e)
+        print('[E] {}'.format(e))
         sys.exit(1)
     except (DuplicateKeyError, WriteError) as e:
-        print u'[E] {}'.format(e)
+        print('[E] {}'.format(e))
 
 
 def simple_leetspeak(text):
@@ -31,7 +31,7 @@ def simple_leetspeak(text):
                'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0', 's': '5', 'S': '5',
                't': '7', 'T': '7'}
 
-    for key, value in pattern.iteritems():
+    for key, value in pattern.items():
         text = text.replace(key, value)
 
     return text
@@ -51,7 +51,7 @@ def main():
         collection.create_index("hash.sha384", unique=True)
         collection.create_index("hash.sha512", unique=True)
     except pymongo.errors.OperationFailure as e:
-        print e
+        print(e)
         sys.exit(1)
 
     documents = dbh.find_all_documents(collection)

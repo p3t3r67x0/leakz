@@ -8,6 +8,7 @@ import json
 import locale
 import pymongo
 import datetime
+
 from flask import abort
 from flask import Flask
 from flask import request
@@ -16,11 +17,9 @@ from flask import render_template
 from datetime import datetime
 from influxdb import InfluxDBClient
 
-reload(sys)
-sys.setdefaultencoding('utf8')
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 app = Flask(__name__, static_folder='static', static_url_path='')
-
+app.config.from_json('config.json')
 
 @app.template_filter()
 def format_time(timestamp):
@@ -28,24 +27,13 @@ def format_time(timestamp):
 
 
 def connect_database(database, port, uri):
-    secret = get_secret()
     client = pymongo.MongoClient('mongodb://{}:{}/'.format(uri, port),
                                  username='pymongo',
-                                 password=secret,
+                                 password=app.config['MONGO_PASSWORD'],
                                  authSource=database,
                                  authMechanism='SCRAM-SHA-1')
 
     return client[database]
-
-
-def get_config():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '.config'))
-    return ''.join(load_document(path))
-
-
-def get_secret():
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '.secret'))
-    return load_document(path)[0].strip()
 
 
 def load_document(filename):
@@ -53,7 +41,7 @@ def load_document(filename):
         with open(filename, 'rb') as f:
             return f.readlines()
     except IOError as e:
-        print e
+        print(e)
         sys.exit(1)
 
 
@@ -127,7 +115,7 @@ def handle_pagination(param_skip, param_limit):
     if param_skip == 0:
         param_skip = 10
 
-    entries = range(param_skip, (param_skip + param_limit * 8), param_limit)
+    entries = list(range(param_skip, (param_skip + param_limit * 8), param_limit))
     last_entry = (entries[-1] + param_limit)
 
     if entries[-1] <= 80:
@@ -144,10 +132,9 @@ def match_mail_address(document):
 
 @app.route('/', methods=['GET'])
 def show_homepage():
-    config = json.loads(get_config())
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
-    amount_hashes = db['passwords'].count()
-    amount_mails = db['mails'].count()
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    amount_hashes = db['passwords'].estimated_document_count()
+    amount_mails = db['mails'].estimated_document_count()
 
     return render_template('home.html',
                            amount_hashes='{:n}'.format(amount_hashes),
@@ -175,8 +162,7 @@ def show_privacy():
 
 @app.route('/hash/latest', methods=['GET'])
 def show_hash_list():
-    config = json.loads(get_config())
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     try:
@@ -209,12 +195,10 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
-    config = json.loads(get_config())
+    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client.create_database(app.config['INFLUX_DB'])
 
-    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
-    influx_client.create_database(config['influxdb_db'])
-
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     data = api_search_hash(collection, param_query)
@@ -242,12 +226,10 @@ def api_query_hash(param_query):
 
 @app.route('/api/password/<param_query>', methods=['GET'])
 def api_query_password(param_query):
-    config = json.loads(get_config())
+    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client.create_database(app.config['INFLUX_DB'])
 
-    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
-    influx_client.create_database(config['influxdb_db'])
-
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     data = api_search_password(collection, param_query)
@@ -274,12 +256,10 @@ def api_query_password(param_query):
 
 @app.route('/api/mail/<param_query>', methods=['GET'])
 def api_query_mail(param_query):
-    config = json.loads(get_config())
+    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client.create_database(app.config['INFLUX_DB'])
 
-    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
-    influx_client.create_database(config['influxdb_db'])
-
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['mails']
 
     data = api_search_mail(collection, param_query)
@@ -306,12 +286,10 @@ def api_query_mail(param_query):
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
-    config = json.loads(get_config())
+    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client.create_database(app.config['INFLUX_DB'])
 
-    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
-    influx_client.create_database(config['influxdb_db'])
-
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -342,12 +320,10 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
-    config = json.loads(get_config())
+    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client.create_database(app.config['INFLUX_DB'])
 
-    influx_client = InfluxDBClient(config['influxdb_uri'], config['influxdb_port'], 'root', 'root', config['influxdb_db'])
-    influx_client.create_database(config['influxdb_db'])
-
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     col_password = db['passwords']
     col_mail = db['mails']
 
@@ -374,8 +350,7 @@ def show_hash():
 
 @app.route('/api/cert/<param_query>', methods=['GET'])
 def api_query_cert(param_query):
-    config = json.loads(get_config())
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['certs']
 
     result_list = list(collection.find(
@@ -390,8 +365,7 @@ def api_query_cert(param_query):
 
 @app.route('/cert', methods=['GET'])
 def find_all_cert():
-    config = json.loads(get_config())
-    db = connect_database(config['mongodb_db'], config['mongodb_port'], config['mongodb_uri'])
+    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['certs']
 
     result_list = list(collection.find({}, { '_id': 0 }).limit(10))
@@ -399,4 +373,4 @@ def find_all_cert():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, threaded=True)
+    app.run(host='127.0.0.1', port=5000, threaded=True)

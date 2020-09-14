@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import random
 
@@ -13,5 +13,5 @@ def gen_phone():
 
     return '{}-{}-{}'.format(first,second, last)
 
-for _ in xrange(1000000000000):
-    print gen_phone()
+for _ in range(1000000000000):
+    print(gen_phone())

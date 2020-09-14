@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -6,14 +6,14 @@ import pymongo
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-import file_handling as fh
+from . import file_handling as fh
 
 
 def delete_one(collection, document_id, context):
     result = collection.delete_one({'_id': ObjectId(document_id)})
 
     if result.deleted_count:
-        print u'[I] deleted {} from collection: {}'.format(context, collection._Collection__name)
+        print(('[I] deleted {} from collection: {}'.format(context, collection._Collection__name)))
 
 
 def update_one(collection, document_id, post):
@@ -21,7 +21,7 @@ def update_one(collection, document_id, post):
         collection.update_one({'_id': document_id}, {
                               "$set": post}, upsert=True)
     except DuplicateKeyError as e:
-        print u'{}'.format(e)
+        print(('{}'.format(e)))
 
 
 def find_documents(collection, skip, limit):
@@ -32,8 +32,7 @@ def find_all_documents(collection):
     return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
-def connect_database(database, port):
-    secret = fh.get_secret()
+def connect_database(database, port, secret):
     client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
                                  username='pymongo',
                                  password=secret,

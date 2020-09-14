@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import json
@@ -7,7 +7,7 @@ import twitter
 import requests
 import re
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from pymongo.errors import WriteError
 from pymongo.errors import BulkWriteError
@@ -31,16 +31,16 @@ def connect_twitter(config):
 def insert_password(col_password, password_string, hash_string):
     try:
         inserted_id = col_password.insert_one({'password': password_string, 'hash': hash_string}).inserted_id
-        print u'[I] Added {} with id: {}'.format(password_string, inserted_id)
+        print('[I] Added {} with id: {}'.format(password_string, inserted_id))
     except (DuplicateKeyError, WriteError) as e:
-        print u'[E] {}'.format(e)
+        print('[E] {}'.format(e))
 
 
 def insert_mail(col_mail, mail_address, leak_name):
     try:
         inserted_id = col_mail.insert_one({'mail': mail_address,
                                              'leak': [leak_name]}).inserted_id
-        print u'[I] Added {} with id {}'.format(mail_address.decode('utf-8'), inserted_id)
+        print('[I] Added {} with id {}'.format(mail_address.decode('utf-8'), inserted_id))
     except DuplicateKeyError as e:
         update_mail(col_mail, mail_address, leak_name)
 
@@ -49,7 +49,7 @@ def update_mail(col_mail, mail_address, leak_name):
     result = col_mail.find_one_and_update({'mail': mail_address, },
                                             {'$addToSet': {'leak': leak_name}})
 
-    print u'[I] Updated {} with id {}'.format(result['mail'], result['_id'])
+    print('[I] Updated {} with id {}'.format(result['mail'], result['_id']))
 
 
 def get_user_timeline(api, username):
@@ -86,7 +86,7 @@ def main():
         col_password.create_index("hash.sha384", unique=True)
         col_password.create_index("hash.sha512", unique=True)
     except OperationFailure as e:
-        print u'{}'.format(e)
+        print('{}'.format(e))
         sys.exit(1)
 
     api = connect_twitter(config)

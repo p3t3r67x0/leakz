@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 import os
@@ -17,7 +17,7 @@ def insert_one(collection, mail_address_string, leak_name):
     try:
         inserted_id = collection.insert_one({'mail': mail_address_string,
                                              'leak': [leak_name]}).inserted_id
-        print u'[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id)
+        print('[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id))
     except DuplicateKeyError as e:
         find_one_and_update(collection, mail_address_string, leak_name)
 
@@ -25,7 +25,7 @@ def insert_one(collection, mail_address_string, leak_name):
 def find_one_and_update(collection, mail_address_string, leak_name):
     result = collection.find_one_and_update({'mail': mail_address_string},
                                             {'$addToSet': {'leak': leak_name}})
-    print u'[I] Updated {} with id {}'.format(result['mail'], result['_id'])
+    print('[I] Updated {} with id {}'.format(result['mail'], result['_id']))
 
 
 def main():

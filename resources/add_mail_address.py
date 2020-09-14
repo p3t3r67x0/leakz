@@ -18,7 +18,7 @@ def insert_one(collection, mail_address_string, leak_name):
     try:
         inserted_id = collection.insert_one({'mail': mail_address_string,
                                              'leak': [leak_name]}).inserted_id
-        print u'[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id)
+        print('[I] Added {} with id {}'.format(mail_address_string.decode('utf-8'), inserted_id))
     except pymongo.errors.DuplicateKeyError as e:
         find_one_and_update(collection, mail_address_string, leak_name)
 
@@ -27,7 +27,7 @@ def find_one_and_update(collection, mail_address_string, leak_name):
     result = collection.find_one_and_update({'mail': mail_address_string, },
                                             {'$addToSet': {'leak': leak_name}})
 
-    print u'[I] Updated {} with id {}'.format(result['mail'], result['_id'])
+    print('[I] Updated {} with id {}'.format(result['mail'], result['_id']))
 
 
 def main():
@@ -46,7 +46,7 @@ def main():
     try:
         collection.create_index('mail', unique=True)
     except pymongo.errors.OperationFailure as e:
-        print u'{}'.format(e)
+        print('{}'.format(e))
         sys.exit(1)
 
     document = ' '.join(fh.load_document(args.file))

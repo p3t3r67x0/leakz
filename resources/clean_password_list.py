@@ -49,7 +49,7 @@ def main():
 
     with codecs.open(args.out, 'w', 'utf-8') as f:
         for line in passwords:
-            f.write(u'{}\n'.format(line))
+            f.write('{}\n'.format(line))
 
 
 if __name__ == '__main__':

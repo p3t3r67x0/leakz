@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 
-from __future__ import division
+
 from operator import itemgetter
 
 import re
@@ -32,7 +32,7 @@ def main():
     sorted_list = []
     vol_amount_all = 0
 
-    for item in sorted(stat_dict.items(), key=lambda x: x[1], reverse=True):
+    for item in sorted(list(stat_dict.items()), key=lambda x: x[1], reverse=True):
         vol_amount_all = item[1] + vol_amount_all
         sorted_list.append(item)
 
@@ -40,7 +40,7 @@ def main():
         calc = round(i[1] / vol_amount_all * 100, 2)
 
         if calc > 0:
-            print calc, i[0]
+            print(calc, i[0])
 
 
 if __name__ == '__main__':
