@@ -14,18 +14,21 @@ sudo apt install influxdb mongodb nginx
 
 ### Dependencies
 
-Now we want to install the dependencies.
+Now install the dependencies and activate the virtualenv enviroment
 
 ```sh
+sudo apt install python3-pip
+sudo pip3 install virtualenv
 virtualenv -p /usr/bin/python3 venv
 source venv/bin/activate
+pip3 install setuptools==45
 pip3 install -r requirements
 ```
 
 
 ### Configuration
 
-Here we create a file called `config.json` in the current directory.
+Here we create a file called `config.json` in the current directory
 
 ```json
 {
