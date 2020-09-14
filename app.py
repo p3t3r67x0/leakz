@@ -17,8 +17,7 @@ from flask import render_template
 from datetime import datetime
 from influxdb import InfluxDBClient
 
-locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
-app = Flask(__name__, static_folder='static', static_url_path='')
+app = Flask(__name__, static_url_path='')
 app.config.from_json('config.json')
 
 @app.template_filter()
