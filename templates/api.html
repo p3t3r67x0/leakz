@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>api leaked passwords, leaked mails and leaked hashes - lea.kz</title>
+  <title>api leaked passwords, leaked mails and leaked hashes - hashcrack.me</title>
   {% include "meta.html" %}
 </head>
 
@@ -14,7 +14,7 @@
       <div class="col-xs-12 upanddown" style="background-color: #fefefe;">
         <h2>Return leaked details for your mail address</h2>
         <p>Call the api with your mail address to see if your account credentials got leaked, when not found it returns a 404</p>
-        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://lea.kz/api/mail/me@example.com">https://lea.kz/api/mail/me@example.com</a></code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://hashcrack.me/api/mail/me@example.com">https://hashcrack.me/api/mail/me@example.com</a></code></pre></figure>
         <figure class=""><pre><code class="language-bash" data-lang="bash">{
   "leaked": "myspace.com, adobe.com"
 }</code></pre>
@@ -22,7 +22,7 @@
         <br>
         <h2>Return password from any md5 or sha* hash</h2>
         <p>Call the api with any hash like md5, sha1, sha224, sha256, sha384 or sha512, when not found it returns a 404</p>
-        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://lea.kz/api/hash/e6e7c0a347468dd5cc73712fa53861cb">https://lea.kz/api/hash/e6e7c0a347468dd5cc73712fa53861cb</a></code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb">https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb</a></code></pre></figure>
         <figure class=""><pre><code class="language-bash" data-lang="bash">{
   "password": "derrick09"
 }</code></pre>
@@ -30,7 +30,7 @@
         <br>
         <h2>Return md5 and sha* hashes for any password</h2>
         <p>Call the api with any plaintext password, when not found it returns a 404</p>
-        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://lea.kz/api/password/derrick09">https://lea.kz/api/password/derrick09</a></code></pre></figure>
+        <figure class=""><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>curl <a href="https://hashcrack.me/api/password/derrick09">https://hashcrack.me/api/password/derrick09</a></code></pre></figure>
         <figure class=""><pre><code class="language-bash" data-lang="bash">{
   "md5": "e6e7c0a347468dd5cc73712fa53861cb",
   "sha1": "2b8ceabd027c1751972cae3e5940f5007a28960b",
