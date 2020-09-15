@@ -4,16 +4,16 @@
 <head>
   <meta charset="utf-8">
   <title>ssl, tls, tls1.3 certificates - hashcrack.me</title>
-  {% include "meta.html" %}
+  {% include "meta.j2" %}
 </head>
 
 <body>
   <div class="wrapper">
-    {% include "header.html" %}
+    {% include "header.j2" %}
     <div class="container">
       {% for i in result_list %}
         <div class="row padding-12 upanddown">
-          <div class="col-xs-12 col-md-6">
+          <div class="w-full col-md-6">
             <ul class="list-unstyled">
               <li>
                 <ul class="list-group margin-bottom-0">
@@ -40,7 +40,7 @@
             </ul>
           </div>
           {% if i['issuer'] %}
-          <div class="col-xs-12 col-md-6">
+          <div class="w-full col-md-6">
             <ul class="list-unstyled">
               <li>
                 <ul class="list-group">
@@ -69,7 +69,7 @@
     </div>
     <div class="push"></div>
   </div>
-  {% include "footer.html" %}
+  {% include "footer.j2" %}
 </body>
 
 </html>

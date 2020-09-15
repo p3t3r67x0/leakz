@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Find your plaintext password - hashcrack.me</title>
+	{% include "meta.j2" %}
+</head>
+
+<div id="app" class="flex flex-col min-h-screen relative">
+	{% include "header.j2" %}
+	<div class="flex-grow mx-auto container pt-12 sm:pt-20">
+		<div class="m-3">
+			<div>
+				<h2 class="text-white text-2xl mb-1">{{ title }}</h2>
+				{% if searchform_visible %}
+				<div class="mb-6">
+					<form class="flex flex-wrap items-stretch w-full relative" action="/search" role="form">
+						<input type="text" name="q" value="{% if param_query | length > 0 %}{{ param_query }}{% endif %}" class="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border h-10 border-grey-light rounded rounded-r-none px-3 relative"
+							placeholder="*********">
+						<div class="flex -mr-px">
+							<button type="submit" class="flex items-center leading-normal bg-gray-400 rounded rounded-l-none border border-l-0 border-grey-light px-3 whitespace-no-wrap text-grey-dark text-sm">Search</button>
+						</div>
+					</form>
+					<div>
+						<small class="claudy">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512 hash</small>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+			{% include "result.j2" %} {% if alert_visible %}
+			<div class="sm:flex items-center justify-center text-gray-700">
+				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 sm:mr-6 mb-4 sm:mb-0">
+					<div class="font-bold text-4xl p-4">
+						<h1 class="text-center">{{ amount_mails }}</h1>
+					</div>
+					<div class="bg-gray-700 text-white text-center p-4">
+						<p class="text-xl">Mail addresses</p>
+					</div>
+				</div>
+				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 sm:ml-6">
+					<div class="font-bold text-4xl p-4">
+						<h1 class="text-center">{{ amount_hashes }}</h1>
+					</div>
+					<div class="bg-gray-700 text-white text-center p-4">
+						<p class="text-xl">Hash values</p>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	{% include "footer.j2" %}
+</div>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			showNav: false
+		},
+		methods: {
+			hideNav() {
+				return this.showNav = false
+			},
+			toggleNav() {
+				return this.showNav = !this.showNav
+			}
+		}
+	})
+</script>

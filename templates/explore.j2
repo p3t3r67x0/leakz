@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Explore pre compiled hash values - hashcrack.me</title>
+	{% include "meta.j2" %}
+</head>
+
+<body>
+	<div id="app" class="flex flex-col min-h-screen relative">
+		{% include "header.j2" %}
+		<div class="flex-grow mx-auto container pt-12 sm:pt-20">
+			<div class="m-3">
+				<div class="w-full">
+					<h2 class="text-white text-2xl mb-2">Explore pre compiled hashes</h2>
+				</div>
+				{% include "result.j2" %}
+				{% include "pagination.j2" %}
+			</div>
+		</div>
+		<div class="push"></div>
+	</div>
+	{% include "footer.j2" %}
+</body>
+
+</html>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			showNav: false
+		},
+		methods: {
+			hideNav() {
+				return this.showNav = false
+			},
+			toggleNav() {
+				return this.showNav = !this.showNav
+			}
+		}
+	})
+</script>

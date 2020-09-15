@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>API leaked passwords, leaked hashes - hashcrack.me</title>
+  {% include "meta.j2" %}
+</head>
+
+<body>
+  <div id="app" class="flex flex-col min-h-screen relative">
+  	{% include "header.j2" %}
+  	<div class="flex-grow mx-auto container pt-12 sm:pt-20">
+  		<div class="bg-gray-300 rounded p-3 m-3">
+        <h2 class="text-gray-800 text-2xl">Return leaked details for your mail address</h2>
+        <p class="mb-3">Call the api with your mail address to see if your account credentials got leaked, when not found it returns a 404</p>
+        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/mail/me@example.com">https://hashcrack.me/api/mail/me@example.com</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+  "leaked": "myspace.com, adobe.com"
+}</code></pre>
+        </figure>
+        <br>
+        <h2 class="text-gray-800 text-2xl">Return password from any md5 or sha* hash</h2>
+        <p class="mb-3">Call the api with any hash like md5, sha1, sha224, sha256, sha384 or sha512, when not found it returns a 404</p>
+        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb">https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+  "password": "derrick09"
+}</code></pre>
+        </figure>
+        <br>
+        <h2 class="text-gray-800 text-2xl">Return md5 and sha* hashes for any password</h2>
+        <p class="mb-3">Call the api with any plaintext password, when not found it returns a 404</p>
+        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/password/derrick09">https://hashcrack.me/api/password/derrick09</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+  "md5": "e6e7c0a347468dd5cc73712fa53861cb",
+  "sha1": "2b8ceabd027c1751972cae3e5940f5007a28960b",
+  "sha224": "68a465d743cd4e5d81855d67178ac4f078d43804f9ad5a9fb8d282e2",
+  "sha256": "9852a8e206e8e7031a2a17e97ae0c71135ca3a197a7caa4e3e35a2af7ce7bee1",
+  "sha384": "889ef67ffb66f51d687008c0258504e6d0b22c6ebb7746c1ffa3e2d74ab24513b13b8ccf71c0d399fae10b485577eae1",
+  "sha512": "5d06a40e653fc3db2100fc15684c51ddb38914bddd944d8e6161be76f161c0bddbe0db2b50e5919053057de1064894b1b23c0e0e56140145982605ab3e67ba96"
+}</code></pre>
+        </figure>
+      </div>
+    </div>
+  </div>
+  {% include "footer.j2" %}
+</body>
+
+</html>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			showNav: false
+		},
+		methods: {
+			hideNav() {
+				return this.showNav = false
+			},
+			toggleNav() {
+				return this.showNav = !this.showNav
+			}
+		}
+	})
+</script>

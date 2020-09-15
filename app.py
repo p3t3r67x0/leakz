@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 import os
@@ -17,6 +17,7 @@ from flask import render_template
 from datetime import datetime
 from influxdb import InfluxDBClient
 
+locale.setlocale(locale.LC_ALL, '')
 app = Flask(__name__, static_url_path='')
 app.config.from_json('config.json')
 
@@ -135,31 +136,30 @@ def show_homepage():
     amount_hashes = db['passwords'].estimated_document_count()
     amount_mails = db['mails'].estimated_document_count()
 
-    return render_template('home.html',
+    return render_template('home.j2',
                            amount_hashes='{:n}'.format(amount_hashes),
                            amount_mails='{:n}'.format(amount_mails),
-                           title='Is my mail address leaked?',
+                           title='Lookup your hashed password',
                            searchform_visible=True,
                            alert_visible=True)
 
 
 @app.route('/api', methods=['GET'])
 def show_api():
-    return render_template('api.html',
-                           menu_is_active='api')
+    return render_template('api.j2', menu_is_active='api')
 
 
 @app.route('/legal', methods=['GET'])
 def show_legal():
-    return render_template('legal.html')
+    return render_template('legal.j2')
 
 
 @app.route('/privacy', methods=['GET'])
 def show_privacy():
-    return render_template('privacy.html')
+    return render_template('privacy.j2')
 
 
-@app.route('/hash/latest', methods=['GET'])
+@app.route('/explore', methods=['GET'])
 def show_hash_list():
     db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
@@ -182,10 +182,10 @@ def show_hash_list():
     result_list = list(collection.find().skip(
         param_skip).limit(param_limit).sort([('$natural', -1)]))
 
-    return render_template('latest.html',
+    return render_template('explore.j2',
                            result_type='hash',
-                           url='/hash/latest',
-                           menu_is_active='latest',
+                           url='/explore',
+                           menu_is_active='explore',
                            result_list=result_list,
                            entries=pagination_list[2],
                            last_entry=pagination_list[1],
@@ -308,7 +308,7 @@ def show_hash_value(param_query):
 
     influx_client.write_points(influx_json_body)
 
-    return render_template('home.html',
+    return render_template('home.j2',
                            title='Detailed information',
                            result_list=result_list,
                            result_type=result_type,
@@ -338,11 +338,11 @@ def show_hash():
         result_list = search_hash_or_password(col_password, param_query)
         result_type = 'hash'
 
-    return render_template('home.html',
+    return render_template('home.j2',
                            result_list=result_list,
                            result_type=result_type,
                            param_query=param_query,
-                           title='Is my mail address leaked?',
+                           title='Lookup your hashed password',
                            pagination_visible=False,
                            searchform_visible=True)
 
@@ -358,7 +358,7 @@ def api_query_cert(param_query):
     if len(result_list) == 0:
         return 'ERROR no result was found'
 
-    return render_template('certificate.html',
+    return render_template('certificate.j2',
                            result_list=result_list)
 
 
@@ -368,8 +368,8 @@ def find_all_cert():
     collection = db['certs']
 
     result_list = list(collection.find({}, { '_id': 0 }).limit(10))
-    return render_template('certificate.html', result_list=result_list)
+    return render_template('certificate.j2', result_list=result_list)
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, threaded=True)
+    app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)
