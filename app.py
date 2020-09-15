@@ -347,29 +347,5 @@ def show_hash():
                            searchform_visible=True)
 
 
-@app.route('/api/cert/<param_query>', methods=['GET'])
-def api_query_cert(param_query):
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
-    collection = db['certs']
-
-    result_list = list(collection.find(
-        {'subject.common_name': param_query}, {'_id': 0}))
-
-    if len(result_list) == 0:
-        return 'ERROR no result was found'
-
-    return render_template('certificate.j2',
-                           result_list=result_list)
-
-
-@app.route('/cert', methods=['GET'])
-def find_all_cert():
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
-    collection = db['certs']
-
-    result_list = list(collection.find({}, { '_id': 0 }).limit(10))
-    return render_template('certificate.j2', result_list=result_list)
-
-
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)

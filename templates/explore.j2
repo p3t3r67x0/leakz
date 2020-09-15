@@ -11,7 +11,7 @@
 	<div id="app" class="flex flex-col min-h-screen relative">
 		{% include "header.j2" %}
 		<div class="flex-grow mx-auto container pt-12 sm:pt-20">
-			<div class="m-3">
+			<div class="m-3 sm:m-0">
 				<div class="w-full">
 					<h2 class="text-white text-2xl mb-2">Explore pre compiled hashes</h2>
 				</div>
@@ -19,9 +19,8 @@
 				{% include "pagination.j2" %}
 			</div>
 		</div>
-		<div class="push"></div>
+		{% include "footer.j2" %}
 	</div>
-	{% include "footer.j2" %}
 </body>
 
 </html>

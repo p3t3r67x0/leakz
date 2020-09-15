@@ -11,7 +11,7 @@
   <div id="app" class="flex flex-col min-h-screen relative">
   	{% include "header.j2" %}
   	<div class="flex-grow mx-auto container pt-12 sm:pt-20">
-  		<div class="bg-gray-300 rounded p-3 m-3">
+  		<div class="bg-gray-300 rounded p-3 m-3 sm:m-0">
         <h2 class="text-gray-800 text-2xl">Return leaked details for your mail address</h2>
         <p class="mb-3">Call the api with your mail address to see if your account credentials got leaked, when not found it returns a 404</p>
         <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/mail/me@example.com">https://hashcrack.me/api/mail/me@example.com</a></code></pre></figure>

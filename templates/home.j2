@@ -10,8 +10,8 @@
 <div id="app" class="flex flex-col min-h-screen relative">
 	{% include "header.j2" %}
 	<div class="flex-grow mx-auto container pt-12 sm:pt-20">
-		<div class="m-3">
-			<div>
+		<div class="m-3 sm:m-0">
+			<div class="mb-4 {% if result_list | length == 0 %}sm:mb-24{% endif %}">
 				<h2 class="text-white text-2xl mb-1">{{ title }}</h2>
 				{% if searchform_visible %}
 				<div class="mb-6">
@@ -23,23 +23,23 @@
 						</div>
 					</form>
 					<div>
-						<small class="claudy">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512 hash</small>
+						<small class="text-gray-100">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512 hash</small>
 					</div>
 				</div>
 				{% endif %}
 			</div>
 			{% include "result.j2" %} {% if alert_visible %}
 			<div class="sm:flex items-center justify-center text-gray-700">
-				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 sm:mr-6 mb-4 sm:mb-0">
-					<div class="font-bold text-4xl p-4">
+				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 xl:w-3/12 sm:mr-6 mb-4 sm:mb-0">
+					<div class="text-4xl p-4">
 						<h1 class="text-center">{{ amount_mails }}</h1>
 					</div>
 					<div class="bg-gray-700 text-white text-center p-4">
 						<p class="text-xl">Mail addresses</p>
 					</div>
 				</div>
-				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 sm:ml-6">
-					<div class="font-bold text-4xl p-4">
+				<div class="bg-gray-300 rounded sm:w-6/12 md:w-4/12 xl:w-3/12 sm:ml-6">
+					<div class="text-4xl p-4">
 						<h1 class="text-center">{{ amount_hashes }}</h1>
 					</div>
 					<div class="bg-gray-700 text-white text-center p-4">
