@@ -136,7 +136,7 @@ def replace_ascii(text):
 
     for i in pattern.items():
         text = text.replace(i[1], i[0])
-	print(text)
+        print(text)
 
     return text
 
