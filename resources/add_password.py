@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+import re
 import sys
-import math
 import json
-import locale
 import argparse
-import pymongo
 
 from pymongo.errors import WriteError
 from pymongo.errors import BulkWriteError
@@ -31,22 +29,23 @@ def insert_one(collection, password_string, hash_string):
 def insert_many(collection, data):
     try:
         collection.insert_many(data)
+    except TypeError:
+        pass
     except BulkWriteError:
         pass
 
 
 def make_docs(docs):
     result = []
+
     for password in docs:
-        password = password.strip().replace(' ', '')
+        password = re.sub(r'\s', '', password.strip())
 
-        if password and not mh.extract_mail_address(password):
-            password_string = password
-
-            if len(password_string) > 3 and len(password_string) < 32 and not ph.test_md5(password_string):
+        if not ph.test_md5(password) and not mh.extract_mail_address(password):
+            if len(password) > 3 and len(password) < 32:
                 result.append({
-                    'password': password_string,
-                    'hash': ph.hash_password(password_string)
+                    'password': password,
+                    'hash': ph.hash_password(password)
                 })
 
     return result
@@ -88,7 +87,8 @@ def main():
     config = json.loads(fh.get_config())
     documents = fh.load_document(args.file)
 
-    db = dbh.connect_database(config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
+    db = dbh.connect_database(
+        config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
     collection = db['passwords']
 
     if args.create:
@@ -107,8 +107,8 @@ def main():
     total = 0
     length = len(documents)
 
-    for i in range(0, length, 1024):
-        docs = make_docs(documents[i:i + 1024])
+    for i in range(0, length, 2048):
+        docs = make_docs(documents[i:i + 2048])
         insert_many(collection, docs)
         total += len(docs)
         print_progress(total, length)

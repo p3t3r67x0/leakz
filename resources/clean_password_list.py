@@ -4,7 +4,6 @@
 import re
 import codecs
 import argparse
-import ipaddress
 
 import utils.file_handling as fh
 
@@ -26,8 +25,7 @@ def match_url(document):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Clean up any password list')
+    parser = argparse.ArgumentParser(description='Clean up any password list')
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
     parser.add_argument('-o, --out', metavar='F', required=True, dest='out',
@@ -41,10 +39,11 @@ def main():
         line = line.strip()
 
         if len(line) > 3 and len(line) < 90:
-            if not match_ipv6_address(line) and not match_ipv4_address(line) and not match_mail_address(line) and not match_url(line):
+            if not match_ipv6_address(line) and not match_ipv4_address(line) \
+                    and not match_mail_address(line) and not match_url(line):
                 try:
                     passwords.append(line.decode('utf-8'))
-                except UnicodeDecodeError as e:
+                except UnicodeDecodeError:
                     passwords.append(line)
 
     with codecs.open(args.out, 'w', 'utf-8') as f:

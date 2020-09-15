@@ -7,9 +7,9 @@ import utils.file_handling as fh
 
 
 def generate_leetspeak(password):
-    pattern = {'a': '4', 'A': '4', 'b': '8', 'B': '8', 'e': '3', 'E': '3', 'g': '6',
-               'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0', 's': '5', 'S': '5',
-               't': '7', 'T': '7'}
+    pattern = {'a': '4', 'A': '4', 'b': '8', 'B': '8', 'e': '3', 'E': '3',
+               'g': '6', 'G': '6', 'i': '1', 'I': '1', 'o': '0', 'O': '0',
+               's': '5', 'S': '5', 't': '7', 'T': '7'}
 
     for key, value in pattern.items():
         password = password.replace(key, value)

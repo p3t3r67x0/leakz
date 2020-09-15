@@ -7,7 +7,7 @@ import sys
 
 def load_document(filename):
     try:
-        with open(filename, 'r') as f:
+        with open(filename, encoding='utf-8', errors='replace') as f:
             return f.readlines()
     except IOError as e:
         print(e)
