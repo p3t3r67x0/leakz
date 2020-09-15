@@ -14,24 +14,24 @@
   		<div class="bg-gray-300 rounded p-3 m-3 sm:m-0">
         <h2 class="text-gray-800 text-2xl">Return leaked details for your mail address</h2>
         <p class="mb-3">Call the api with your mail address to see if your account credentials got leaked, when not found it returns a 404</p>
-        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/mail/me@example.com">https://hashcrack.me/api/mail/me@example.com</a></code></pre></figure>
-        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+        <figure class="bg-gray-400"><pre class="p-2 mb-2 overflow-x-scroll"><code class="break-all font-mono font-bold"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/mail/me@example.com">https://hashcrack.me/api/mail/me@example.com</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2 overflow-x-scroll"><code class="break-all font-mono">{
   "leaked": "myspace.com, adobe.com"
 }</code></pre>
         </figure>
         <br>
         <h2 class="text-gray-800 text-2xl">Return password from any md5 or sha* hash</h2>
         <p class="mb-3">Call the api with any hash like md5, sha1, sha224, sha256, sha384 or sha512, when not found it returns a 404</p>
-        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb">https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb</a></code></pre></figure>
-        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+        <figure class="bg-gray-400"><pre class="p-2 mb-2 overflow-x-scroll"><code class="break-all font-mono font-bold"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb">https://hashcrack.me/api/hash/e6e7c0a347468dd5cc73712fa53861cb</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2 overflow-x-scroll"><code class="break-all font-mono">{
   "password": "derrick09"
 }</code></pre>
         </figure>
         <br>
         <h2 class="text-gray-800 text-2xl">Return md5 and sha* hashes for any password</h2>
         <p class="mb-3">Call the api with any plaintext password, when not found it returns a 404</p>
-        <figure class="bg-gray-400"><pre class="p-2 mb-2"><code class="font-mono font-bold break-all"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/password/derrick09">https://hashcrack.me/api/password/derrick09</a></code></pre></figure>
-        <figure class="bg-gray-400"><pre class="p-2"><code class="font-mono break-all">{
+        <figure class="bg-gray-400"><pre class="p-2 mb-2 overflow-x-scroll"><code class="break-all font-mono font-bold"><span class="text-red-600">curl</span> <a href="https://hashcrack.me/api/password/derrick09">https://hashcrack.me/api/password/derrick09</a></code></pre></figure>
+        <figure class="bg-gray-400"><pre class="p-2 overflow-x-scroll"><code class="break-all font-mono">{
   "md5": "e6e7c0a347468dd5cc73712fa53861cb",
   "sha1": "2b8ceabd027c1751972cae3e5940f5007a28960b",
   "sha224": "68a465d743cd4e5d81855d67178ac4f078d43804f9ad5a9fb8d282e2",
