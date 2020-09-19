@@ -39,7 +39,7 @@ def simple_leetspeak(text):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['db_name'], config['db_port_passwords'])
+    db = dbh.connect_mongodb(config['db_name'], config['db_port_passwords'])
     collection = db['passwords']
 
     try:

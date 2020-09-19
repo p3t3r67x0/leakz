@@ -72,7 +72,7 @@ def iterate_items(statuses):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
+    db = dbh.connect_mongodb(config['mongodb_db'], config['mongodb_port'])
     col_password = db['passwords']
     col_mail = db['mails']
 

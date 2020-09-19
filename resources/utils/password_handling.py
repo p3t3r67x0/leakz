@@ -27,6 +27,7 @@ def hash_password(password):
     hash_sha256 = hashlib.sha256(password_string).hexdigest()
     hash_sha384 = hashlib.sha384(password_string).hexdigest()
     hash_sha512 = hashlib.sha512(password_string).hexdigest()
+
     return {'md5': hash_md5,
             'sha1': hash_sha1,
             'sha224': hash_sha224,

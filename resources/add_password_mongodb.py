@@ -87,7 +87,7 @@ def main():
     config = json.loads(fh.get_config())
     documents = fh.load_document(args.file)
 
-    db = dbh.connect_database(
+    db = dbh.connect_mongodb(
         config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
     collection = db['passwords']
 

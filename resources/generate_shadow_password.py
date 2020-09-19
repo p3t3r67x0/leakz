@@ -39,7 +39,7 @@ def load_passwords(filename):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
+    db = dbh.connect_mongodb(config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
     collection = db['shadow']
 
     try:

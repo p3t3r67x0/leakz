@@ -6,19 +6,9 @@ import json
 import utils.database_helper as dbh
 import utils.file_handling as fh
 
-from pymongo.errors import CursorNotFound
-
-from couchbase.cluster import Cluster, ClusterOptions
-from couchbase_core.cluster import PasswordAuthenticator
 from couchbase.exceptions import DocumentExistsException, TimeoutException
 
-
-def connect_couchdb(uri, username, password, database):
-    cluster = Cluster(uri, ClusterOptions(
-        PasswordAuthenticator(username, password)))
-    cb = cluster.bucket(database)
-
-    return cb
+from pymongo.errors import CursorNotFound
 
 
 def insert_hash(couchdb, document):
@@ -35,10 +25,10 @@ def insert_hash(couchdb, document):
 def main():
     config = json.loads(fh.get_config())
 
-    couchdb = connect_couchdb(
+    couchdb = dbh.connect_couchdb(
         config['COUCH_URI'], config['COUCH_USERNAME'],
         config['COUCH_PASSWORD'], config['COUCH_DATABASE'])
-    mongodb = dbh.connect_database(
+    mongodb = dbh.connect_mongodb(
         config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
 
     condition = {'import': {'$exists': False}}

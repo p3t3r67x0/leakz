@@ -12,7 +12,7 @@ from pymongo.errors import DuplicateKeyError
 import utils.file_handling as fh
 
 
-def connect_database(database, port):
+def connect_mongodb(database, port):
     secret = fh.get_secret()
     client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
         username='pymongo', password=secret, authSource=database, authMechanism='SCRAM-SHA-1')
@@ -38,7 +38,7 @@ def create_bcrypt_hash(collection):
 
 
 def main():
-    db = connect_database('intel', '27017')
+    db = connect_mongodb('intel', '27017')
     collection = db['bcrypt']
 
     try:

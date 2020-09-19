@@ -12,7 +12,7 @@ import socket
 import errno
 
 
-def connect_database():
+def connect_mongodb():
     secret = get_secret()
     client = pymongo.MongoClient('mongodb://localhost:27017/',
                                  username='pymongo',
@@ -168,7 +168,7 @@ def main():
     parser.add_argument('-f, --file', metavar='F', required=True, dest='file',
                         help='file with absolute or relative path')
 
-    db = connect_database()
+    db = connect_mongodb()
     collection = db['certs']
 
     try:

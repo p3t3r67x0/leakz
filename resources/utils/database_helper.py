@@ -3,7 +3,18 @@
 
 import pymongo
 
+from couchbase.cluster import Cluster, ClusterOptions
+from couchbase_core.cluster import PasswordAuthenticator
+
 from bson import ObjectId
+
+
+def connect_couchdb(uri, username, password, database):
+    cluster = Cluster(uri, ClusterOptions(
+        PasswordAuthenticator(username, password)))
+    bucket = cluster.bucket(database)
+
+    return cluster, bucket
 
 
 def delete_one(collection, document_id, context):
@@ -26,7 +37,7 @@ def find_all_documents(collection):
     return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
-def connect_database(database, port, secret):
+def connect_mongodb(database, port, secret):
     client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
                                  username='pymongo',
                                  password=secret,

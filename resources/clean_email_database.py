@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os
-import re
 import json
 
-import utils.database_helper as dbh
 import utils.mail_handling as mh
+import utils.database_helper as dbh
 import utils.file_handling as fh
 
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
+    db = dbh.connect_mongodb(config['mongodb_db'], config['mongodb_port'])
     collection = db['mail_address']
     amount = db['mails'].count()
     step = 50000

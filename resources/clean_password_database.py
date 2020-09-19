@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os
 import re
-import sys
 import json
-import pymongo
 
 import utils.database_helper as dbh
 import utils.file_handling as fh
@@ -25,7 +22,8 @@ def match_full_url(document):
 
 def main():
     config = json.loads(fh.get_config())
-    db = dbh.connect_database(config['mongodb_db'], config['mongodb_port'])
+    db = dbh.connect_mongodb(
+        config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
     amount = db['passwords'].count()
     step = 50000
 
@@ -35,7 +33,11 @@ def main():
         for document in documents:
             password = document['password']
 
-            if match_ip_address(password) or match_mail_address(password) or match_full_url(password):
+            if match_ip_address(password):
+                dbh.delete_one(db.passwords, document['_id'], password)
+            elif match_mail_address(password):
+                dbh.delete_one(db.passwords, document['_id'], password)
+            elif match_full_url(password):
                 dbh.delete_one(db.passwords, document['_id'], password)
 
 
