@@ -14,7 +14,7 @@ import utils.database_helper as dbh
 from couchbase.exceptions import DocumentExistsException
 
 
-def filter_non_printable(s):
+def filter_unicode(s):
     return ''.join(c for c in s if not unicodedata.category(c).startswith('C'))
 
 
@@ -27,8 +27,9 @@ def insert_hash(couchdb, document):
 
 
 def make_document(password):
+    password_striped = re.sub(r'^(\$HEX\[.*])', '', password.strip())
     password_string = re.sub(
-        r'[\s\t ]+', '', filter_non_printable(password.strip()))
+        r'[^\x00-\x7F]+|[\s\t ]+', '', filter_unicode(password_striped))
     result = None
 
     if not mh.extract_mail_address(password_string):
@@ -50,7 +51,10 @@ def main():
     documents = fh.load_document(sys.argv[1])
 
     for document in documents:
-        insert_hash(couchdb[1], make_document(document))
+        doc = make_document(document)
+
+        if doc is not None:
+            insert_hash(couchdb[1], doc)
 
 
 if __name__ == '__main__':
