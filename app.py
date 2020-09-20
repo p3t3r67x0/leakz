@@ -27,6 +27,10 @@ def connect_cassandra():
     return session
 
 
+with app.app_context():
+    session = connect_cassandra()
+
+
 def make_response(documents):
     results = []
 
@@ -49,8 +53,6 @@ def make_response(documents):
 
 @app.route('/beta/explore')
 def explore_cassandra_documents():
-    session = connect_cassandra()
-
     statement = SimpleStatement('SELECT * FROM leakz.leakz_model LIMIT 50')
     documents = session.execute(statement)
 
@@ -59,8 +61,6 @@ def explore_cassandra_documents():
 
 @app.route('/beta/lookup/<passphrase>')
 def lookup_cassandra_document(passphrase):
-    session = connect_cassandra()
-
     statement = 'SELECT * FROM leakz.leakz_model WHERE passphrase=?'
     prepare = session.prepare(statement)
     documents = session.execute(prepare, [passphrase])
