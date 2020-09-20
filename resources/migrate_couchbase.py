@@ -29,7 +29,8 @@ def main():
         config['COUCH_URI'], config['COUCH_USERNAME'],
         config['COUCH_PASSWORD'], config['COUCH_DATABASE'])
     mongodb = dbh.connect_mongodb(
-        config['MONGO_DB'], config['MONGO_PORT'], config['MONGO_PASSWORD'])
+        config['MONGO_DB'], config['MONGO_PASSWORD'],
+        config['MONGO_PORT'], config['MONGO_URI'])
 
     condition = {'import': {'$exists': False}}
     collection = mongodb['passwords']

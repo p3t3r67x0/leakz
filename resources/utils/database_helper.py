@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pymongo
+from pymongo import MongoClient
 
 from couchbase.cluster import Cluster, ClusterOptions
 from couchbase_core.cluster import PasswordAuthenticator
@@ -37,11 +37,11 @@ def find_all_documents(collection):
     return collection.find({}).sort([('$natural', -1)]).batch_size(30)
 
 
-def connect_mongodb(database, port, secret):
-    client = pymongo.MongoClient('mongodb://localhost:{}/'.format(port),
-                                 username='pymongo',
-                                 password=secret,
-                                 authSource=database,
-                                 authMechanism='SCRAM-SHA-1')
+def connect_mongodb(database, secret, port=27017, server='127.0.0.1'):
+    client = MongoClient('mongodb://{}:{}/'.format(server, port),
+                         username='pymongo',
+                         password=secret,
+                         authSource=database,
+                         authMechanism='SCRAM-SHA-1')
 
     return client[database]
