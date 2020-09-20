@@ -1,48 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import os
 import re
-import sys
-import json
 import locale
 import pymongo
-import datetime
 
 from flask import abort
 from flask import Flask
 from flask import request
 from flask import jsonify
-from flask import render_template
 from datetime import datetime
+from flask import render_template
 from influxdb import InfluxDBClient
 
 locale.setlocale(locale.LC_ALL, '')
 app = Flask(__name__, static_url_path='')
 app.config.from_json('config.json')
 
-@app.template_filter()
-def format_time(timestamp):
-    return datetime.strptime(timestamp.replace('Z', ''), '%Y%m%d%H%M%S').strftime('%d.%m.%Y %H:%M')
 
-
-def connect_database(database, port, uri):
-    client = pymongo.MongoClient('mongodb://{}:{}/'.format(uri, port),
+def connect_mongodb(database, secret, port='27017', server='127.0.0.1'):
+    client = pymongo.MongoClient('mongodb://{}:{}/'.format(server, port),
                                  username='pymongo',
-                                 password=app.config['MONGO_PASSWORD'],
+                                 password=secret,
                                  authSource=database,
                                  authMechanism='SCRAM-SHA-1')
 
     return client[database]
-
-
-def load_document(filename):
-    try:
-        with open(filename, 'rb') as f:
-            return f.readlines()
-    except IOError as e:
-        print(e)
-        sys.exit(1)
 
 
 def get(iterable, keys):
@@ -54,7 +37,7 @@ def get(iterable, keys):
 
         return result
 
-    except (KeyError, IndexError) as e:
+    except (KeyError, IndexError):
         return None
 
 
@@ -88,7 +71,7 @@ def api_search_hash(collection, param_query):
 
     try:
         return list(collection.find({key: hash}, {'_id': 0, 'password': 1}))[0]
-    except IndexError as e:
+    except IndexError:
         return []
 
 
@@ -96,18 +79,20 @@ def api_search_password(collection, param_query):
     key, hash = guess_hash(param_query)
 
     try:
-        return list(collection.find({key: hash}, {'_id': 0, 'password': 0}))[0]['hash']
-    except IndexError as e:
+        condition = {'_id': 0, 'password': 0}
+        return list(collection.find({key: hash}, condition))[0]['hash']
+    except IndexError:
         return []
 
 
 def api_search_mail(collection, param_query):
     try:
-        result = list(collection.find({'mail': param_query}, {'_id': 0, 'mail': 0}))[0]
+        result = list(collection.find(
+            {'mail': param_query}, {'_id': 0, 'mail': 0}))[0]
         return {
             'leaked': ', '.join(result['leak'])
         }
-    except IndexError as e:
+    except IndexError:
         return []
 
 
@@ -115,7 +100,8 @@ def handle_pagination(param_skip, param_limit):
     if param_skip == 0:
         param_skip = 10
 
-    entries = list(range(param_skip, (param_skip + param_limit * 8), param_limit))
+    entries = list(
+        range(param_skip, (param_skip + param_limit * 8), param_limit))
     last_entry = (entries[-1] + param_limit)
 
     if entries[-1] <= 80:
@@ -132,7 +118,10 @@ def match_mail_address(document):
 
 @app.route('/', methods=['GET'])
 def show_homepage():
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
+
     amount_hashes = db['passwords'].estimated_document_count()
     amount_mails = db['mails'].estimated_document_count()
 
@@ -161,12 +150,14 @@ def show_privacy():
 
 @app.route('/explore', methods=['GET'])
 def show_hash_list():
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     try:
         param_skip = int(request.args.get('skip'))
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         param_skip = 0
 
     try:
@@ -175,7 +166,7 @@ def show_hash_list():
         if param_limit > 200:
             param_limit = 200
 
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         param_limit = 10
 
     pagination_list = handle_pagination(param_skip, param_limit)
@@ -194,10 +185,14 @@ def show_hash_list():
 
 @app.route('/api/hash/<param_query>', methods=['GET'])
 def api_query_hash(param_query):
-    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client = InfluxDBClient(
+        app.config['INFLUX_URI'], app.config['INFLUX_PORT'],
+        'root', 'root', app.config['INFLUX_DB'])
     influx_client.create_database(app.config['INFLUX_DB'])
 
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     data = api_search_hash(collection, param_query)
@@ -222,13 +217,16 @@ def api_query_hash(param_query):
         return abort(404)
 
 
-
 @app.route('/api/password/<param_query>', methods=['GET'])
 def api_query_password(param_query):
-    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client = InfluxDBClient(
+        app.config['INFLUX_URI'], app.config['INFLUX_PORT'],
+        'root', 'root', app.config['INFLUX_DB'])
     influx_client.create_database(app.config['INFLUX_DB'])
 
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['passwords']
 
     data = api_search_password(collection, param_query)
@@ -255,10 +253,14 @@ def api_query_password(param_query):
 
 @app.route('/api/mail/<param_query>', methods=['GET'])
 def api_query_mail(param_query):
-    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client = InfluxDBClient(
+        app.config['INFLUX_URI'], app.config['INFLUX_PORT'],
+        'root', 'root', app.config['INFLUX_DB'])
     influx_client.create_database(app.config['INFLUX_DB'])
 
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     collection = db['mails']
 
     data = api_search_mail(collection, param_query)
@@ -285,10 +287,14 @@ def api_query_mail(param_query):
 
 @app.route('/hash/<param_query>', methods=['GET'])
 def show_hash_value(param_query):
-    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client = InfluxDBClient(
+        app.config['INFLUX_URI'], app.config['INFLUX_PORT'],
+        'root', 'root', app.config['INFLUX_DB'])
     influx_client.create_database(app.config['INFLUX_DB'])
 
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     col_password = db['passwords']
 
     result_list = search_hash_or_password(col_password, param_query)
@@ -319,16 +325,20 @@ def show_hash_value(param_query):
 
 @app.route('/search', methods=['GET'])
 def show_hash():
-    influx_client = InfluxDBClient(app.config['INFLUX_URI'], app.config['INFLUX_PORT'], 'root', 'root', app.config['INFLUX_DB'])
+    influx_client = InfluxDBClient(
+        app.config['INFLUX_URI'], app.config['INFLUX_PORT'],
+        'root', 'root', app.config['INFLUX_DB'])
     influx_client.create_database(app.config['INFLUX_DB'])
 
-    db = connect_database(app.config['MONGO_DB'], app.config['MONGO_PORT'], app.config['MONGO_URI'])
+    db = connect_mongodb(
+        app.config['MONGO_DB'], app.config['MONGO_PASSWORD'],
+        app.config['MONGO_PORT'], app.config['MONGO_URI'])
     col_password = db['passwords']
     col_mail = db['mails']
 
     try:
         param_query = request.args.get('q')
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         param_query = ''
 
     if match_mail_address(param_query):
