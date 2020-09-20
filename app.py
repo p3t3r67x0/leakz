@@ -20,6 +20,16 @@ app.config.from_json('config.json')
 cassandra = CassandraCluster()
 
 
+def connect_mongodb(database, secret, port='27017', server='127.0.0.1'):
+    client = pymongo.MongoClient('mongodb://{}:{}/'.format(server, port),
+                                 username='pymongo',
+                                 password=secret,
+                                 authSource=database,
+                                 authMechanism='SCRAM-SHA-1')
+
+    return client[database]
+
+
 def connect_cassandra():
     session = cassandra.connect()
     session.set_keyspace('leakz')
@@ -29,6 +39,39 @@ def connect_cassandra():
 
 with app.app_context():
     session = connect_cassandra()
+
+
+def get(iterable, keys):
+    try:
+        result = iterable
+
+        for key in keys:
+            result = result[key]
+
+        return result
+
+    except (KeyError, IndexError):
+        return None
+
+
+def guess_hash(query):
+    m = re.match(r'^[0-9a-fA-F]+$', query)
+
+    if m:
+        hash = {
+            'md5': 32,
+            'sha1': 40,
+            'sha224': 56,
+            'sha256': 64,
+            'sha384': 96,
+            'sha512': 128,
+            'ntlm': 32
+        }
+
+        items = [x[0] for x in list(hash.items()) if x[1] == len(query)]
+        return items, query.lower()
+
+    return ['passphrase'], query
 
 
 def make_response(documents):
@@ -48,102 +91,167 @@ def make_response(documents):
             }
         })
 
-    return jsonify(results)
+    return results
 
 
-@app.route('/beta/explore')
+@app.route('/beta/explore', methods=['GET'])
 def explore_cassandra_documents():
     statement = SimpleStatement('SELECT * FROM leakz.leakz_model LIMIT 50')
     documents = session.execute(statement)
 
-    return make_response(documents)
+    return jsonify(make_response(documents))
 
 
-@app.route('/beta/lookup/<passphrase>')
-def lookup_cassandra_document(passphrase):
-    statement = 'SELECT * FROM leakz.leakz_model WHERE passphrase=?'
-    prepare = session.prepare(statement)
-    documents = session.execute(prepare, [passphrase])
+@app.route('/beta/lookup/<query>', methods=['GET'])
+def lookup_cassandra_document(query):
+    terms = guess_hash(query)
 
-    return make_response(documents)
+    for term in terms[0]:
+        statement = 'SELECT * FROM leakz.leakz_model WHERE {}=?'.format(term)
+        prepare = session.prepare(statement)
+        documents = session.execute(prepare, [query])
 
+        if documents:
+            return jsonify(make_response(documents))
 
-def connect_mongodb(database, secret, port='27017', server='127.0.0.1'):
-    client = pymongo.MongoClient('mongodb://{}:{}/'.format(server, port),
-                                 username='pymongo',
-                                 password=secret,
-                                 authSource=database,
-                                 authMechanism='SCRAM-SHA-1')
-
-    return client[database]
+    return jsonify([]), 404, 404
 
 
-def get(iterable, keys):
-    try:
-        result = iterable
-
-        for key in keys:
-            result = result[key]
-
-        return result
-
-    except (KeyError, IndexError):
-        return None
+@app.route('/beta', methods=['GET'])
+def render_homepage():
+    return render_template('beta.home.j2',
+                           amount_mails='{:n}'.format(0),
+                           amount_hashes='{:n}'.format(47869489),
+                           title='Recover your password now',
+                           searchform_visible=True,
+                           alert_visible=True)
 
 
-def guess_hash(hash_string):
-    m = re.match(r'^[0-9a-fA-F]+$', hash_string)
+@app.route('/beta/search/<query>', methods=['GET', 'POST'])
+def search_cassandra_document(query):
+    terms = guess_hash(query)
+    results = []
 
-    if m:
-        hash = {
-            32: 'hash.md5',
-            40: 'hash.sha1',
-            56: 'hash.sha224',
-            64: 'hash.sha256',
-            96: 'hash.sha384',
-            128: 'hash.sha512'
-        }
+    for term in terms[0]:
+        statement = 'SELECT * FROM leakz.leakz_model WHERE {}=?'.format(term)
+        prepare = session.prepare(statement)
+        documents = session.execute(prepare, [query])
 
-        if len(hash_string) in hash:
-            return hash[len(hash_string)], hash_string.lower()
+        if documents:
+            results = make_response(documents)
 
-    return 'password', hash_string
+    return render_template('beta.home.j2',
+                           result_list=results,
+                           result_type='hash',
+                           param_query=query,
+                           title='Recover your hashed passphrase',
+                           pagination_visible=False,
+                           searchform_visible=True)
+
+
+@app.route('/beta/<term>/<query>', methods=['GET'])
+def render_cassandra_document(term, query):
+    terms = ['passphrase', 'md5', 'sha1', 'sha224',
+             'sha256', 'sha384', 'sha512', 'ntlm']
+    results = []
+
+    if term not in terms:
+        lookup = 'invalid query'
+
+    if term in terms:
+        statement = 'SELECT * FROM leakz.leakz_model WHERE {}=?'.format(term)
+        prepare = session.prepare(statement)
+        documents = session.execute(prepare, [query])
+
+        if term == terms[0]:
+            lookup = 'passphrase'
+        else:
+            lookup = '{} hash'.format(term)
+
+        if documents:
+            results = make_response(documents)
+
+    return render_template('beta.home.j2',
+                           title='You were looking for a {}'.format(lookup),
+                           result_list=results,
+                           result_type=lookup,
+                           param_query=query,
+                           searchform_visible=True,
+                           pagination_visible=False)
 
 
 def search_hash_or_password(collection, param_query):
     key, hash = guess_hash(param_query)
 
-    return list(collection.find({key: hash}, {'_id': 0}))
+    filter = {'_id': 0}
+    statements = []
+
+    for k in key:
+        if k == 'passphrase':
+            c = 'password'
+        else:
+            c = 'hash.{}'.format(k)
+
+        statements.append({c: hash})
+
+    if len(statements) > 1:
+        condition = {'$or': statements}
+    else:
+        condition = statements[0]
+
+    return list(collection.find(condition, filter))
 
 
 def api_search_hash(collection, param_query):
     key, hash = guess_hash(param_query)
 
     try:
-        return list(collection.find({key: hash}, {'_id': 0, 'password': 1}))[0]
+        filter = {'_id': 0, 'password': 1}
+        statements = []
+
+        for k in key:
+            statements.append({'hash.{}'.format(k): hash})
+
+        if len(statements) > 1:
+            condition = {'$or': statements}
+        else:
+            condition = statements[0]
+
+        return list(collection.find(condition, filter))[0]
     except IndexError:
-        return []
+        return jsonify([]), 404
 
 
 def api_search_password(collection, param_query):
     key, hash = guess_hash(param_query)
 
     try:
-        condition = {'_id': 0, 'password': 0}
-        return list(collection.find({key: hash}, condition))[0]['hash']
+        filter = {'_id': 0, 'password': 0}
+        statements = []
+
+        for k in key:
+            statements.append({'hash.{}'.format(k): hash})
+
+        if len(statements) > 1:
+            condition = {'$or': statements}
+        else:
+            condition = statements[0]
+
+        return list(collection.find(condition, filter))[0]['hash']
     except IndexError:
-        return []
+        return jsonify([]), 404
 
 
 def api_search_mail(collection, param_query):
     try:
         result = list(collection.find(
             {'mail': param_query}, {'_id': 0, 'mail': 0}))[0]
+
         return {
             'leaked': ', '.join(result['leak'])
         }
     except IndexError:
-        return []
+        return jsonify([]), 404
 
 
 def handle_pagination(param_skip, param_limit):
@@ -178,7 +286,7 @@ def show_homepage():
     return render_template('home.j2',
                            amount_hashes='{:n}'.format(amount_hashes),
                            amount_mails='{:n}'.format(amount_mails),
-                           title='Lookup your hashed password',
+                           title='Recover your hashed passphrase',
                            searchform_visible=True,
                            alert_visible=True)
 
@@ -402,7 +510,7 @@ def show_hash():
                            result_list=result_list,
                            result_type=result_type,
                            param_query=param_query,
-                           title='Lookup your hashed password',
+                           title='Recover your hashed passphrase',
                            pagination_visible=False,
                            searchform_visible=True)
 

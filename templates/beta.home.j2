@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Find your plaintext password - hashcrack.me</title>
+	{% include "meta.j2" %}
+</head>
+
+<body>
+	<div id="app" class="flex flex-col min-h-screen relative">
+		{% include "header.j2" %}
+		<div class="flex-grow mx-auto container pt-12 sm:pt-20">
+			<div class="m-3 sm:m-0">
+				<div class="mb-4 {% if result_list | length == 0 %}sm:mb-24{% endif %}">
+					<h2 class="text-white text-2xl mb-1">{{ title }}</h2>
+					{% if searchform_visible %}
+					<div class="mb-6">
+						<form @submit.prevent="submitSearch" ref="form" method="POST" :action="computedAction" class="flex flex-wrap items-stretch w-full relative" role="form">
+							<input @keyup.enter="submitSearch" type="text" v-model="query" class="flex-shrink flex-grow flex-auto leading-normal w-px flex-1 border h-10 border-grey-light rounded rounded-r-none px-3 relative" placeholder="*********">
+							<div class="flex -mr-px">
+								<button type="submit" class="flex items-center leading-normal bg-gray-400 rounded rounded-l-none border border-l-0 border-grey-light px-3 whitespace-no-wrap text-grey-dark text-sm">Search</button>
+							</div>
+						</form>
+						<div>
+							<small class="text-gray-100">Hint: You can also search for any md5, sha1, sha224, sha256, sha384, sha512, ntlm hash</small>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				{% include "beta.result.j2" %}
+			</div>
+		</div>
+		{% include "footer.j2" %}
+	</div>
+</body>
+
+</html>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			query: '{{ param_query }}',
+			showNav: false
+		},
+		computed: {
+			computedAction() {
+				return `/beta/search/${this.query}`
+			}
+		},
+		methods: {
+			hideNav() {
+				return this.showNav = false
+			},
+			toggleNav() {
+				return this.showNav = !this.showNav
+			},
+			submitSearch() {
+				this.$refs.form.submit()
+			}
+		}
+	})
+</script>

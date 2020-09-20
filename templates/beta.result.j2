@@ -1,0 +1,43 @@
+{% if result_list | length > 0 %}
+<ul>
+  {% for i in result_list %}
+  <li class="bg-white rounded {% if result_list | length > 1 %}mb-4{% endif %}">
+    <ul>
+      <li class="px-2 py-1 bg-gray-700">
+        <h3 class="text-2xl text-white break-all">
+          <a href="/beta/passphrase/{{ i['passphrase'] }}">{{ i['passphrase'] }}</a>
+        </h3>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>md5:</b>
+        <a href="/beta/md5/{{ i['hash']['md5'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['md5'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>sha1:</b>
+        <a href="/beta/sha1/{{ i['hash']['sha1'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['sha1'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>sha224:</b>
+        <a href="/beta/sha224/{{ i['hash']['sha224'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['sha224'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>sha256:</b>
+        <a href="/beta/sha256/{{ i['hash']['sha256'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['sha256'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>sha384:</b>
+        <a href="/beta/sha384/{{ i['hash']['sha384'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['sha384'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>sha512:</b>
+        <a href="/beta/sha512/{{ i['hash']['sha512'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['sha512'] | lower }}</a>
+      </li>
+      <li class="font-mono px-2 py-1">
+        <b>ntlm:</b>
+        <a href="/beta/ntlm/{{ i['hash']['ntlm'] | lower }}" class="text-gray-700 break-all hover:text-blue-700">{{ i['hash']['ntlm'] | lower }}</a>
+      </li>
+    </ul>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
