@@ -2,20 +2,70 @@
 # -*- coding:utf-8 -*-
 
 import re
-import locale
 import pymongo
+import locale
 
-from flask import abort
-from flask import Flask
-from flask import request
-from flask import jsonify
-from datetime import datetime
-from flask import render_template
+from flask import Flask, abort, request, jsonify, render_template
+from flask_cassandra import CassandraCluster
+
+from cassandra.query import SimpleStatement
+
 from influxdb import InfluxDBClient
+from datetime import datetime
+
 
 locale.setlocale(locale.LC_ALL, '')
 app = Flask(__name__, static_url_path='')
 app.config.from_json('config.json')
+cassandra = CassandraCluster()
+
+
+def connect_cassandra():
+    session = cassandra.connect()
+    session.set_keyspace('leakz')
+
+    return session
+
+
+def make_response(documents):
+    results = []
+
+    for document in documents:
+        results.append({
+            'passphrase': document.passphrase,
+            'hash': {
+                'md5': document.md5,
+                'sha1': document.sha1,
+                'sha224': document.sha224,
+                'sha256': document.sha256,
+                'sha384': document.sha384,
+                'sha512': document.sha512,
+                'ntlm': document.ntlm
+            }
+        })
+
+    return jsonify(results)
+
+
+@app.route('/beta/explore')
+def explore_cassandra_documents():
+    session = connect_cassandra()
+
+    statement = SimpleStatement('SELECT * FROM leakz.leakz_model LIMIT 50')
+    documents = session.execute(statement)
+
+    return make_response(documents)
+
+
+@app.route('/beta/lookup/<passphrase>')
+def lookup_cassandra_document(passphrase):
+    session = connect_cassandra()
+
+    statement = 'SELECT * FROM leakz.leakz_model WHERE passphrase=?'
+    prepare = session.prepare(statement)
+    documents = session.execute(prepare, [passphrase])
+
+    return make_response(documents)
 
 
 def connect_mongodb(database, secret, port='27017', server='127.0.0.1'):
