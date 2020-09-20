@@ -27,7 +27,8 @@ def insert_hash(couchdb, document):
 
 
 def make_document(password):
-    password_striped = re.sub(r'^(\$HEX\[.*])', '', password.strip())
+    password_striped = re.sub(r'^(\$HEX\[(.*)\]?)', '', password.strip())
+    print(re.match(r'[^\x00-\x7F]+', password_striped))
     password_string = re.sub(
         r'[^\x00-\x7F]+|[\s\t ]+', '', filter_unicode(password_striped))
     result = None

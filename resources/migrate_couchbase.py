@@ -34,7 +34,7 @@ def main():
     condition = {'import': {'$exists': False}}
     collection = mongodb['passwords']
 
-    documents = dbh.find_collectional_documents(collection, condition)
+    documents = dbh.find_conditional_documents(collection, condition)
 
     for document in documents:
         try:

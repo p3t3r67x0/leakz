@@ -29,8 +29,8 @@ def find_documents(collection, skip, limit):
     return collection.find({}).skip(skip).limit(limit)
 
 
-def find_collectional_documents(collection, condition):
-    return collection.find(condition).sort([('$natural', 1)]).batch_size(30)
+def find_conditional_documents(collection, condition):
+    return collection.find(condition).sort([('$natural', 1)])
 
 
 def find_all_documents(collection):
