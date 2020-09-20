@@ -230,7 +230,7 @@ def api_search_password(collection, param_query):
         statements = []
 
         for k in key:
-            statements.append({'hash.{}'.format(k): hash})
+            statements.append({'password': hash})
 
         if len(statements) > 1:
             condition = {'$or': statements}
