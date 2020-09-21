@@ -13,6 +13,8 @@ from cassandra.query import SimpleStatement
 from influxdb import InfluxDBClient
 from datetime import datetime
 
+from resources.utils.password_handling import handle_document
+
 
 locale.setlocale(locale.LC_ALL, '')
 app = Flask(__name__, static_url_path='')
@@ -78,18 +80,21 @@ def make_response(documents):
     results = []
 
     for document in documents:
-        results.append({
-            'passphrase': document.passphrase,
-            'hash': {
-                'md5': document.md5,
-                'sha1': document.sha1,
-                'sha224': document.sha224,
-                'sha256': document.sha256,
-                'sha384': document.sha384,
-                'sha512': document.sha512,
-                'ntlm': document.ntlm
-            }
-        })
+        try:
+            results.append({
+                'passphrase': document.passphrase,
+                'hash': {
+                    'md5': document.md5,
+                    'sha1': document.sha1,
+                    'sha224': document.sha224,
+                    'sha256': document.sha256,
+                    'sha384': document.sha384,
+                    'sha512': document.sha512,
+                    'ntlm': document.ntlm
+                }
+            })
+        except AttributeError:
+            continue
 
     return results
 
@@ -114,7 +119,7 @@ def lookup_cassandra_document(query):
         if documents:
             return jsonify(make_response(documents))
 
-    return jsonify([]), 404, 404
+    return jsonify([]), 404
 
 
 @app.route('/beta', methods=['GET'])
@@ -139,6 +144,8 @@ def search_cassandra_document(query):
 
         if documents:
             results = make_response(documents)
+        elif not documents and term == 'passphrase':
+            results = make_response([handle_document(query)])
 
     return render_template('beta.home.j2',
                            result_list=results,
@@ -170,6 +177,9 @@ def render_cassandra_document(term, query):
 
         if documents:
             results = make_response(documents)
+        elif not documents and term == 'passphrase':
+            results = make_response([handle_document(query)])
+            print(results)
 
     return render_template('beta.home.j2',
                            title='You were looking for a {}'.format(lookup),
