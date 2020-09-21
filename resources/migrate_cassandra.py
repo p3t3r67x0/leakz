@@ -118,7 +118,7 @@ def main():
     for document in documents:
         try:
             pattern1 = r'^(\$HEX\[(.*)\]?)'
-            pattern2 = r'[\s\t ]+|[^\x00-\x7F]+|[\s\t ]+'
+            pattern2 = r'[\s\t ]+'
 
             pws = re.sub(pattern1, '', document['password'])
             pw = re.sub(pattern2, '', filter_unicode(pws))
