@@ -118,6 +118,8 @@ def lookup_cassandra_document(query):
 
         if documents:
             return jsonify(make_response(documents))
+        elif not documents and term == 'passphrase':
+            return jsonify(make_response([handle_document(query)]))
 
     return jsonify([]), 404
 
@@ -179,7 +181,6 @@ def render_cassandra_document(term, query):
             results = make_response(documents)
         elif not documents and term == 'passphrase':
             results = make_response([handle_document(query)])
-            print(results)
 
     return render_template('beta.home.j2',
                            title='You were looking for a {}'.format(lookup),
