@@ -41,7 +41,7 @@ rope==0.17.0
 six==1.15.0
 snowballstemmer==2.0.0
 toml==0.10.1
-ujson==3.2.0
+ujson==5.4.0
 urllib3==1.24.2
 Werkzeug==2.2.3
 wrapt==1.12.1
